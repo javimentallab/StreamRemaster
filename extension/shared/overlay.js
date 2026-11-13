@@ -66,6 +66,19 @@
   document.addEventListener("fullscreenchange", anchor);
   document.addEventListener("webkitfullscreenchange", anchor);
 
+  // Chromium does not let a tab that is being captured take the whole screen: the page goes
+  // fullscreen inside the tab only. The background puts the window itself in fullscreen and
+  // back (where the browser already did it, nothing changes).
+  function askWindowFullscreen() {
+    const on = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    try {
+      const sent = api.runtime.sendMessage({ cmd: "pageFullscreen", on });
+      if (sent && sent.catch) sent.catch(() => {});
+    } catch (e) { /* the extension was reloaded */ }
+  }
+  document.addEventListener("fullscreenchange", askWindowFullscreen);
+  document.addEventListener("webkitfullscreenchange", askWindowFullscreen);
+
   function applyStyle() {
     if (!box) return;
     const lh = Math.round(fontSize * 1.38);

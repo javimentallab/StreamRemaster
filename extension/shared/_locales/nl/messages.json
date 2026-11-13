@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "Scherpte"
+  },
+  "fg_sharpen_off": {
+    "message": "Uit"
+  },
+  "fg_sharpen_soft": {
+    "message": "Licht"
+  },
+  "fg_sharpen_medium": {
+    "message": "Gemiddeld"
+  },
+  "fg_sharpen_strong": {
+    "message": "Sterk"
+  },
+  "fg_resolution": {
+    "message": "Doelresolutie van de opschaling"
+  },
+  "fg_res_original": {
+    "message": "Origineel (zonder opschaling)"
+  },
+  "fg_model": {
+    "message": "AI-model"
+  },
+  "fg_kind_sr": {
+    "message": "Opschaling"
+  },
+  "fg_kind_fi": {
+    "message": "Tussenbeelden"
+  },
+  "fg_builtin": {
+    "message": "Ingebouwd"
+  },
+  "fg_model_none": {
+    "message": "Geen (zonder AI)"
+  },
+  "section_fgmodels": {
+    "message": "Modellen voor vloeiende video"
+  },
+  "fg_models_hint": {
+    "message": "Download een modelbestand (.stmodel, .srmodel, .fimodel) en voeg het hier toe. Het draait op je eigen videokaart."
+  },
+  "fg_add_model": {
+    "message": "Modelbestand toevoegen"
+  },
+  "fg_no_models": {
+    "message": "Nog geen modellen toegevoegd."
+  },
+  "fg_model_bad": {
+    "message": "Dit bestand is geen geldig model."
+  },
+  "tab_subs": {
+    "message": "Ondertiteling"
+  },
+  "tab_fg": {
+    "message": "Vloeiende video"
+  },
+  "fg_start": {
+    "message": "Vloeiende video inschakelen"
+  },
+  "fg_stop": {
+    "message": "Vloeiende video uitschakelen"
+  },
+  "fg_target": {
+    "message": "Doel-FPS"
+  },
+  "fg_target_display": {
+    "message": "Gelijk aan het scherm"
+  },
+  "fg_state_off": {
+    "message": "Uit"
+  },
+  "fg_state_measuring": {
+    "message": "Video wordt gemeten…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (video op {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "Er wordt geen video afgespeeld op deze pagina."
+  },
+  "fg_no_webgpu": {
+    "message": "Deze browser kan de GPU hiervoor niet gebruiken (WebGPU is niet beschikbaar)."
+  },
+  "fg_cannot_read": {
+    "message": "Deze video kan niet worden gelezen: hij is beveiligd of komt van een andere site."
+  },
+  "fg_unavailable": {
+    "message": "Deze pagina staat geen extensies toe."
+  },
+  "fg_auto_start": {
+    "message": "Vloeiende video inschakelen zodra een video speelt"
+  },
+  "subs_auto_start": {
+    "message": "Ondertiteling starten zodra een video speelt"
+  },
+  "auto_start_hint": {
+    "message": "In deze browser werkt het alleen in tabbladen waarin je op de knop van de extensie hebt geklikt, totdat ze naar een andere site gaan."
+  },
+  "fg_allow_all_sites": {
+    "message": "Op alle sites toestaan"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Live-ondertitels voor elk tabblad, getranscribeerd en vertaald door je eigen Whisper-server."
@@ -90,7 +192,7 @@
     "message": "Verbind je server"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription heeft een WhisperLive-server op je computer of in je netwerk nodig."
+    "message": "StreamRemaster heeft een WhisperLive-server op je computer of in je netwerk nodig."
   },
   "server_address": {
     "message": "Serveradres"
@@ -135,7 +237,7 @@
     "message": "Typ hier daarna zijn adres: het IP van de computer en de poort, bijv. 192.168.1.10:9090. Draait hij op deze computer, dan localhost:9090."
   },
   "server_help_3": {
-    "message": "Om vanaf deze pagina modellen te downloaden en te beheren, voeg je de Stream Transcription-add-on toe aan de server."
+    "message": "Om vanaf deze pagina modellen te downloaden en te beheren, voeg je de StreamRemaster-add-on toe aan de server."
   },
   "server_help_guide": {
     "message": "Stapsgewijze handleiding"
@@ -168,7 +270,7 @@
     "message": "Stel eerst de server in."
   },
   "settings_title": {
-    "message": "Stream Transcription · Instellingen"
+    "message": "StreamRemaster · Instellingen"
   },
   "section_server": {
     "message": "Server"
@@ -255,7 +357,7 @@
     "message": "Opnieuw"
   },
   "plain_server_hint": {
-    "message": "Dit is een standaard WhisperLive-server: typ een modelgrootte (tiny, base, small, medium, large-v3, large-v3-turbo) en de server downloadt die de eerste keer. Om elk model vanaf hier te downloaden, installeer je de Stream Transcription-add-on op de server."
+    "message": "Dit is een standaard WhisperLive-server: typ een modelgrootte (tiny, base, small, medium, large-v3, large-v3-turbo) en de server downloadt die de eerste keer. Om elk model vanaf hier te downloaden, installeer je de StreamRemaster-add-on op de server."
   },
   "model_name": {
     "message": "Modelnaam"
@@ -276,7 +378,7 @@
     "message": "Prestaties"
   },
   "performance_hint": {
-    "message": "Als de videokaart van de server zonder geheugen komt (ondertitels die niet komen of een geheugenwaarschuwing), maken deze twee opties veel vrij. Ze werken alleen met de Stream Transcription-server."
+    "message": "Als de videokaart van de server zonder geheugen komt (ondertitels die niet komen of een geheugenwaarschuwing), maken deze twee opties veel vrij. Ze werken alleen met de StreamRemaster-server."
   },
   "precision": {
     "message": "Modelprecisie"
@@ -408,7 +510,7 @@
     "message": "Firefox installeert nieuwe versies zelf. Wil je hem nu al, open dan about:addons, klik op het tandwiel en kies ‘Controleren op updates’. Een net verschenen versie kan een paar dagen nodig hebben om op de add-onsite te komen."
   },
   "update_how_chromium": {
-    "message": "Om bij te werken download je de Chromium-zip van de pagina van de versie, pak je hem uit over de oude map en klik je in chrome://extensions op het herlaadpictogram op de kaart van Stream Transcription. Je instellingen blijven bewaard."
+    "message": "Om bij te werken download je de Chromium-zip van de pagina van de versie, pak je hem uit over de oude map en klik je in chrome://extensions op het herlaadpictogram op de kaart van StreamRemaster. Je instellingen blijven bewaard."
   },
   "update_privacy": {
     "message": "Bij het controleren wordt GitHub alleen naar het nummer van de nieuwste versie gevraagd; verder wordt er niets verstuurd."

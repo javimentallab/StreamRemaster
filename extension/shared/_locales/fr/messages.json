@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "Netteté"
+  },
+  "fg_sharpen_off": {
+    "message": "Désactivée"
+  },
+  "fg_sharpen_soft": {
+    "message": "Douce"
+  },
+  "fg_sharpen_medium": {
+    "message": "Moyenne"
+  },
+  "fg_sharpen_strong": {
+    "message": "Forte"
+  },
+  "fg_resolution": {
+    "message": "Résolution cible de l'agrandissement"
+  },
+  "fg_res_original": {
+    "message": "Originale (sans agrandissement)"
+  },
+  "fg_model": {
+    "message": "Modèle d'IA"
+  },
+  "fg_kind_sr": {
+    "message": "Agrandissement"
+  },
+  "fg_kind_fi": {
+    "message": "Images intermédiaires"
+  },
+  "fg_builtin": {
+    "message": "Intégré"
+  },
+  "fg_model_none": {
+    "message": "Aucun (sans IA)"
+  },
+  "section_fgmodels": {
+    "message": "Modèles de vidéo fluide"
+  },
+  "fg_models_hint": {
+    "message": "Téléchargez un fichier de modèle (.stmodel, .srmodel, .fimodel) et ajoutez-le ici. Il fonctionne sur votre propre carte graphique."
+  },
+  "fg_add_model": {
+    "message": "Ajouter un fichier de modèle"
+  },
+  "fg_no_models": {
+    "message": "Aucun modèle ajouté pour le moment."
+  },
+  "fg_model_bad": {
+    "message": "Ce fichier n'est pas un modèle valide."
+  },
+  "tab_subs": {
+    "message": "Sous-titres"
+  },
+  "tab_fg": {
+    "message": "Vidéo fluide"
+  },
+  "fg_start": {
+    "message": "Activer la vidéo fluide"
+  },
+  "fg_stop": {
+    "message": "Désactiver la vidéo fluide"
+  },
+  "fg_target": {
+    "message": "FPS cible"
+  },
+  "fg_target_display": {
+    "message": "Comme l'écran"
+  },
+  "fg_state_off": {
+    "message": "Désactivé"
+  },
+  "fg_state_measuring": {
+    "message": "Mesure de la vidéo…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (vidéo à {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "Aucune vidéo n'est en cours de lecture sur cette page."
+  },
+  "fg_no_webgpu": {
+    "message": "Ce navigateur ne peut pas utiliser la carte graphique pour cela (WebGPU n'est pas disponible)."
+  },
+  "fg_cannot_read": {
+    "message": "Cette vidéo ne peut pas être lue : elle est protégée ou provient d'un autre site."
+  },
+  "fg_unavailable": {
+    "message": "Cette page n'autorise pas les extensions."
+  },
+  "fg_auto_start": {
+    "message": "Activer la vidéo fluide à la lecture d'une vidéo"
+  },
+  "subs_auto_start": {
+    "message": "Lancer les sous-titres à la lecture d'une vidéo"
+  },
+  "auto_start_hint": {
+    "message": "Dans ce navigateur, cela ne fonctionne que dans les onglets où vous avez cliqué sur le bouton de l'extension, jusqu'à ce qu'ils changent de site."
+  },
+  "fg_allow_all_sites": {
+    "message": "Autoriser sur tous les sites"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Sous-titres en direct pour n’importe quel onglet, transcrits et traduits par votre propre serveur Whisper."
@@ -90,7 +192,7 @@
     "message": "Connectez votre serveur"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription a besoin d’un serveur WhisperLive sur votre ordinateur ou votre réseau."
+    "message": "StreamRemaster a besoin d’un serveur WhisperLive sur votre ordinateur ou votre réseau."
   },
   "server_address": {
     "message": "Adresse du serveur"
@@ -135,7 +237,7 @@
     "message": "Saisissez ensuite son adresse ici : l’IP de l’ordinateur et le port, ex. 192.168.1.10:9090. S’il tourne sur cet ordinateur, localhost:9090."
   },
   "server_help_3": {
-    "message": "Pour télécharger et gérer des modèles depuis cette page, ajoutez au serveur le module de Stream Transcription."
+    "message": "Pour télécharger et gérer des modèles depuis cette page, ajoutez au serveur le module de StreamRemaster."
   },
   "server_help_guide": {
     "message": "Guide pas à pas"
@@ -168,7 +270,7 @@
     "message": "Configurez d’abord le serveur."
   },
   "settings_title": {
-    "message": "Stream Transcription · Réglages"
+    "message": "StreamRemaster · Réglages"
   },
   "section_server": {
     "message": "Serveur"
@@ -255,7 +357,7 @@
     "message": "Réessayer"
   },
   "plain_server_hint": {
-    "message": "C’est un serveur WhisperLive standard : saisissez une taille de modèle (tiny, base, small, medium, large-v3, large-v3-turbo) et le serveur la télécharge la première fois. Pour télécharger n’importe quel modèle d’ici, installez le module de Stream Transcription sur le serveur."
+    "message": "C’est un serveur WhisperLive standard : saisissez une taille de modèle (tiny, base, small, medium, large-v3, large-v3-turbo) et le serveur la télécharge la première fois. Pour télécharger n’importe quel modèle d’ici, installez le module de StreamRemaster sur le serveur."
   },
   "model_name": {
     "message": "Nom du modèle"
@@ -276,7 +378,7 @@
     "message": "Performances"
   },
   "performance_hint": {
-    "message": "Si la carte graphique du serveur manque de mémoire (sous-titres qui n’arrivent pas ou alerte mémoire), ces deux options en libèrent beaucoup. Elles ne marchent qu’avec le serveur de Stream Transcription."
+    "message": "Si la carte graphique du serveur manque de mémoire (sous-titres qui n’arrivent pas ou alerte mémoire), ces deux options en libèrent beaucoup. Elles ne marchent qu’avec le serveur de StreamRemaster."
   },
   "precision": {
     "message": "Précision du modèle"
@@ -408,7 +510,7 @@
     "message": "Firefox installe les nouvelles versions tout seul. Pour l’avoir tout de suite, ouvrez about:addons, cliquez sur la roue dentée et choisissez « Rechercher des mises à jour ». Une version qui vient de sortir peut mettre quelques jours à arriver sur le site des modules complémentaires."
   },
   "update_how_chromium": {
-    "message": "Pour mettre à jour, téléchargez le zip Chromium sur la page de la version, décompressez-le par-dessus l’ancien dossier et cliquez sur l’icône de rechargement de la carte Stream Transcription dans chrome://extensions. Vos réglages sont conservés."
+    "message": "Pour mettre à jour, téléchargez le zip Chromium sur la page de la version, décompressez-le par-dessus l’ancien dossier et cliquez sur l’icône de rechargement de la carte StreamRemaster dans chrome://extensions. Vos réglages sont conservés."
   },
   "update_privacy": {
     "message": "La recherche demande seulement à GitHub le numéro de la dernière version ; rien d’autre n’est envoyé."

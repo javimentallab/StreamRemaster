@@ -43,7 +43,8 @@ test('prettyServer', () => {
 
 test('formatBytes', () => {
   assert.equal(ST.formatBytes(0), '0 MB');
-  assert.equal(ST.formatBytes(500000), '1 MB');
+  assert.equal(ST.formatBytes(500000), '500 KB');
+  assert.equal(ST.formatBytes(21564), '22 KB');
   assert.equal(ST.formatBytes(120000000), '120 MB');
   assert.equal(ST.formatBytes(1500000000), '1.5 GB');
   assert.equal(ST.formatBytes(2000000000), '2 GB');

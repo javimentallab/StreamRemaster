@@ -1,10 +1,14 @@
-# Stream Transcription
+# StreamRemaster
 
-**Subtítulos en directo para cualquier pestaña del navegador, transcritos y traducidos por tu propio servidor Whisper.**
+**Subtítulos en directo y vídeo fluido para cualquier pestaña del navegador, con tu propio equipo.**
 
 Mira un directo de Twitch, un vídeo de YouTube o una llamada en un idioma que no hablas y
 léelo en el tuyo, en tiempo real. El audio no sale de tu red: solo va al servidor
-[WhisperLive](https://github.com/collabora/WhisperLive) que tú montes.
+[WhisperLive](https://github.com/collabora/WhisperLive) que tú montes. La pestaña **Vídeo fluido** sube
+los fotogramas por segundo del vídeo y lo reescala con IA, en tu propia tarjeta gráfica.
+
+StreamRemaster se llamaba Stream Transcription hasta la versión 2.2.0. Los subtítulos funcionan igual que
+antes.
 
 [English version](README.md)
 
@@ -24,19 +28,63 @@ léelo en el tuyo, en tiempo real. El audio no sale de tu red: solo va al servid
   texto, el traductor puede ir en el procesador, y si el modelo no cabe sale un **aviso de
   VRAM** en vez de unos subtítulos que se congelan sin decir nada.
 - **Guarda los subtítulos** en un `.srt` al parar.
+- **Vídeo fluido**: fotogramas intermedios generados con IA suben los fotogramas por segundo del vídeo
+  hasta los de tu pantalla, y el reescalado con IA duplica su resolución. En tu propia tarjeta gráfica y
+  sin servidor. [Más abajo](#vídeo-fluido).
 - **Busca actualizaciones** desde la extensión: dice si hay una versión más nueva, de la
   extensión y del servidor, y te lleva a ella. Solo cuando lo pides.
-- Interfaz en castellano, inglés, portugués, francés, alemán, italiano, neerlandés, polaco, ruso, ucraniano,
-  chino, japonés, coreano, tailandés e hindi; sigue al navegador o se elige en los ajustes.
-- Sin cuentas, sin rastreo, sin estadísticas. Código abierto (MIT).
+- Interfaz en castellano, catalán, gallego, euskera, inglés, portugués, francés, alemán, italiano,
+  neerlandés, polaco, ruso, ucraniano, chino, japonés, coreano, tailandés e hindi; sigue al navegador o se elige en los ajustes.
+- Sin cuentas, sin rastreo, sin estadísticas. Código fuente disponible (PolyForm Noncommercial).
 
 | Ventana de la extensión | Ajustes · modelos |
 |---|---|
 | ![Ventana de la extensión](store/screenshot-2-popup.png) | ![Modelos](store/screenshot-3-models.png) |
 
+## Vídeo fluido
+
+La pestaña **Vídeo fluido**, junto a **Subtítulos** en la ventana de la extensión, hace que el vídeo de la
+página se vea más fluido y más nítido. Hace dos cosas con IA:
+
+- **Fotogramas intermedios.** Un directo a 30 o 60 fps en una pantalla de 144 Hz muestra cada fotograma
+  varias veces. La extensión genera los fotogramas que faltan entre medias, y el vídeo va hasta a los
+  fotogramas por segundo de tu pantalla.
+- **Reescalado.** Duplica la resolución del vídeo; por ejemplo, de 720p a 1440p.
+
+Todo funciona en el navegador, en tu propia tarjeta gráfica, mediante WebGPU. Esta pestaña no necesita
+servidor: funciona sin el servidor WhisperLive, y el vídeo no sale de tu ordenador. Va en Firefox, Zen y
+los navegadores Chromium (probado en Brave).
+
+<!-- TODO: captura de la pestaña Vídeo fluido -->
+
+Los controles:
+
+- **El botón grande** lo activa y lo quita en la pestaña actual.
+- **FPS objetivo**: **Igual que la pantalla** o un valor fijo: 60, 75, 90, 100, 120, 144, 165, 180 o
+  240 fps.
+- **Modelo de IA**: **StreamRemaster**, el modelo que trae la extensión; cualquier modelo que hayas
+  añadido; o **Ninguno (sin IA)**, que usa un fundido simple entre fotogramas y un escalado simple.
+- **Resolución objetivo del reescalado**: **Original (sin reescalar)**, **Igual que la pantalla**, 1080p,
+  1440p o 4K.
+
+Mientras está activo, un contador en la página muestra los fotogramas por segundo del vídeo y los que
+consigues.
+
+**Modelos.** En Ajustes → **Modelos de vídeo fluido** puedes añadir archivos de modelo (`.stmodel`, y los
+antiguos `.srmodel` y `.fimodel`) y elegir uno. El modelo que trae la extensión aparece como **Incluido** y
+no se puede borrar. Un archivo de modelo solo contiene pesos, nada de código, y la extensión lo comprueba
+con rigor antes de usarlo. Cómo se hizo StreamRemaster, con qué datos y qué límites tiene:
+[ficha del modelo](docs/MODEL.es.md).
+
+**Límites.** Necesitas una tarjeta gráfica y un navegador con WebGPU. El reescalado dibuja detalle
+verosímil que no estaba en el original, así que no sirve para leer texto pequeño del que tengas que
+fiarte. El vídeo protegido (DRM) se ve negro para cualquier extensión y no se puede procesar.
+
 ## Instalar la extensión
 
-- **Firefox** (y Zen, LibreWolf, Floorp…): [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
+<!-- TODO: el enlace de AMO, si StreamRemaster tiene una ficha o un ID nuevos; y cómo comprarla en
+Chromium, cuando se decida el sistema de pago y licencias. -->
+- **Firefox** (y Zen, LibreWolf, Floorp…), gratis: [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
 - **Chromium** (Chrome, Brave, Edge, Opera, Vivaldi…): descarga
   `stream-transcription-chromium-<versión>.zip` de la
   [última versión](https://github.com/javimentallab/stream-transcription/releases/latest),
@@ -59,7 +107,7 @@ Después pulsa el icono de la extensión, escribe la dirección de tu servidor (
 Necesitas un servidor WhisperLive, mejor en un ordenador con tarjeta gráfica NVIDIA (los
 modelos pequeños también van solo con el procesador). Dos opciones:
 
-### Opción A — servidor de Stream Transcription (recomendada)
+### Opción A — servidor de StreamRemaster (recomendada)
 
 WhisperLive más los parches que hacen funcionar todo lo de la extensión (gestión de modelos,
 cambio de modelo, int8, traductor en el procesador, avisos de VRAM). Con Docker y el
@@ -122,7 +170,8 @@ El traductor suma ~0,7 GB en la gráfica (o nada, si lo pones en el procesador).
 ## Privacidad
 
 La extensión envía el audio de la pestaña **solo** a la dirección de servidor que escribas, y
-nada a ningún otro sitio. Solo cuando pulsas **Buscar actualizaciones** pregunta a GitHub el
+nada a ningún otro sitio. **Vídeo fluido** no envía nada: el vídeo se procesa en tu propia tarjeta
+gráfica. Solo cuando pulsas **Buscar actualizaciones** pregunta a GitHub el
 número de la última versión. Guarda sus ajustes en tu navegador. Ver [PRIVACY.md](PRIVACY.md).
 
 ## Compilar
@@ -143,7 +192,10 @@ Qué cambia en cada versión: [CHANGELOG](CHANGELOG.md), en inglés. Consulta [C
 
 ## Créditos y licencia
 
-MIT ([LICENSE](LICENSE)). Hecho sobre [WhisperLive](https://github.com/collabora/WhisperLive), de Collabora (MIT, ver
+[PolyForm Noncommercial 1.0.0](LICENSE): se permite cualquier uso no comercial; el uso comercial necesita permiso del autor. Las versiones hasta la 2.2.0 se publicaron con licencia MIT. Hecho sobre [WhisperLive](https://github.com/collabora/WhisperLive), de Collabora (MIT, ver
 [NOTICE](NOTICE)), y
 [faster-whisper](https://github.com/SYSTRAN/faster-whisper). La traducción usa
-[SMALL100](https://huggingface.co/alirezamsh/small100).
+[SMALL100](https://huggingface.co/alirezamsh/small100). El modelo de vídeo fluido, que también se llama StreamRemaster, lo
+entrenó el autor desde cero con el conjunto [REDS](https://seungjunnah.github.io/Datasets/reds.html)
+(CC BY 4.0) y con partidas de [Xonotic](https://xonotic.org); los detalles, en la
+[ficha del modelo](docs/MODEL.es.md) y en [NOTICE](NOTICE).

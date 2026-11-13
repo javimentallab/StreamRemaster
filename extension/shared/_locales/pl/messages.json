@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "Ostrość"
+  },
+  "fg_sharpen_off": {
+    "message": "Wyłączona"
+  },
+  "fg_sharpen_soft": {
+    "message": "Łagodna"
+  },
+  "fg_sharpen_medium": {
+    "message": "Średnia"
+  },
+  "fg_sharpen_strong": {
+    "message": "Mocna"
+  },
+  "fg_resolution": {
+    "message": "Docelowa rozdzielczość skalowania"
+  },
+  "fg_res_original": {
+    "message": "Oryginalna (bez skalowania)"
+  },
+  "fg_model": {
+    "message": "Model AI"
+  },
+  "fg_kind_sr": {
+    "message": "Skalowanie"
+  },
+  "fg_kind_fi": {
+    "message": "Klatki pośrednie"
+  },
+  "fg_builtin": {
+    "message": "Wbudowany"
+  },
+  "fg_model_none": {
+    "message": "Brak (bez AI)"
+  },
+  "section_fgmodels": {
+    "message": "Modele płynnego wideo"
+  },
+  "fg_models_hint": {
+    "message": "Pobierz plik modelu (.stmodel, .srmodel, .fimodel) i dodaj go tutaj. Działa na Twojej karcie graficznej."
+  },
+  "fg_add_model": {
+    "message": "Dodaj plik modelu"
+  },
+  "fg_no_models": {
+    "message": "Nie dodano jeszcze żadnych modeli."
+  },
+  "fg_model_bad": {
+    "message": "Ten plik nie jest prawidłowym modelem."
+  },
+  "tab_subs": {
+    "message": "Napisy"
+  },
+  "tab_fg": {
+    "message": "Płynne wideo"
+  },
+  "fg_start": {
+    "message": "Włącz płynne wideo"
+  },
+  "fg_stop": {
+    "message": "Wyłącz płynne wideo"
+  },
+  "fg_target": {
+    "message": "Docelowe FPS"
+  },
+  "fg_target_display": {
+    "message": "Jak ekran"
+  },
+  "fg_state_off": {
+    "message": "Wyłączone"
+  },
+  "fg_state_measuring": {
+    "message": "Pomiar wideo…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (wideo {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "Na tej stronie nie jest odtwarzane żadne wideo."
+  },
+  "fg_no_webgpu": {
+    "message": "Ta przeglądarka nie może użyć do tego GPU (WebGPU jest niedostępne)."
+  },
+  "fg_cannot_read": {
+    "message": "Nie można odczytać tego wideo: jest chronione lub pochodzi z innej witryny."
+  },
+  "fg_unavailable": {
+    "message": "Ta strona nie zezwala na rozszerzenia."
+  },
+  "fg_auto_start": {
+    "message": "Włączaj płynne wideo, gdy odtwarzany jest film"
+  },
+  "subs_auto_start": {
+    "message": "Uruchamiaj napisy, gdy odtwarzany jest film"
+  },
+  "auto_start_hint": {
+    "message": "W tej przeglądarce działa to tylko na kartach, na których kliknięto przycisk rozszerzenia, dopóki nie przejdą na inną stronę."
+  },
+  "fg_allow_all_sites": {
+    "message": "Zezwól na wszystkich stronach"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Napisy na żywo w dowolnej karcie, transkrybowane i tłumaczone przez twój własny serwer Whisper."
@@ -90,7 +192,7 @@
     "message": "Połącz swój serwer"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription potrzebuje serwera WhisperLive na twoim komputerze lub w twojej sieci."
+    "message": "StreamRemaster potrzebuje serwera WhisperLive na twoim komputerze lub w twojej sieci."
   },
   "server_address": {
     "message": "Adres serwera"
@@ -135,7 +237,7 @@
     "message": "Potem wpisz tu jego adres: IP komputera i port, np. 192.168.1.10:9090. Jeśli działa na tym komputerze — localhost:9090."
   },
   "server_help_3": {
-    "message": "Aby pobierać modele i zarządzać nimi z tej strony, dodaj do serwera dodatek Stream Transcription."
+    "message": "Aby pobierać modele i zarządzać nimi z tej strony, dodaj do serwera dodatek StreamRemaster."
   },
   "server_help_guide": {
     "message": "Przewodnik krok po kroku"
@@ -168,7 +270,7 @@
     "message": "Najpierw skonfiguruj serwer."
   },
   "settings_title": {
-    "message": "Stream Transcription · Ustawienia"
+    "message": "StreamRemaster · Ustawienia"
   },
   "section_server": {
     "message": "Serwer"
@@ -255,7 +357,7 @@
     "message": "Spróbuj ponownie"
   },
   "plain_server_hint": {
-    "message": "To standardowy serwer WhisperLive: wpisz rozmiar modelu (tiny, base, small, medium, large-v3, large-v3-turbo), a serwer pobierze go za pierwszym razem. Aby pobierać stąd dowolne modele, zainstaluj na serwerze dodatek Stream Transcription."
+    "message": "To standardowy serwer WhisperLive: wpisz rozmiar modelu (tiny, base, small, medium, large-v3, large-v3-turbo), a serwer pobierze go za pierwszym razem. Aby pobierać stąd dowolne modele, zainstaluj na serwerze dodatek StreamRemaster."
   },
   "model_name": {
     "message": "Nazwa modelu"
@@ -276,7 +378,7 @@
     "message": "Wydajność"
   },
   "performance_hint": {
-    "message": "Jeśli karcie graficznej serwera brakuje pamięci (napisy nie przychodzą albo pojawia się ostrzeżenie o pamięci), te dwie opcje sporo jej zwalniają. Działają tylko z serwerem Stream Transcription."
+    "message": "Jeśli karcie graficznej serwera brakuje pamięci (napisy nie przychodzą albo pojawia się ostrzeżenie o pamięci), te dwie opcje sporo jej zwalniają. Działają tylko z serwerem StreamRemaster."
   },
   "precision": {
     "message": "Precyzja modelu"
@@ -408,7 +510,7 @@
     "message": "Firefox sam instaluje nowe wersje. Aby mieć ją od razu, otwórz about:addons, kliknij ikonę koła zębatego i wybierz „Sprawdź dostępność aktualizacji”. Świeżo wydana wersja może dotrzeć do witryny dodatków dopiero po kilku dniach."
   },
   "update_how_chromium": {
-    "message": "Aby zaktualizować, pobierz plik zip dla Chromium ze strony wersji, rozpakuj go na starym folderze i kliknij ikonę ponownego wczytania na karcie Stream Transcription w chrome://extensions. Ustawienia zostają zachowane."
+    "message": "Aby zaktualizować, pobierz plik zip dla Chromium ze strony wersji, rozpakuj go na starym folderze i kliknij ikonę ponownego wczytania na karcie StreamRemaster w chrome://extensions. Ustawienia zostają zachowane."
   },
   "update_privacy": {
     "message": "Sprawdzanie tylko pyta GitHub o numer najnowszej wersji; nic więcej nie jest wysyłane."

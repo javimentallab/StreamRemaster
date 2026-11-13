@@ -7,6 +7,16 @@ body.popup { width: 360px; }
 .logo { width: 22px; height: 22px; }
 .title { font-weight: 700; font-size: 15px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+.tabs { display: flex; border-bottom: 1px solid var(--line); }
+.tabs[hidden] { display: none; }
+.tabs button {
+  appearance: none; flex: 1; padding: 8px; cursor: pointer; background: transparent;
+  border: 0; border-bottom: 2px solid transparent;
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--muted);
+}
+.tabs button:hover { color: var(--text); }
+.tabs button.on { color: var(--text); border-bottom-color: var(--accent); }
+
 main, .card { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 .card h2 { font-size: 15px; }
 .setup { border-bottom: 1px solid var(--line); }

@@ -71,6 +71,7 @@ function applySettingsToForm() {
   $("targetLang").value = settings.targetLang;
   $("fontSize").value = settings.fontSize;
   $("saveSrt").checked = settings.saveSrt;
+  $("subsAutoStart").checked = !!settings.subsAutoStart;
   $("useVad").checked = settings.useVad;
   $("precision").value = settings.precision;
   $("translatorDevice").value = settings.translatorDevice;
@@ -94,6 +95,10 @@ function bindControls() {
   $("model").addEventListener("change", (e) => save({ model: e.target.value }));
   $("modelFree").addEventListener("change", (e) => save({ model: e.target.value.trim() }));
   $("saveSrt").addEventListener("change", (e) => save({ saveSrt: e.target.checked }));
+  // armAutoStart is in popup-framegen.js, which both tabs share.
+  $("subsAutoStart").addEventListener("change", (e) => save({ subsAutoStart: e.target.checked }).then(() => {
+    if (e.target.checked) armAutoStart();
+  }));
   $("useVad").addEventListener("change", (e) => save({ useVad: e.target.checked }));
   $("precision").addEventListener("change", (e) => save({ precision: e.target.value }));
   $("translatorDevice").addEventListener("change", (e) => save({ translatorDevice: e.target.value }));

@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "Schärfe"
+  },
+  "fg_sharpen_off": {
+    "message": "Aus"
+  },
+  "fg_sharpen_soft": {
+    "message": "Leicht"
+  },
+  "fg_sharpen_medium": {
+    "message": "Mittel"
+  },
+  "fg_sharpen_strong": {
+    "message": "Stark"
+  },
+  "fg_resolution": {
+    "message": "Zielauflösung der Hochskalierung"
+  },
+  "fg_res_original": {
+    "message": "Original (ohne Hochskalierung)"
+  },
+  "fg_model": {
+    "message": "KI-Modell"
+  },
+  "fg_kind_sr": {
+    "message": "Hochskalierung"
+  },
+  "fg_kind_fi": {
+    "message": "Zwischenbilder"
+  },
+  "fg_builtin": {
+    "message": "Integriert"
+  },
+  "fg_model_none": {
+    "message": "Keines (ohne KI)"
+  },
+  "section_fgmodels": {
+    "message": "Modelle für flüssiges Video"
+  },
+  "fg_models_hint": {
+    "message": "Lade eine Modelldatei (.stmodel, .srmodel, .fimodel) herunter und füge sie hier hinzu. Sie läuft auf deiner eigenen Grafikkarte."
+  },
+  "fg_add_model": {
+    "message": "Modelldatei hinzufügen"
+  },
+  "fg_no_models": {
+    "message": "Noch keine Modelle hinzugefügt."
+  },
+  "fg_model_bad": {
+    "message": "Diese Datei ist kein gültiges Modell."
+  },
+  "tab_subs": {
+    "message": "Untertitel"
+  },
+  "tab_fg": {
+    "message": "Flüssiges Video"
+  },
+  "fg_start": {
+    "message": "Flüssiges Video einschalten"
+  },
+  "fg_stop": {
+    "message": "Flüssiges Video ausschalten"
+  },
+  "fg_target": {
+    "message": "Ziel-FPS"
+  },
+  "fg_target_display": {
+    "message": "Wie der Bildschirm"
+  },
+  "fg_state_off": {
+    "message": "Aus"
+  },
+  "fg_state_measuring": {
+    "message": "Video wird gemessen…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (Video mit {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "Auf dieser Seite wird kein Video abgespielt."
+  },
+  "fg_no_webgpu": {
+    "message": "Dieser Browser kann die GPU dafür nicht nutzen (WebGPU ist nicht verfügbar)."
+  },
+  "fg_cannot_read": {
+    "message": "Dieses Video kann nicht gelesen werden: Es ist geschützt oder stammt von einer anderen Website."
+  },
+  "fg_unavailable": {
+    "message": "Diese Seite lässt keine Erweiterungen zu."
+  },
+  "fg_auto_start": {
+    "message": "Flüssiges Video beim Abspielen eines Videos einschalten"
+  },
+  "subs_auto_start": {
+    "message": "Untertitel beim Abspielen eines Videos starten"
+  },
+  "auto_start_hint": {
+    "message": "In diesem Browser funktioniert das nur in Tabs, in denen du auf die Schaltfläche der Erweiterung geklickt hast, bis sie zu einer anderen Website wechseln."
+  },
+  "fg_allow_all_sites": {
+    "message": "Auf allen Websites erlauben"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Live-Untertitel für jeden Tab, transkribiert und übersetzt von deinem eigenen Whisper-Server."
@@ -90,7 +192,7 @@
     "message": "Verbinde deinen Server"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription braucht einen WhisperLive-Server auf deinem Computer oder in deinem Netzwerk."
+    "message": "StreamRemaster braucht einen WhisperLive-Server auf deinem Computer oder in deinem Netzwerk."
   },
   "server_address": {
     "message": "Serveradresse"
@@ -168,7 +270,7 @@
     "message": "Richte zuerst den Server ein."
   },
   "settings_title": {
-    "message": "Stream Transcription · Einstellungen"
+    "message": "StreamRemaster · Einstellungen"
   },
   "section_server": {
     "message": "Server"
@@ -408,7 +510,7 @@
     "message": "Firefox installiert neue Versionen von selbst. Um sie sofort zu bekommen, öffnen Sie about:addons, klicken Sie auf das Zahnrad und wählen Sie „Auf Updates überprüfen“. Eine gerade erschienene Version kann einige Tage brauchen, bis sie auf der Add-on-Website ist."
   },
   "update_how_chromium": {
-    "message": "Zum Aktualisieren laden Sie das Chromium-ZIP von der Seite der Version herunter, entpacken es über den alten Ordner und klicken in chrome://extensions auf der Karte von Stream Transcription auf das Neu-laden-Symbol. Ihre Einstellungen bleiben erhalten."
+    "message": "Zum Aktualisieren laden Sie das Chromium-ZIP von der Seite der Version herunter, entpacken es über den alten Ordner und klicken in chrome://extensions auf der Karte von StreamRemaster auf das Neu-laden-Symbol. Ihre Einstellungen bleiben erhalten."
   },
   "update_privacy": {
     "message": "Bei der Suche wird GitHub nur nach der Nummer der neuesten Version gefragt; sonst wird nichts gesendet."

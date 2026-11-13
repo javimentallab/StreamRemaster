@@ -5,7 +5,41 @@
 LANGS = {}
 
 LANGS['pt_BR'] = """
-extName|Stream Transcription
+fg_sharpen|Nitidez
+fg_sharpen_off|Desativada
+fg_sharpen_soft|Suave
+fg_sharpen_medium|Média
+fg_sharpen_strong|Forte
+fg_resolution|Resolução de destino da ampliação
+fg_res_original|Original (sem ampliar)
+fg_model|Modelo de IA
+fg_kind_sr|Ampliação
+fg_kind_fi|Quadros intermediários
+fg_builtin|Incluído
+fg_model_none|Nenhum (sem IA)
+section_fgmodels|Modelos de vídeo fluido
+fg_models_hint|Baixe um arquivo de modelo (.stmodel, .srmodel, .fimodel) e adicione-o aqui. Ele roda na sua própria placa de vídeo.
+fg_add_model|Adicionar arquivo de modelo
+fg_no_models|Nenhum modelo adicionado ainda.
+fg_model_bad|Esse arquivo não é um modelo válido.
+tab_subs|Legendas
+tab_fg|Vídeo fluido
+fg_start|Ativar vídeo fluido
+fg_stop|Desativar vídeo fluido
+fg_target|FPS desejado
+fg_target_display|Igual à tela
+fg_state_off|Desligado
+fg_state_measuring|Medindo o vídeo…
+fg_state_on|{0} fps (vídeo a {1} fps)
+fg_no_video|Não há nenhum vídeo em reprodução nesta página.
+fg_no_webgpu|Este navegador não pode usar a GPU para isto (WebGPU não está disponível).
+fg_cannot_read|Este vídeo não pode ser lido: está protegido ou vem de outro site.
+fg_unavailable|Esta página não permite extensões.
+fg_auto_start|Ativar o vídeo fluido ao reproduzir um vídeo
+subs_auto_start|Iniciar as legendas ao reproduzir um vídeo
+auto_start_hint|Neste navegador, só funciona nas abas em que você clicou no botão da extensão, até que mudem para outro site.
+fg_allow_all_sites|Permitir em todos os sites
+extName|StreamRemaster
 extDescription|Legendas ao vivo para qualquer aba, transcritas e traduzidas pelo seu próprio servidor Whisper.
 start|Ativar legendas
 stop|Desativar legendas
@@ -35,7 +69,7 @@ settings|Configurações
 first_load_hint|Na primeira vez, um modelo pode levar até um minuto para carregar.
 options_locked|Desative as legendas para mudar estas opções.
 server_setup_title|Conecte seu servidor
-server_setup_hint|O Stream Transcription precisa de um servidor WhisperLive rodando no seu computador ou na sua rede.
+server_setup_hint|O StreamRemaster precisa de um servidor WhisperLive rodando no seu computador ou na sua rede.
 server_address|Endereço do servidor
 server_placeholder|ex.: localhost:9090 ou 192.168.1.10:9090
 connect|Conectar
@@ -50,7 +84,7 @@ server_change|Alterar
 server_help|Como monto um servidor?
 server_help_1|Você precisa de um servidor WhisperLive (livre e gratuito) rodando em um computador, de preferência com placa de vídeo NVIDIA. Modelos pequenos também funcionam só com o processador.
 server_help_2|Depois digite aqui o endereço dele: o IP do computador e a porta, ex.: 192.168.1.10:9090. Se estiver neste mesmo computador, localhost:9090.
-server_help_3|Para baixar e gerenciar modelos por esta página, adicione ao servidor o complemento do Stream Transcription.
+server_help_3|Para baixar e gerenciar modelos por esta página, adicione ao servidor o complemento do StreamRemaster.
 server_help_guide|Guia passo a passo
 error_capture|Esta aba não pode ser capturada (páginas do navegador, lojas de extensões e PDFs não são permitidos).
 error_no_media|Não há vídeo nem áudio nesta página.
@@ -61,7 +95,7 @@ warn_no_response|⚠ As legendas pararam de chegar, embora haja som. Provavelmen
 warn_slow_load|⚠ O modelo está demorando demais para carregar. Pode não caber na memória de vídeo (VRAM) do servidor: escolha um modelo menor ou ative “Economizar memória (int8)” em Avançado.
 error_reload|Recarregue a página (F5) e comece de novo.
 error_no_server|Primeiro configure o servidor.
-settings_title|Stream Transcription · Configurações
+settings_title|StreamRemaster · Configurações
 section_server|Servidor
 section_models|Modelos
 section_subtitles|Legendas
@@ -90,14 +124,14 @@ job_extracting|Descompactando…
 job_ready|Instalado
 job_error|Falhou: {0}
 retry|Tentar de novo
-plain_server_hint|É um servidor WhisperLive padrão: digite um tamanho de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) e o servidor o baixa na primeira vez. Para baixar qualquer modelo por aqui, instale no servidor o complemento do Stream Transcription.
+plain_server_hint|É um servidor WhisperLive padrão: digite um tamanho de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) e o servidor o baixa na primeira vez. Para baixar qualquer modelo por aqui, instale no servidor o complemento do StreamRemaster.
 model_name|Nome do modelo
 save|Salvar
 saved|Salvo
 reset_position|Reposicionar as legendas
 position_reset_done|Pronto: elas voltarão para baixo.
 section_performance|Desempenho
-performance_hint|Se a placa de vídeo do servidor ficar sem memória (legendas que não chegam ou um aviso de memória), estas duas opções liberam bastante. Só funcionam com o servidor do Stream Transcription.
+performance_hint|Se a placa de vídeo do servidor ficar sem memória (legendas que não chegam ou um aviso de memória), estas duas opções liberam bastante. Só funcionam com o servidor do StreamRemaster.
 precision|Precisão do modelo
 precision_auto|Automática
 precision_int8|Economizar memória (int8)
@@ -141,7 +175,7 @@ update_latest|Você tem a versão mais recente ({0}).
 update_rate_limited|O GitHub está limitando as consultas por um tempo. Tente de novo mais tarde.
 update_failed|Não foi possível procurar atualizações. Verifique a conexão e tente de novo.
 update_how_firefox|O Firefox instala as versões novas sozinho. Para tê-la agora, abra about:addons, clique no ícone de engrenagem e escolha “Procurar atualizações”. Uma versão recém-lançada pode levar alguns dias para chegar ao site de extensões.
-update_how_chromium|Para atualizar, baixe o zip do Chromium na página da versão, descompacte por cima da pasta antiga e clique no ícone de recarregar no cartão do Stream Transcription em chrome://extensions. Suas configurações são mantidas.
+update_how_chromium|Para atualizar, baixe o zip do Chromium na página da versão, descompacte por cima da pasta antiga e clique no ícone de recarregar no cartão do StreamRemaster em chrome://extensions. Suas configurações são mantidas.
 update_privacy|Ao procurar, só se pergunta ao GitHub o número da versão mais recente; nada mais é enviado.
 server_update_available|Seu servidor tem a versão {0} e a {1} já está disponível. Para atualizá-lo, execute isto no computador onde ele roda:
 server_version_unknown|Seu servidor não informa a versão, então é anterior a esta verificação. Para atualizá-lo, execute isto no computador onde ele roda:
@@ -150,7 +184,41 @@ server_update_note|Os modelos ficam no volume do Docker e não são baixados de 
 """
 
 LANGS['fr'] = """
-extName|Stream Transcription
+fg_sharpen|Netteté
+fg_sharpen_off|Désactivée
+fg_sharpen_soft|Douce
+fg_sharpen_medium|Moyenne
+fg_sharpen_strong|Forte
+fg_resolution|Résolution cible de l'agrandissement
+fg_res_original|Originale (sans agrandissement)
+fg_model|Modèle d'IA
+fg_kind_sr|Agrandissement
+fg_kind_fi|Images intermédiaires
+fg_builtin|Intégré
+fg_model_none|Aucun (sans IA)
+section_fgmodels|Modèles de vidéo fluide
+fg_models_hint|Téléchargez un fichier de modèle (.stmodel, .srmodel, .fimodel) et ajoutez-le ici. Il fonctionne sur votre propre carte graphique.
+fg_add_model|Ajouter un fichier de modèle
+fg_no_models|Aucun modèle ajouté pour le moment.
+fg_model_bad|Ce fichier n'est pas un modèle valide.
+tab_subs|Sous-titres
+tab_fg|Vidéo fluide
+fg_start|Activer la vidéo fluide
+fg_stop|Désactiver la vidéo fluide
+fg_target|FPS cible
+fg_target_display|Comme l'écran
+fg_state_off|Désactivé
+fg_state_measuring|Mesure de la vidéo…
+fg_state_on|{0} fps (vidéo à {1} fps)
+fg_no_video|Aucune vidéo n'est en cours de lecture sur cette page.
+fg_no_webgpu|Ce navigateur ne peut pas utiliser la carte graphique pour cela (WebGPU n'est pas disponible).
+fg_cannot_read|Cette vidéo ne peut pas être lue : elle est protégée ou provient d'un autre site.
+fg_unavailable|Cette page n'autorise pas les extensions.
+fg_auto_start|Activer la vidéo fluide à la lecture d'une vidéo
+subs_auto_start|Lancer les sous-titres à la lecture d'une vidéo
+auto_start_hint|Dans ce navigateur, cela ne fonctionne que dans les onglets où vous avez cliqué sur le bouton de l'extension, jusqu'à ce qu'ils changent de site.
+fg_allow_all_sites|Autoriser sur tous les sites
+extName|StreamRemaster
 extDescription|Sous-titres en direct pour n’importe quel onglet, transcrits et traduits par votre propre serveur Whisper.
 start|Activer les sous-titres
 stop|Arrêter les sous-titres
@@ -180,7 +248,7 @@ settings|Réglages
 first_load_hint|La première fois, le chargement d’un modèle peut prendre jusqu’à une minute.
 options_locked|Arrêtez les sous-titres pour changer ces options.
 server_setup_title|Connectez votre serveur
-server_setup_hint|Stream Transcription a besoin d’un serveur WhisperLive sur votre ordinateur ou votre réseau.
+server_setup_hint|StreamRemaster a besoin d’un serveur WhisperLive sur votre ordinateur ou votre réseau.
 server_address|Adresse du serveur
 server_placeholder|ex. localhost:9090 ou 192.168.1.10:9090
 connect|Connecter
@@ -195,7 +263,7 @@ server_change|Modifier
 server_help|Comment installer un serveur ?
 server_help_1|Il vous faut un serveur WhisperLive (libre et gratuit) sur un ordinateur, idéalement avec une carte graphique NVIDIA. Les petits modèles fonctionnent aussi avec le seul processeur.
 server_help_2|Saisissez ensuite son adresse ici : l’IP de l’ordinateur et le port, ex. 192.168.1.10:9090. S’il tourne sur cet ordinateur, localhost:9090.
-server_help_3|Pour télécharger et gérer des modèles depuis cette page, ajoutez au serveur le module de Stream Transcription.
+server_help_3|Pour télécharger et gérer des modèles depuis cette page, ajoutez au serveur le module de StreamRemaster.
 server_help_guide|Guide pas à pas
 error_capture|Cet onglet ne peut pas être capturé (pages du navigateur, boutiques d’extensions et PDF sont exclus).
 error_no_media|Il n’y a ni vidéo ni audio sur cette page.
@@ -206,7 +274,7 @@ warn_no_response|⚠ Les sous-titres n’arrivent plus alors qu’il y a du son.
 warn_slow_load|⚠ Le modèle met trop de temps à charger. Il ne tient peut-être pas dans la mémoire graphique (VRAM) du serveur : choisissez un modèle plus petit ou activez « Économiser la mémoire (int8) » dans Avancé.
 error_reload|Rechargez la page (F5) et recommencez.
 error_no_server|Configurez d’abord le serveur.
-settings_title|Stream Transcription · Réglages
+settings_title|StreamRemaster · Réglages
 section_server|Serveur
 section_models|Modèles
 section_subtitles|Sous-titres
@@ -235,14 +303,14 @@ job_extracting|Décompression…
 job_ready|Installé
 job_error|Échec : {0}
 retry|Réessayer
-plain_server_hint|C’est un serveur WhisperLive standard : saisissez une taille de modèle (tiny, base, small, medium, large-v3, large-v3-turbo) et le serveur la télécharge la première fois. Pour télécharger n’importe quel modèle d’ici, installez le module de Stream Transcription sur le serveur.
+plain_server_hint|C’est un serveur WhisperLive standard : saisissez une taille de modèle (tiny, base, small, medium, large-v3, large-v3-turbo) et le serveur la télécharge la première fois. Pour télécharger n’importe quel modèle d’ici, installez le module de StreamRemaster sur le serveur.
 model_name|Nom du modèle
 save|Enregistrer
 saved|Enregistré
 reset_position|Replacer les sous-titres
 position_reset_done|C’est fait : ils reviendront en bas.
 section_performance|Performances
-performance_hint|Si la carte graphique du serveur manque de mémoire (sous-titres qui n’arrivent pas ou alerte mémoire), ces deux options en libèrent beaucoup. Elles ne marchent qu’avec le serveur de Stream Transcription.
+performance_hint|Si la carte graphique du serveur manque de mémoire (sous-titres qui n’arrivent pas ou alerte mémoire), ces deux options en libèrent beaucoup. Elles ne marchent qu’avec le serveur de StreamRemaster.
 precision|Précision du modèle
 precision_auto|Automatique
 precision_int8|Économiser la mémoire (int8)
@@ -286,7 +354,7 @@ update_latest|Vous avez la dernière version ({0}).
 update_rate_limited|GitHub limite les vérifications pendant un moment. Réessayez plus tard.
 update_failed|Impossible de rechercher des mises à jour. Vérifiez la connexion et réessayez.
 update_how_firefox|Firefox installe les nouvelles versions tout seul. Pour l’avoir tout de suite, ouvrez about:addons, cliquez sur la roue dentée et choisissez « Rechercher des mises à jour ». Une version qui vient de sortir peut mettre quelques jours à arriver sur le site des modules complémentaires.
-update_how_chromium|Pour mettre à jour, téléchargez le zip Chromium sur la page de la version, décompressez-le par-dessus l’ancien dossier et cliquez sur l’icône de rechargement de la carte Stream Transcription dans chrome://extensions. Vos réglages sont conservés.
+update_how_chromium|Pour mettre à jour, téléchargez le zip Chromium sur la page de la version, décompressez-le par-dessus l’ancien dossier et cliquez sur l’icône de rechargement de la carte StreamRemaster dans chrome://extensions. Vos réglages sont conservés.
 update_privacy|La recherche demande seulement à GitHub le numéro de la dernière version ; rien d’autre n’est envoyé.
 server_update_available|Votre serveur a la version {0} et la {1} est disponible. Pour le mettre à jour, lancez ceci sur l’ordinateur qui l’héberge :
 server_version_unknown|Votre serveur n’indique pas sa version : il est donc antérieur à cette vérification. Pour le mettre à jour, lancez ceci sur l’ordinateur qui l’héberge :
@@ -295,7 +363,41 @@ server_update_note|Les modèles restent dans le volume Docker et ne sont pas ret
 """
 
 LANGS['de'] = """
-extName|Stream Transcription
+fg_sharpen|Schärfe
+fg_sharpen_off|Aus
+fg_sharpen_soft|Leicht
+fg_sharpen_medium|Mittel
+fg_sharpen_strong|Stark
+fg_resolution|Zielauflösung der Hochskalierung
+fg_res_original|Original (ohne Hochskalierung)
+fg_model|KI-Modell
+fg_kind_sr|Hochskalierung
+fg_kind_fi|Zwischenbilder
+fg_builtin|Integriert
+fg_model_none|Keines (ohne KI)
+section_fgmodels|Modelle für flüssiges Video
+fg_models_hint|Lade eine Modelldatei (.stmodel, .srmodel, .fimodel) herunter und füge sie hier hinzu. Sie läuft auf deiner eigenen Grafikkarte.
+fg_add_model|Modelldatei hinzufügen
+fg_no_models|Noch keine Modelle hinzugefügt.
+fg_model_bad|Diese Datei ist kein gültiges Modell.
+tab_subs|Untertitel
+tab_fg|Flüssiges Video
+fg_start|Flüssiges Video einschalten
+fg_stop|Flüssiges Video ausschalten
+fg_target|Ziel-FPS
+fg_target_display|Wie der Bildschirm
+fg_state_off|Aus
+fg_state_measuring|Video wird gemessen…
+fg_state_on|{0} fps (Video mit {1} fps)
+fg_no_video|Auf dieser Seite wird kein Video abgespielt.
+fg_no_webgpu|Dieser Browser kann die GPU dafür nicht nutzen (WebGPU ist nicht verfügbar).
+fg_cannot_read|Dieses Video kann nicht gelesen werden: Es ist geschützt oder stammt von einer anderen Website.
+fg_unavailable|Diese Seite lässt keine Erweiterungen zu.
+fg_auto_start|Flüssiges Video beim Abspielen eines Videos einschalten
+subs_auto_start|Untertitel beim Abspielen eines Videos starten
+auto_start_hint|In diesem Browser funktioniert das nur in Tabs, in denen du auf die Schaltfläche der Erweiterung geklickt hast, bis sie zu einer anderen Website wechseln.
+fg_allow_all_sites|Auf allen Websites erlauben
+extName|StreamRemaster
 extDescription|Live-Untertitel für jeden Tab, transkribiert und übersetzt von deinem eigenen Whisper-Server.
 start|Untertitel starten
 stop|Untertitel beenden
@@ -325,7 +427,7 @@ settings|Einstellungen
 first_load_hint|Beim ersten Mal kann das Laden eines Modells bis zu einer Minute dauern.
 options_locked|Beende die Untertitel, um diese Optionen zu ändern.
 server_setup_title|Verbinde deinen Server
-server_setup_hint|Stream Transcription braucht einen WhisperLive-Server auf deinem Computer oder in deinem Netzwerk.
+server_setup_hint|StreamRemaster braucht einen WhisperLive-Server auf deinem Computer oder in deinem Netzwerk.
 server_address|Serveradresse
 server_placeholder|z. B. localhost:9090 oder 192.168.1.10:9090
 connect|Verbinden
@@ -351,7 +453,7 @@ warn_no_response|⚠ Es kommen keine Untertitel mehr, obwohl Ton da ist. Wahrsch
 warn_slow_load|⚠ Das Modell lädt zu lange. Vielleicht passt es nicht in den Grafikspeicher (VRAM) des Servers: Wähle ein kleineres Modell oder schalte unter Erweitert „Speicher sparen (int8)“ ein.
 error_reload|Lade die Seite neu (F5) und starte erneut.
 error_no_server|Richte zuerst den Server ein.
-settings_title|Stream Transcription · Einstellungen
+settings_title|StreamRemaster · Einstellungen
 section_server|Server
 section_models|Modelle
 section_subtitles|Untertitel
@@ -431,7 +533,7 @@ update_latest|Sie haben die neueste Version ({0}).
 update_rate_limited|GitHub begrenzt die Abfragen für eine Weile. Versuchen Sie es später erneut.
 update_failed|Die Suche nach Updates ist fehlgeschlagen. Prüfen Sie die Verbindung und versuchen Sie es erneut.
 update_how_firefox|Firefox installiert neue Versionen von selbst. Um sie sofort zu bekommen, öffnen Sie about:addons, klicken Sie auf das Zahnrad und wählen Sie „Auf Updates überprüfen“. Eine gerade erschienene Version kann einige Tage brauchen, bis sie auf der Add-on-Website ist.
-update_how_chromium|Zum Aktualisieren laden Sie das Chromium-ZIP von der Seite der Version herunter, entpacken es über den alten Ordner und klicken in chrome://extensions auf der Karte von Stream Transcription auf das Neu-laden-Symbol. Ihre Einstellungen bleiben erhalten.
+update_how_chromium|Zum Aktualisieren laden Sie das Chromium-ZIP von der Seite der Version herunter, entpacken es über den alten Ordner und klicken in chrome://extensions auf der Karte von StreamRemaster auf das Neu-laden-Symbol. Ihre Einstellungen bleiben erhalten.
 update_privacy|Bei der Suche wird GitHub nur nach der Nummer der neuesten Version gefragt; sonst wird nichts gesendet.
 server_update_available|Ihr Server hat Version {0}, und {1} ist verfügbar. Führen Sie zum Aktualisieren dies auf dem Computer aus, auf dem er läuft:
 server_version_unknown|Ihr Server meldet seine Version nicht, er ist also älter als diese Prüfung. Führen Sie zum Aktualisieren dies auf dem Computer aus, auf dem er läuft:
@@ -440,7 +542,41 @@ server_update_note|Die Modelle bleiben im Docker-Volume und werden nicht erneut 
 """
 
 LANGS['it'] = """
-extName|Stream Transcription
+fg_sharpen|Nitidezza
+fg_sharpen_off|Disattivata
+fg_sharpen_soft|Leggera
+fg_sharpen_medium|Media
+fg_sharpen_strong|Forte
+fg_resolution|Risoluzione di destinazione dell'ingrandimento
+fg_res_original|Originale (senza ingrandimento)
+fg_model|Modello di IA
+fg_kind_sr|Ingrandimento
+fg_kind_fi|Fotogrammi intermedi
+fg_builtin|Integrato
+fg_model_none|Nessuno (senza IA)
+section_fgmodels|Modelli per video fluido
+fg_models_hint|Scarica un file di modello (.stmodel, .srmodel, .fimodel) e aggiungilo qui. Funziona sulla tua scheda grafica.
+fg_add_model|Aggiungi file di modello
+fg_no_models|Nessun modello aggiunto.
+fg_model_bad|Questo file non è un modello valido.
+tab_subs|Sottotitoli
+tab_fg|Video fluido
+fg_start|Attiva video fluido
+fg_stop|Disattiva video fluido
+fg_target|FPS desiderati
+fg_target_display|Come lo schermo
+fg_state_off|Disattivato
+fg_state_measuring|Misurazione del video…
+fg_state_on|{0} fps (video a {1} fps)
+fg_no_video|In questa pagina non è in riproduzione alcun video.
+fg_no_webgpu|Questo browser non può usare la GPU per questo (WebGPU non è disponibile).
+fg_cannot_read|Questo video non può essere letto: è protetto o proviene da un altro sito.
+fg_unavailable|Questa pagina non consente le estensioni.
+fg_auto_start|Attiva il video fluido quando parte un video
+subs_auto_start|Avvia i sottotitoli quando parte un video
+auto_start_hint|In questo browser funziona solo nelle schede in cui hai fatto clic sul pulsante dell'estensione, finché non passano a un altro sito.
+fg_allow_all_sites|Consenti su tutti i siti
+extName|StreamRemaster
 extDescription|Sottotitoli in diretta per qualsiasi scheda, trascritti e tradotti dal tuo server Whisper.
 start|Attiva sottotitoli
 stop|Disattiva sottotitoli
@@ -470,7 +606,7 @@ settings|Impostazioni
 first_load_hint|La prima volta il caricamento di un modello può richiedere fino a un minuto.
 options_locked|Disattiva i sottotitoli per cambiare queste opzioni.
 server_setup_title|Collega il tuo server
-server_setup_hint|Stream Transcription ha bisogno di un server WhisperLive sul tuo computer o nella tua rete.
+server_setup_hint|StreamRemaster ha bisogno di un server WhisperLive sul tuo computer o nella tua rete.
 server_address|Indirizzo del server
 server_placeholder|es. localhost:9090 o 192.168.1.10:9090
 connect|Collega
@@ -485,7 +621,7 @@ server_change|Cambia
 server_help|Come configuro un server?
 server_help_1|Ti serve un server WhisperLive (libero e gratuito) su un computer, meglio se con una scheda grafica NVIDIA. I modelli piccoli funzionano anche solo con il processore.
 server_help_2|Poi scrivi qui il suo indirizzo: l’IP del computer e la porta, es. 192.168.1.10:9090. Se è su questo stesso computer, localhost:9090.
-server_help_3|Per scaricare e gestire i modelli da questa pagina, aggiungi al server il componente di Stream Transcription.
+server_help_3|Per scaricare e gestire i modelli da questa pagina, aggiungi al server il componente di StreamRemaster.
 server_help_guide|Guida passo passo
 error_capture|Questa scheda non si può catturare (pagine del browser, negozi di estensioni e PDF sono esclusi).
 error_no_media|In questa pagina non ci sono video né audio.
@@ -496,7 +632,7 @@ warn_no_response|⚠ I sottotitoli non arrivano più anche se c’è audio. Prob
 warn_slow_load|⚠ Il modello ci mette troppo a caricarsi. Forse non entra nella memoria grafica (VRAM) del server: scegli un modello più piccolo o attiva “Risparmia memoria (int8)” in Avanzate.
 error_reload|Ricarica la pagina (F5) e ricomincia.
 error_no_server|Prima configura il server.
-settings_title|Stream Transcription · Impostazioni
+settings_title|StreamRemaster · Impostazioni
 section_server|Server
 section_models|Modelli
 section_subtitles|Sottotitoli
@@ -525,14 +661,14 @@ job_extracting|Estrazione…
 job_ready|Installato
 job_error|Non riuscito: {0}
 retry|Riprova
-plain_server_hint|È un server WhisperLive standard: scrivi una dimensione di modello (tiny, base, small, medium, large-v3, large-v3-turbo) e il server la scarica la prima volta. Per scaricare qualsiasi modello da qui, installa sul server il componente di Stream Transcription.
+plain_server_hint|È un server WhisperLive standard: scrivi una dimensione di modello (tiny, base, small, medium, large-v3, large-v3-turbo) e il server la scarica la prima volta. Per scaricare qualsiasi modello da qui, installa sul server il componente di StreamRemaster.
 model_name|Nome del modello
 save|Salva
 saved|Salvato
 reset_position|Riposiziona i sottotitoli
 position_reset_done|Fatto: torneranno in basso.
 section_performance|Prestazioni
-performance_hint|Se la scheda grafica del server resta senza memoria (sottotitoli che non arrivano o un avviso di memoria), queste due opzioni ne liberano parecchia. Funzionano solo con il server di Stream Transcription.
+performance_hint|Se la scheda grafica del server resta senza memoria (sottotitoli che non arrivano o un avviso di memoria), queste due opzioni ne liberano parecchia. Funzionano solo con il server di StreamRemaster.
 precision|Precisione del modello
 precision_auto|Automatica
 precision_int8|Risparmia memoria (int8)
@@ -576,7 +712,7 @@ update_latest|Hai l’ultima versione ({0}).
 update_rate_limited|GitHub sta limitando le verifiche per un po’. Riprova più tardi.
 update_failed|Impossibile cercare aggiornamenti. Controlla la connessione e riprova.
 update_how_firefox|Firefox installa da solo le nuove versioni. Per averla subito, apri about:addons, fai clic sull’icona dell’ingranaggio e scegli “Controlla aggiornamenti”. Una versione appena uscita può impiegare qualche giorno ad arrivare al sito dei componenti aggiuntivi.
-update_how_chromium|Per aggiornare, scarica lo zip per Chromium dalla pagina della versione, estrailo sopra la vecchia cartella e fai clic sull’icona di ricarica nella scheda di Stream Transcription in chrome://extensions. Le impostazioni restano.
+update_how_chromium|Per aggiornare, scarica lo zip per Chromium dalla pagina della versione, estrailo sopra la vecchia cartella e fai clic sull’icona di ricarica nella scheda di StreamRemaster in chrome://extensions. Le impostazioni restano.
 update_privacy|La ricerca chiede a GitHub solo il numero dell’ultima versione; non viene inviato nient’altro.
 server_update_available|Il tuo server ha la versione {0} ed è disponibile la {1}. Per aggiornarlo, esegui questo sul computer che lo ospita:
 server_version_unknown|Il tuo server non dice quale versione ha, quindi è precedente a questa verifica. Per aggiornarlo, esegui questo sul computer che lo ospita:
@@ -585,7 +721,41 @@ server_update_note|I modelli restano nel volume Docker e non vengono riscaricati
 """
 
 LANGS['nl'] = """
-extName|Stream Transcription
+fg_sharpen|Scherpte
+fg_sharpen_off|Uit
+fg_sharpen_soft|Licht
+fg_sharpen_medium|Gemiddeld
+fg_sharpen_strong|Sterk
+fg_resolution|Doelresolutie van de opschaling
+fg_res_original|Origineel (zonder opschaling)
+fg_model|AI-model
+fg_kind_sr|Opschaling
+fg_kind_fi|Tussenbeelden
+fg_builtin|Ingebouwd
+fg_model_none|Geen (zonder AI)
+section_fgmodels|Modellen voor vloeiende video
+fg_models_hint|Download een modelbestand (.stmodel, .srmodel, .fimodel) en voeg het hier toe. Het draait op je eigen videokaart.
+fg_add_model|Modelbestand toevoegen
+fg_no_models|Nog geen modellen toegevoegd.
+fg_model_bad|Dit bestand is geen geldig model.
+tab_subs|Ondertiteling
+tab_fg|Vloeiende video
+fg_start|Vloeiende video inschakelen
+fg_stop|Vloeiende video uitschakelen
+fg_target|Doel-FPS
+fg_target_display|Gelijk aan het scherm
+fg_state_off|Uit
+fg_state_measuring|Video wordt gemeten…
+fg_state_on|{0} fps (video op {1} fps)
+fg_no_video|Er wordt geen video afgespeeld op deze pagina.
+fg_no_webgpu|Deze browser kan de GPU hiervoor niet gebruiken (WebGPU is niet beschikbaar).
+fg_cannot_read|Deze video kan niet worden gelezen: hij is beveiligd of komt van een andere site.
+fg_unavailable|Deze pagina staat geen extensies toe.
+fg_auto_start|Vloeiende video inschakelen zodra een video speelt
+subs_auto_start|Ondertiteling starten zodra een video speelt
+auto_start_hint|In deze browser werkt het alleen in tabbladen waarin je op de knop van de extensie hebt geklikt, totdat ze naar een andere site gaan.
+fg_allow_all_sites|Op alle sites toestaan
+extName|StreamRemaster
 extDescription|Live-ondertitels voor elk tabblad, getranscribeerd en vertaald door je eigen Whisper-server.
 start|Ondertitels aan
 stop|Ondertitels uit
@@ -615,7 +785,7 @@ settings|Instellingen
 first_load_hint|De eerste keer kan het laden van een model tot een minuut duren.
 options_locked|Zet de ondertitels uit om deze opties te wijzigen.
 server_setup_title|Verbind je server
-server_setup_hint|Stream Transcription heeft een WhisperLive-server op je computer of in je netwerk nodig.
+server_setup_hint|StreamRemaster heeft een WhisperLive-server op je computer of in je netwerk nodig.
 server_address|Serveradres
 server_placeholder|bijv. localhost:9090 of 192.168.1.10:9090
 connect|Verbinden
@@ -630,7 +800,7 @@ server_change|Wijzigen
 server_help|Hoe zet ik een server op?
 server_help_1|Je hebt een WhisperLive-server nodig (vrij en gratis) op een computer, liefst met een NVIDIA-videokaart. Kleine modellen werken ook alleen op de processor.
 server_help_2|Typ hier daarna zijn adres: het IP van de computer en de poort, bijv. 192.168.1.10:9090. Draait hij op deze computer, dan localhost:9090.
-server_help_3|Om vanaf deze pagina modellen te downloaden en te beheren, voeg je de Stream Transcription-add-on toe aan de server.
+server_help_3|Om vanaf deze pagina modellen te downloaden en te beheren, voeg je de StreamRemaster-add-on toe aan de server.
 server_help_guide|Stapsgewijze handleiding
 error_capture|Dit tabblad kan niet worden opgenomen (browserpagina’s, extensiewinkels en pdf’s zijn uitgesloten).
 error_no_media|Er staat geen video of audio op deze pagina.
@@ -641,7 +811,7 @@ warn_no_response|⚠ Er komen geen ondertitels meer, al is er geluid. Waarschijn
 warn_slow_load|⚠ Het laden van het model duurt te lang. Misschien past het niet in het grafische geheugen (VRAM) van de server: kies een kleiner model of zet ‘Geheugen besparen (int8)’ aan bij Geavanceerd.
 error_reload|Herlaad de pagina (F5) en begin opnieuw.
 error_no_server|Stel eerst de server in.
-settings_title|Stream Transcription · Instellingen
+settings_title|StreamRemaster · Instellingen
 section_server|Server
 section_models|Modellen
 section_subtitles|Ondertitels
@@ -670,14 +840,14 @@ job_extracting|Uitpakken…
 job_ready|Geïnstalleerd
 job_error|Mislukt: {0}
 retry|Opnieuw
-plain_server_hint|Dit is een standaard WhisperLive-server: typ een modelgrootte (tiny, base, small, medium, large-v3, large-v3-turbo) en de server downloadt die de eerste keer. Om elk model vanaf hier te downloaden, installeer je de Stream Transcription-add-on op de server.
+plain_server_hint|Dit is een standaard WhisperLive-server: typ een modelgrootte (tiny, base, small, medium, large-v3, large-v3-turbo) en de server downloadt die de eerste keer. Om elk model vanaf hier te downloaden, installeer je de StreamRemaster-add-on op de server.
 model_name|Modelnaam
 save|Opslaan
 saved|Opgeslagen
 reset_position|Positie van ondertitels herstellen
 position_reset_done|Klaar: ze gaan weer naar onderen.
 section_performance|Prestaties
-performance_hint|Als de videokaart van de server zonder geheugen komt (ondertitels die niet komen of een geheugenwaarschuwing), maken deze twee opties veel vrij. Ze werken alleen met de Stream Transcription-server.
+performance_hint|Als de videokaart van de server zonder geheugen komt (ondertitels die niet komen of een geheugenwaarschuwing), maken deze twee opties veel vrij. Ze werken alleen met de StreamRemaster-server.
 precision|Modelprecisie
 precision_auto|Automatisch
 precision_int8|Geheugen besparen (int8)
@@ -721,7 +891,7 @@ update_latest|Je hebt de nieuwste versie ({0}).
 update_rate_limited|GitHub beperkt de controles een tijdje. Probeer het later opnieuw.
 update_failed|Kon niet op updates controleren. Controleer de verbinding en probeer het opnieuw.
 update_how_firefox|Firefox installeert nieuwe versies zelf. Wil je hem nu al, open dan about:addons, klik op het tandwiel en kies ‘Controleren op updates’. Een net verschenen versie kan een paar dagen nodig hebben om op de add-onsite te komen.
-update_how_chromium|Om bij te werken download je de Chromium-zip van de pagina van de versie, pak je hem uit over de oude map en klik je in chrome://extensions op het herlaadpictogram op de kaart van Stream Transcription. Je instellingen blijven bewaard.
+update_how_chromium|Om bij te werken download je de Chromium-zip van de pagina van de versie, pak je hem uit over de oude map en klik je in chrome://extensions op het herlaadpictogram op de kaart van StreamRemaster. Je instellingen blijven bewaard.
 update_privacy|Bij het controleren wordt GitHub alleen naar het nummer van de nieuwste versie gevraagd; verder wordt er niets verstuurd.
 server_update_available|Je server heeft versie {0} en {1} is beschikbaar. Voer dit uit op de computer waarop hij draait om hem bij te werken:
 server_version_unknown|Je server zegt niet welke versie hij heeft, dus hij is ouder dan deze controle. Voer dit uit op de computer waarop hij draait om hem bij te werken:
@@ -730,7 +900,41 @@ server_update_note|De modellen blijven in het Docker-volume en worden niet opnie
 """
 
 LANGS['pl'] = """
-extName|Stream Transcription
+fg_sharpen|Ostrość
+fg_sharpen_off|Wyłączona
+fg_sharpen_soft|Łagodna
+fg_sharpen_medium|Średnia
+fg_sharpen_strong|Mocna
+fg_resolution|Docelowa rozdzielczość skalowania
+fg_res_original|Oryginalna (bez skalowania)
+fg_model|Model AI
+fg_kind_sr|Skalowanie
+fg_kind_fi|Klatki pośrednie
+fg_builtin|Wbudowany
+fg_model_none|Brak (bez AI)
+section_fgmodels|Modele płynnego wideo
+fg_models_hint|Pobierz plik modelu (.stmodel, .srmodel, .fimodel) i dodaj go tutaj. Działa na Twojej karcie graficznej.
+fg_add_model|Dodaj plik modelu
+fg_no_models|Nie dodano jeszcze żadnych modeli.
+fg_model_bad|Ten plik nie jest prawidłowym modelem.
+tab_subs|Napisy
+tab_fg|Płynne wideo
+fg_start|Włącz płynne wideo
+fg_stop|Wyłącz płynne wideo
+fg_target|Docelowe FPS
+fg_target_display|Jak ekran
+fg_state_off|Wyłączone
+fg_state_measuring|Pomiar wideo…
+fg_state_on|{0} fps (wideo {1} fps)
+fg_no_video|Na tej stronie nie jest odtwarzane żadne wideo.
+fg_no_webgpu|Ta przeglądarka nie może użyć do tego GPU (WebGPU jest niedostępne).
+fg_cannot_read|Nie można odczytać tego wideo: jest chronione lub pochodzi z innej witryny.
+fg_unavailable|Ta strona nie zezwala na rozszerzenia.
+fg_auto_start|Włączaj płynne wideo, gdy odtwarzany jest film
+subs_auto_start|Uruchamiaj napisy, gdy odtwarzany jest film
+auto_start_hint|W tej przeglądarce działa to tylko na kartach, na których kliknięto przycisk rozszerzenia, dopóki nie przejdą na inną stronę.
+fg_allow_all_sites|Zezwól na wszystkich stronach
+extName|StreamRemaster
 extDescription|Napisy na żywo w dowolnej karcie, transkrybowane i tłumaczone przez twój własny serwer Whisper.
 start|Włącz napisy
 stop|Wyłącz napisy
@@ -760,7 +964,7 @@ settings|Ustawienia
 first_load_hint|Za pierwszym razem wczytanie modelu może potrwać do minuty.
 options_locked|Wyłącz napisy, aby zmienić te opcje.
 server_setup_title|Połącz swój serwer
-server_setup_hint|Stream Transcription potrzebuje serwera WhisperLive na twoim komputerze lub w twojej sieci.
+server_setup_hint|StreamRemaster potrzebuje serwera WhisperLive na twoim komputerze lub w twojej sieci.
 server_address|Adres serwera
 server_placeholder|np. localhost:9090 lub 192.168.1.10:9090
 connect|Połącz
@@ -775,7 +979,7 @@ server_change|Zmień
 server_help|Jak skonfigurować serwer?
 server_help_1|Potrzebujesz serwera WhisperLive (wolnego i darmowego) na komputerze, najlepiej z kartą graficzną NVIDIA. Małe modele działają też na samym procesorze.
 server_help_2|Potem wpisz tu jego adres: IP komputera i port, np. 192.168.1.10:9090. Jeśli działa na tym komputerze — localhost:9090.
-server_help_3|Aby pobierać modele i zarządzać nimi z tej strony, dodaj do serwera dodatek Stream Transcription.
+server_help_3|Aby pobierać modele i zarządzać nimi z tej strony, dodaj do serwera dodatek StreamRemaster.
 server_help_guide|Przewodnik krok po kroku
 error_capture|Tej karty nie można przechwycić (strony przeglądarki, sklepy z rozszerzeniami i pliki PDF są wykluczone).
 error_no_media|Na tej stronie nie ma wideo ani dźwięku.
@@ -786,7 +990,7 @@ warn_no_response|⚠ Napisy przestały przychodzić, choć jest dźwięk. Model 
 warn_slow_load|⚠ Model wczytuje się za długo. Może nie mieścić się w pamięci graficznej (VRAM) serwera: wybierz mniejszy model lub włącz „Oszczędzaj pamięć (int8)” w Zaawansowanych.
 error_reload|Odśwież stronę (F5) i zacznij od nowa.
 error_no_server|Najpierw skonfiguruj serwer.
-settings_title|Stream Transcription · Ustawienia
+settings_title|StreamRemaster · Ustawienia
 section_server|Serwer
 section_models|Modele
 section_subtitles|Napisy
@@ -815,14 +1019,14 @@ job_extracting|Rozpakowywanie…
 job_ready|Zainstalowano
 job_error|Niepowodzenie: {0}
 retry|Spróbuj ponownie
-plain_server_hint|To standardowy serwer WhisperLive: wpisz rozmiar modelu (tiny, base, small, medium, large-v3, large-v3-turbo), a serwer pobierze go za pierwszym razem. Aby pobierać stąd dowolne modele, zainstaluj na serwerze dodatek Stream Transcription.
+plain_server_hint|To standardowy serwer WhisperLive: wpisz rozmiar modelu (tiny, base, small, medium, large-v3, large-v3-turbo), a serwer pobierze go za pierwszym razem. Aby pobierać stąd dowolne modele, zainstaluj na serwerze dodatek StreamRemaster.
 model_name|Nazwa modelu
 save|Zapisz
 saved|Zapisano
 reset_position|Przywróć położenie napisów
 position_reset_done|Gotowe: wrócą na dół.
 section_performance|Wydajność
-performance_hint|Jeśli karcie graficznej serwera brakuje pamięci (napisy nie przychodzą albo pojawia się ostrzeżenie o pamięci), te dwie opcje sporo jej zwalniają. Działają tylko z serwerem Stream Transcription.
+performance_hint|Jeśli karcie graficznej serwera brakuje pamięci (napisy nie przychodzą albo pojawia się ostrzeżenie o pamięci), te dwie opcje sporo jej zwalniają. Działają tylko z serwerem StreamRemaster.
 precision|Precyzja modelu
 precision_auto|Automatyczna
 precision_int8|Oszczędzaj pamięć (int8)
@@ -866,7 +1070,7 @@ update_latest|Masz najnowszą wersję ({0}).
 update_rate_limited|GitHub przez jakiś czas ogranicza sprawdzanie. Spróbuj ponownie później.
 update_failed|Nie udało się sprawdzić aktualizacji. Sprawdź połączenie i spróbuj ponownie.
 update_how_firefox|Firefox sam instaluje nowe wersje. Aby mieć ją od razu, otwórz about:addons, kliknij ikonę koła zębatego i wybierz „Sprawdź dostępność aktualizacji”. Świeżo wydana wersja może dotrzeć do witryny dodatków dopiero po kilku dniach.
-update_how_chromium|Aby zaktualizować, pobierz plik zip dla Chromium ze strony wersji, rozpakuj go na starym folderze i kliknij ikonę ponownego wczytania na karcie Stream Transcription w chrome://extensions. Ustawienia zostają zachowane.
+update_how_chromium|Aby zaktualizować, pobierz plik zip dla Chromium ze strony wersji, rozpakuj go na starym folderze i kliknij ikonę ponownego wczytania na karcie StreamRemaster w chrome://extensions. Ustawienia zostają zachowane.
 update_privacy|Sprawdzanie tylko pyta GitHub o numer najnowszej wersji; nic więcej nie jest wysyłane.
 server_update_available|Twój serwer ma wersję {0}, a dostępna jest {1}. Aby go zaktualizować, uruchom to na komputerze, na którym działa:
 server_version_unknown|Twój serwer nie podaje swojej wersji, więc jest starszy niż to sprawdzanie. Aby go zaktualizować, uruchom to na komputerze, na którym działa:
@@ -875,7 +1079,41 @@ server_update_note|Modele zostają w woluminie Dockera i nie są pobierane ponow
 """
 
 LANGS['ru'] = """
-extName|Stream Transcription
+fg_sharpen|Резкость
+fg_sharpen_off|Выключена
+fg_sharpen_soft|Слабая
+fg_sharpen_medium|Средняя
+fg_sharpen_strong|Сильная
+fg_resolution|Целевое разрешение масштабирования
+fg_res_original|Исходное (без масштабирования)
+fg_model|Модель ИИ
+fg_kind_sr|Масштабирование
+fg_kind_fi|Промежуточные кадры
+fg_builtin|Встроенная
+fg_model_none|Нет (без ИИ)
+section_fgmodels|Модели плавного видео
+fg_models_hint|Скачайте файл модели (.stmodel, .srmodel, .fimodel) и добавьте его здесь. Он работает на вашей видеокарте.
+fg_add_model|Добавить файл модели
+fg_no_models|Модели ещё не добавлены.
+fg_model_bad|Этот файл не является допустимой моделью.
+tab_subs|Субтитры
+tab_fg|Плавное видео
+fg_start|Включить плавное видео
+fg_stop|Выключить плавное видео
+fg_target|Целевая частота кадров
+fg_target_display|Как у экрана
+fg_state_off|Выключено
+fg_state_measuring|Измерение видео…
+fg_state_on|{0} к/с (видео {1} к/с)
+fg_no_video|На этой странице не воспроизводится видео.
+fg_no_webgpu|Этот браузер не может использовать для этого видеокарту (WebGPU недоступен).
+fg_cannot_read|Это видео нельзя прочитать: оно защищено или загружено с другого сайта.
+fg_unavailable|Эта страница не разрешает расширения.
+fg_auto_start|Включать плавное видео при воспроизведении видео
+subs_auto_start|Запускать субтитры при воспроизведении видео
+auto_start_hint|В этом браузере это работает только во вкладках, где вы нажали кнопку расширения, пока они не перейдут на другой сайт.
+fg_allow_all_sites|Разрешить на всех сайтах
+extName|StreamRemaster
 extDescription|Субтитры в реальном времени для любой вкладки: распознаёт и переводит ваш собственный сервер Whisper.
 start|Включить субтитры
 stop|Выключить субтитры
@@ -905,7 +1143,7 @@ settings|Настройки
 first_load_hint|В первый раз загрузка модели может занять до минуты.
 options_locked|Выключите субтитры, чтобы изменить эти параметры.
 server_setup_title|Подключите свой сервер
-server_setup_hint|Stream Transcription нужен сервер WhisperLive на вашем компьютере или в вашей сети.
+server_setup_hint|StreamRemaster нужен сервер WhisperLive на вашем компьютере или в вашей сети.
 server_address|Адрес сервера
 server_placeholder|напр. localhost:9090 или 192.168.1.10:9090
 connect|Подключить
@@ -920,7 +1158,7 @@ server_change|Изменить
 server_help|Как настроить сервер?
 server_help_1|Нужен сервер WhisperLive (свободный и бесплатный) на компьютере, лучше с видеокартой NVIDIA. Небольшие модели работают и на одном процессоре.
 server_help_2|Затем введите здесь его адрес: IP компьютера и порт, напр. 192.168.1.10:9090. Если он на этом же компьютере — localhost:9090.
-server_help_3|Чтобы скачивать модели и управлять ими с этой страницы, добавьте на сервер дополнение Stream Transcription.
+server_help_3|Чтобы скачивать модели и управлять ими с этой страницы, добавьте на сервер дополнение StreamRemaster.
 server_help_guide|Пошаговое руководство
 error_capture|Эту вкладку нельзя захватить (страницы браузера, магазины расширений и PDF недоступны).
 error_no_media|На этой странице нет ни видео, ни звука.
@@ -931,7 +1169,7 @@ warn_no_response|⚠ Субтитры перестали приходить, х�
 warn_slow_load|⚠ Модель загружается слишком долго. Возможно, она не помещается в видеопамять (VRAM) сервера: выберите модель поменьше или включите «Экономить память (int8)» в разделе «Дополнительно».
 error_reload|Перезагрузите страницу (F5) и начните заново.
 error_no_server|Сначала настройте сервер.
-settings_title|Stream Transcription · Настройки
+settings_title|StreamRemaster · Настройки
 section_server|Сервер
 section_models|Модели
 section_subtitles|Субтитры
@@ -960,14 +1198,14 @@ job_extracting|Распаковка…
 job_ready|Установлена
 job_error|Не удалось: {0}
 retry|Повторить
-plain_server_hint|Это стандартный сервер WhisperLive: введите размер модели (tiny, base, small, medium, large-v3, large-v3-turbo), и сервер скачает её при первом запуске. Чтобы скачивать отсюда любые модели, установите на сервер дополнение Stream Transcription.
+plain_server_hint|Это стандартный сервер WhisperLive: введите размер модели (tiny, base, small, medium, large-v3, large-v3-turbo), и сервер скачает её при первом запуске. Чтобы скачивать отсюда любые модели, установите на сервер дополнение StreamRemaster.
 model_name|Название модели
 save|Сохранить
 saved|Сохранено
 reset_position|Сбросить положение субтитров
 position_reset_done|Готово: они вернутся вниз.
 section_performance|Производительность
-performance_hint|Если видеокарте сервера не хватает памяти (субтитры не приходят или появляется предупреждение о памяти), эти два параметра освобождают немало. Работают только с сервером Stream Transcription.
+performance_hint|Если видеокарте сервера не хватает памяти (субтитры не приходят или появляется предупреждение о памяти), эти два параметра освобождают немало. Работают только с сервером StreamRemaster.
 precision|Точность модели
 precision_auto|Автоматически
 precision_int8|Экономить память (int8)
@@ -1011,7 +1249,7 @@ update_latest|У вас последняя версия ({0}).
 update_rate_limited|GitHub временно ограничивает проверки. Попробуйте позже.
 update_failed|Не удалось проверить обновления. Проверьте подключение и попробуйте ещё раз.
 update_how_firefox|Firefox сам устанавливает новые версии. Чтобы получить её сразу, откройте about:addons, нажмите на значок шестерёнки и выберите «Проверить наличие обновлений». Только что вышедшая версия может появиться на сайте дополнений через несколько дней.
-update_how_chromium|Чтобы обновить, скачайте zip для Chromium со страницы версии, распакуйте его поверх старой папки и нажмите значок перезагрузки на карточке Stream Transcription в chrome://extensions. Настройки сохранятся.
+update_how_chromium|Чтобы обновить, скачайте zip для Chromium со страницы версии, распакуйте его поверх старой папки и нажмите значок перезагрузки на карточке StreamRemaster в chrome://extensions. Настройки сохранятся.
 update_privacy|При проверке у GitHub запрашивается только номер последней версии; больше ничего не отправляется.
 server_update_available|На вашем сервере версия {0}, а доступна {1}. Чтобы обновить его, выполните это на компьютере, где он работает:
 server_version_unknown|Ваш сервер не сообщает свою версию, значит, он старше этой проверки. Чтобы обновить его, выполните это на компьютере, где он работает:
@@ -1020,7 +1258,41 @@ server_update_note|Модели остаются в томе Docker и зано�
 """
 
 LANGS['uk'] = """
-extName|Stream Transcription
+fg_sharpen|Різкість
+fg_sharpen_off|Вимкнено
+fg_sharpen_soft|Слабка
+fg_sharpen_medium|Середня
+fg_sharpen_strong|Сильна
+fg_resolution|Цільова роздільна здатність масштабування
+fg_res_original|Початкова (без масштабування)
+fg_model|Модель ШІ
+fg_kind_sr|Масштабування
+fg_kind_fi|Проміжні кадри
+fg_builtin|Вбудована
+fg_model_none|Немає (без ШІ)
+section_fgmodels|Моделі плавного відео
+fg_models_hint|Завантажте файл моделі (.stmodel, .srmodel, .fimodel) і додайте його тут. Він працює на вашій відеокарті.
+fg_add_model|Додати файл моделі
+fg_no_models|Моделі ще не додано.
+fg_model_bad|Цей файл не є дійсною моделлю.
+tab_subs|Субтитри
+tab_fg|Плавне відео
+fg_start|Увімкнути плавне відео
+fg_stop|Вимкнути плавне відео
+fg_target|Цільова частота кадрів
+fg_target_display|Як на екрані
+fg_state_off|Вимкнено
+fg_state_measuring|Вимірювання відео…
+fg_state_on|{0} к/с (відео {1} к/с)
+fg_no_video|На цій сторінці не відтворюється відео.
+fg_no_webgpu|Цей браузер не може використовувати для цього відеокарту (WebGPU недоступний).
+fg_cannot_read|Це відео неможливо прочитати: воно захищене або завантажене з іншого сайту.
+fg_unavailable|Ця сторінка не дозволяє розширення.
+fg_auto_start|Вмикати плавне відео під час відтворення відео
+subs_auto_start|Запускати субтитри під час відтворення відео
+auto_start_hint|У цьому браузері це працює лише у вкладках, де ви натиснули кнопку розширення, доки вони не перейдуть на інший сайт.
+fg_allow_all_sites|Дозволити на всіх сайтах
+extName|StreamRemaster
 extDescription|Субтитри наживо для будь-якої вкладки: розпізнає й перекладає ваш власний сервер Whisper.
 start|Увімкнути субтитри
 stop|Вимкнути субтитри
@@ -1050,7 +1322,7 @@ settings|Налаштування
 first_load_hint|Першого разу завантаження моделі може тривати до хвилини.
 options_locked|Вимкніть субтитри, щоб змінити ці параметри.
 server_setup_title|Підключіть свій сервер
-server_setup_hint|Stream Transcription потрібен сервер WhisperLive на вашому комп’ютері або у вашій мережі.
+server_setup_hint|StreamRemaster потрібен сервер WhisperLive на вашому комп’ютері або у вашій мережі.
 server_address|Адреса сервера
 server_placeholder|напр. localhost:9090 або 192.168.1.10:9090
 connect|Підключити
@@ -1065,7 +1337,7 @@ server_change|Змінити
 server_help|Як налаштувати сервер?
 server_help_1|Потрібен сервер WhisperLive (вільний і безкоштовний) на комп’ютері, краще з відеокартою NVIDIA. Невеликі моделі працюють і на самому процесорі.
 server_help_2|Потім введіть тут його адресу: IP комп’ютера й порт, напр. 192.168.1.10:9090. Якщо він на цьому ж комп’ютері — localhost:9090.
-server_help_3|Щоб завантажувати моделі й керувати ними з цієї сторінки, додайте на сервер доповнення Stream Transcription.
+server_help_3|Щоб завантажувати моделі й керувати ними з цієї сторінки, додайте на сервер доповнення StreamRemaster.
 server_help_guide|Покроковий посібник
 error_capture|Цю вкладку неможливо захопити (сторінки браузера, крамниці розширень і PDF недоступні).
 error_no_media|На цій сторінці немає ні відео, ні звуку.
@@ -1076,7 +1348,7 @@ warn_no_response|⚠ Субтитри перестали надходити, х�
 warn_slow_load|⚠ Модель завантажується надто довго. Можливо, вона не вміщується у відеопам’ять (VRAM) сервера: виберіть меншу модель або ввімкніть «Заощаджувати пам’ять (int8)» у розділі «Додатково».
 error_reload|Перезавантажте сторінку (F5) і почніть знову.
 error_no_server|Спершу налаштуйте сервер.
-settings_title|Stream Transcription · Налаштування
+settings_title|StreamRemaster · Налаштування
 section_server|Сервер
 section_models|Моделі
 section_subtitles|Субтитри
@@ -1105,14 +1377,14 @@ job_extracting|Розпакування…
 job_ready|Встановлено
 job_error|Не вдалося: {0}
 retry|Повторити
-plain_server_hint|Це стандартний сервер WhisperLive: введіть розмір моделі (tiny, base, small, medium, large-v3, large-v3-turbo), і сервер завантажить її першого разу. Щоб завантажувати звідси будь-які моделі, встановіть на сервер доповнення Stream Transcription.
+plain_server_hint|Це стандартний сервер WhisperLive: введіть розмір моделі (tiny, base, small, medium, large-v3, large-v3-turbo), і сервер завантажить її першого разу. Щоб завантажувати звідси будь-які моделі, встановіть на сервер доповнення StreamRemaster.
 model_name|Назва моделі
 save|Зберегти
 saved|Збережено
 reset_position|Скинути положення субтитрів
 position_reset_done|Готово: вони повернуться вниз.
 section_performance|Продуктивність
-performance_hint|Якщо відеокарті сервера бракує пам’яті (субтитри не надходять або з’являється попередження про пам’ять), ці два параметри звільняють чимало. Працюють лише із сервером Stream Transcription.
+performance_hint|Якщо відеокарті сервера бракує пам’яті (субтитри не надходять або з’являється попередження про пам’ять), ці два параметри звільняють чимало. Працюють лише із сервером StreamRemaster.
 precision|Точність моделі
 precision_auto|Автоматично
 precision_int8|Заощаджувати пам’ять (int8)
@@ -1156,7 +1428,7 @@ update_latest|У вас найновіша версія ({0}).
 update_rate_limited|GitHub тимчасово обмежує перевірки. Спробуйте пізніше.
 update_failed|Не вдалося перевірити оновлення. Перевірте з’єднання і спробуйте ще раз.
 update_how_firefox|Firefox сам встановлює нові версії. Щоб отримати її одразу, відкрийте about:addons, натисніть значок шестерні й виберіть «Перевірити наявність оновлень». Щойно випущена версія може з’явитися на сайті додатків за кілька днів.
-update_how_chromium|Щоб оновити, завантажте zip для Chromium зі сторінки версії, розпакуйте його поверх старої теки й натисніть значок перезавантаження на картці Stream Transcription у chrome://extensions. Налаштування збережуться.
+update_how_chromium|Щоб оновити, завантажте zip для Chromium зі сторінки версії, розпакуйте його поверх старої теки й натисніть значок перезавантаження на картці StreamRemaster у chrome://extensions. Налаштування збережуться.
 update_privacy|Під час перевірки в GitHub запитується лише номер найновішої версії; більше нічого не надсилається.
 server_update_available|На вашому сервері версія {0}, а доступна {1}. Щоб оновити його, виконайте це на комп’ютері, де він працює:
 server_version_unknown|Ваш сервер не повідомляє свою версію, отже, він старіший за цю перевірку. Щоб оновити його, виконайте це на комп’ютері, де він працює:
@@ -1165,7 +1437,41 @@ server_update_note|Моделі залишаються в томі Docker і н�
 """
 
 LANGS['zh_CN'] = """
-extName|Stream Transcription
+fg_sharpen|锐度
+fg_sharpen_off|关闭
+fg_sharpen_soft|柔和
+fg_sharpen_medium|中等
+fg_sharpen_strong|强
+fg_resolution|放大目标分辨率
+fg_res_original|原始（不放大）
+fg_model|AI 模型
+fg_kind_sr|放大
+fg_kind_fi|插帧
+fg_builtin|内置
+fg_model_none|无（不使用 AI）
+section_fgmodels|流畅视频模型
+fg_models_hint|下载模型文件（.stmodel、.srmodel、.fimodel）并在此添加。它在您自己的显卡上运行。
+fg_add_model|添加模型文件
+fg_no_models|尚未添加任何模型。
+fg_model_bad|该文件不是有效的模型。
+tab_subs|字幕
+tab_fg|流畅视频
+fg_start|开启流畅视频
+fg_stop|关闭流畅视频
+fg_target|目标帧率
+fg_target_display|与屏幕相同
+fg_state_off|已关闭
+fg_state_measuring|正在测量视频…
+fg_state_on|{0} fps（视频 {1} fps）
+fg_no_video|此页面上没有正在播放的视频。
+fg_no_webgpu|此浏览器无法为此使用 GPU（WebGPU 不可用）。
+fg_cannot_read|无法读取此视频：它受保护或来自其他网站。
+fg_unavailable|此页面不允许使用扩展程序。
+fg_auto_start|播放视频时自动开启流畅视频
+subs_auto_start|播放视频时自动开始字幕
+auto_start_hint|在此浏览器中，仅在您点击过扩展按钮的标签页中有效，直到该标签页转到其他网站。
+fg_allow_all_sites|在所有网站上允许
+extName|StreamRemaster
 extDescription|为任意标签页提供实时字幕，由你自己的 Whisper 服务器转写和翻译。
 start|开启字幕
 stop|关闭字幕
@@ -1195,7 +1501,7 @@ settings|设置
 first_load_hint|首次加载模型可能需要一分钟左右。
 options_locked|关闭字幕后才能更改这些选项。
 server_setup_title|连接你的服务器
-server_setup_hint|Stream Transcription 需要在你的电脑或网络中运行 WhisperLive 服务器。
+server_setup_hint|StreamRemaster 需要在你的电脑或网络中运行 WhisperLive 服务器。
 server_address|服务器地址
 server_placeholder|例如 localhost:9090 或 192.168.1.10:9090
 connect|连接
@@ -1210,7 +1516,7 @@ server_change|更改
 server_help|如何搭建服务器？
 server_help_1|你需要在一台电脑上运行 WhisperLive 服务器（免费开源），最好有 NVIDIA 显卡。小模型只用处理器也能运行。
 server_help_2|然后在这里输入它的地址：电脑的 IP 和端口，例如 192.168.1.10:9090。如果就在这台电脑上，填 localhost:9090。
-server_help_3|要在此页面下载和管理模型，请给服务器加装 Stream Transcription 插件。
+server_help_3|要在此页面下载和管理模型，请给服务器加装 StreamRemaster 插件。
 server_help_guide|分步指南
 error_capture|无法捕获此标签页（浏览器页面、扩展商店和 PDF 不允许）。
 error_no_media|此页面没有视频或音频。
@@ -1221,7 +1527,7 @@ warn_no_response|⚠ 虽然有声音，但字幕不再出现。可能是模型�
 warn_slow_load|⚠ 模型加载时间过长。可能放不进服务器的显存 (VRAM)：请选择更小的模型，或在“高级”中开启“节省内存 (int8)”。
 error_reload|请刷新页面 (F5) 后重新开始。
 error_no_server|请先设置服务器。
-settings_title|Stream Transcription · 设置
+settings_title|StreamRemaster · 设置
 section_server|服务器
 section_models|模型
 section_subtitles|字幕
@@ -1250,14 +1556,14 @@ job_extracting|正在解压…
 job_ready|已安装
 job_error|失败：{0}
 retry|重试
-plain_server_hint|这是标准的 WhisperLive 服务器：输入模型大小（tiny、base、small、medium、large-v3、large-v3-turbo），服务器会在首次使用时下载。要从这里下载任意模型，请在服务器上安装 Stream Transcription 插件。
+plain_server_hint|这是标准的 WhisperLive 服务器：输入模型大小（tiny、base、small、medium、large-v3、large-v3-turbo），服务器会在首次使用时下载。要从这里下载任意模型，请在服务器上安装 StreamRemaster 插件。
 model_name|模型名称
 save|保存
 saved|已保存
 reset_position|重置字幕位置
 position_reset_done|完成：字幕会回到底部。
 section_performance|性能
-performance_hint|如果服务器显卡内存不足（字幕不出现或出现内存警告），这两个选项可以释放大量内存。仅适用于 Stream Transcription 服务器。
+performance_hint|如果服务器显卡内存不足（字幕不出现或出现内存警告），这两个选项可以释放大量内存。仅适用于 StreamRemaster 服务器。
 precision|模型精度
 precision_auto|自动
 precision_int8|节省内存 (int8)
@@ -1301,7 +1607,7 @@ update_latest|你已是最新版本（{0}）。
 update_rate_limited|GitHub 暂时限制了查询次数，请稍后再试。
 update_failed|无法检查更新。请检查网络连接后重试。
 update_how_firefox|Firefox 会自动安装新版本。想立即获取，请打开 about:addons，点击齿轮图标，选择“检查更新”。刚发布的版本可能要过几天才会出现在附加组件网站上。
-update_how_chromium|更新方法：从版本页面下载 Chromium 版 zip，解压覆盖旧文件夹，然后在 chrome://extensions 中点击 Stream Transcription 卡片上的重新加载图标。你的设置会保留。
+update_how_chromium|更新方法：从版本页面下载 Chromium 版 zip，解压覆盖旧文件夹，然后在 chrome://extensions 中点击 StreamRemaster 卡片上的重新加载图标。你的设置会保留。
 update_privacy|检查时只会向 GitHub 询问最新版本号，不会发送其他任何内容。
 server_update_available|你的服务器是 {0} 版，已有 {1} 版。要更新，请在运行服务器的电脑上执行：
 server_version_unknown|你的服务器没有报告版本，说明它比这项检查更早。要更新，请在运行服务器的电脑上执行：
@@ -1310,7 +1616,41 @@ server_update_note|模型保留在 Docker 卷中，不会重新下载。如果�
 """
 
 LANGS['ja'] = """
-extName|Stream Transcription
+fg_sharpen|シャープネス
+fg_sharpen_off|オフ
+fg_sharpen_soft|弱
+fg_sharpen_medium|中
+fg_sharpen_strong|強
+fg_resolution|アップスケール後の解像度
+fg_res_original|オリジナル（アップスケールなし）
+fg_model|AIモデル
+fg_kind_sr|アップスケール
+fg_kind_fi|中間フレーム
+fg_builtin|内蔵
+fg_model_none|なし（AI なし）
+section_fgmodels|なめらか動画のモデル
+fg_models_hint|モデルファイル（.stmodel、.srmodel、.fimodel）をダウンロードしてここに追加します。お使いのグラフィックカードで動作します。
+fg_add_model|モデルファイルを追加
+fg_no_models|モデルはまだ追加されていません。
+fg_model_bad|このファイルは有効なモデルではありません。
+tab_subs|字幕
+tab_fg|なめらか動画
+fg_start|なめらか動画をオン
+fg_stop|なめらか動画をオフ
+fg_target|目標フレームレート
+fg_target_display|画面に合わせる
+fg_state_off|オフ
+fg_state_measuring|動画を測定中…
+fg_state_on|{0} fps（動画 {1} fps）
+fg_no_video|このページで再生中の動画はありません。
+fg_no_webgpu|このブラウザーではこの機能に GPU を使用できません（WebGPU が利用できません）。
+fg_cannot_read|この動画は読み取れません。保護されているか、別のサイトのものです。
+fg_unavailable|このページでは拡張機能を使用できません。
+fg_auto_start|動画の再生時になめらか動画を自動でオン
+subs_auto_start|動画の再生時に字幕を自動で開始
+auto_start_hint|このブラウザーでは、拡張機能のボタンをクリックしたタブでのみ、別のサイトに移動するまで機能します。
+fg_allow_all_sites|すべてのサイトで許可
+extName|StreamRemaster
 extDescription|どのタブにもリアルタイム字幕。自分の Whisper サーバーが文字起こしと翻訳をします。
 start|字幕をオン
 stop|字幕をオフ
@@ -1340,7 +1680,7 @@ settings|設定
 first_load_hint|モデルの初回読み込みには最大 1 分ほどかかることがあります。
 options_locked|これらの設定を変えるには字幕をオフにしてください。
 server_setup_title|サーバーに接続
-server_setup_hint|Stream Transcription には、パソコンかネットワーク上で動く WhisperLive サーバーが必要です。
+server_setup_hint|StreamRemaster には、パソコンかネットワーク上で動く WhisperLive サーバーが必要です。
 server_address|サーバーのアドレス
 server_placeholder|例：localhost:9090 または 192.168.1.10:9090
 connect|接続
@@ -1355,7 +1695,7 @@ server_change|変更
 server_help|サーバーの用意のしかた
 server_help_1|パソコンで WhisperLive サーバー（無料のオープンソース）を動かします。NVIDIA のグラフィックボードがあると理想的です。小さなモデルは CPU だけでも動きます。
 server_help_2|次にここにアドレスを入力します：パソコンの IP とポート、例 192.168.1.10:9090。同じパソコンで動かすなら localhost:9090。
-server_help_3|このページからモデルをダウンロード・管理するには、サーバーに Stream Transcription のアドオンを追加してください。
+server_help_3|このページからモデルをダウンロード・管理するには、サーバーに StreamRemaster のアドオンを追加してください。
 server_help_guide|手順ガイド
 error_capture|このタブはキャプチャできません（ブラウザーのページ、拡張機能ストア、PDF は対象外です）。
 error_no_media|このページには動画も音声もありません。
@@ -1366,7 +1706,7 @@ warn_no_response|⚠ 音が出ているのに字幕が届かなくなりまし�
 warn_slow_load|⚠ モデルの読み込みに時間がかかりすぎています。サーバーのビデオメモリ (VRAM) に収まらないのかもしれません。小さいモデルを選ぶか、詳細設定で「メモリを節約 (int8)」をオンにしてください。
 error_reload|ページを再読み込み (F5) して、もう一度始めてください。
 error_no_server|先にサーバーを設定してください。
-settings_title|Stream Transcription · 設定
+settings_title|StreamRemaster · 設定
 section_server|サーバー
 section_models|モデル
 section_subtitles|字幕
@@ -1395,14 +1735,14 @@ job_extracting|展開中…
 job_ready|インストール済み
 job_error|失敗：{0}
 retry|再試行
-plain_server_hint|標準の WhisperLive サーバーです。モデルのサイズ（tiny、base、small、medium、large-v3、large-v3-turbo）を入力すると、初回にサーバーがダウンロードします。ここから任意のモデルをダウンロードするには、サーバーに Stream Transcription のアドオンを入れてください。
+plain_server_hint|標準の WhisperLive サーバーです。モデルのサイズ（tiny、base、small、medium、large-v3、large-v3-turbo）を入力すると、初回にサーバーがダウンロードします。ここから任意のモデルをダウンロードするには、サーバーに StreamRemaster のアドオンを入れてください。
 model_name|モデル名
 save|保存
 saved|保存しました
 reset_position|字幕の位置をリセット
 position_reset_done|完了：下に戻ります。
 section_performance|パフォーマンス
-performance_hint|サーバーのグラフィックボードのメモリが足りないとき（字幕が届かない、メモリの警告が出る）、この 2 つの設定で大きく空けられます。Stream Transcription のサーバーでのみ有効です。
+performance_hint|サーバーのグラフィックボードのメモリが足りないとき（字幕が届かない、メモリの警告が出る）、この 2 つの設定で大きく空けられます。StreamRemaster のサーバーでのみ有効です。
 precision|モデルの精度
 precision_auto|自動
 precision_int8|メモリを節約 (int8)
@@ -1446,7 +1786,7 @@ update_latest|最新バージョンです（{0}）。
 update_rate_limited|GitHub がしばらく確認を制限しています。後でもう一度お試しください。
 update_failed|アップデートを確認できませんでした。接続を確認してもう一度お試しください。
 update_how_firefox|Firefox は新しいバージョンを自動でインストールします。すぐに入れるには about:addons を開き、歯車アイコンから「今すぐ更新を確認」を選んでください。出たばかりのバージョンはアドオンサイトに載るまで数日かかることがあります。
-update_how_chromium|アップデートするには、バージョンのページから Chromium 用の zip をダウンロードして古いフォルダーに上書きで展開し、chrome://extensions の Stream Transcription のカードで再読み込みアイコンを押してください。設定はそのまま残ります。
+update_how_chromium|アップデートするには、バージョンのページから Chromium 用の zip をダウンロードして古いフォルダーに上書きで展開し、chrome://extensions の StreamRemaster のカードで再読み込みアイコンを押してください。設定はそのまま残ります。
 update_privacy|確認では GitHub に最新バージョンの番号を問い合わせるだけで、ほかには何も送信しません。
 server_update_available|サーバーはバージョン {0} で、{1} が出ています。アップデートするには、サーバーが動いているパソコンで次を実行してください：
 server_version_unknown|サーバーがバージョンを伝えていないため、この確認機能より古いものです。アップデートするには、サーバーが動いているパソコンで次を実行してください：
@@ -1455,7 +1795,41 @@ server_update_note|モデルは Docker ボリュームに残り、再ダウン�
 """
 
 LANGS['ko'] = """
-extName|Stream Transcription
+fg_sharpen|선명도
+fg_sharpen_off|끄기
+fg_sharpen_soft|약하게
+fg_sharpen_medium|보통
+fg_sharpen_strong|강하게
+fg_resolution|업스케일 목표 해상도
+fg_res_original|원본 (업스케일 없음)
+fg_model|AI 모델
+fg_kind_sr|업스케일
+fg_kind_fi|중간 프레임
+fg_builtin|기본 제공
+fg_model_none|없음(AI 사용 안 함)
+section_fgmodels|부드러운 영상 모델
+fg_models_hint|모델 파일(.stmodel, .srmodel, .fimodel)을 다운로드하여 여기에 추가하세요. 사용자의 그래픽 카드에서 실행됩니다.
+fg_add_model|모델 파일 추가
+fg_no_models|추가된 모델이 없습니다.
+fg_model_bad|유효한 모델 파일이 아닙니다.
+tab_subs|자막
+tab_fg|부드러운 영상
+fg_start|부드러운 영상 켜기
+fg_stop|부드러운 영상 끄기
+fg_target|목표 프레임 속도
+fg_target_display|화면에 맞춤
+fg_state_off|꺼짐
+fg_state_measuring|영상 측정 중…
+fg_state_on|{0} fps (영상 {1} fps)
+fg_no_video|이 페이지에서 재생 중인 영상이 없습니다.
+fg_no_webgpu|이 브라우저는 이 기능에 GPU를 사용할 수 없습니다(WebGPU를 사용할 수 없음).
+fg_cannot_read|이 영상은 읽을 수 없습니다. 보호되어 있거나 다른 사이트에서 제공됩니다.
+fg_unavailable|이 페이지는 확장 프로그램을 허용하지 않습니다.
+fg_auto_start|동영상이 재생되면 부드러운 영상 자동으로 켜기
+subs_auto_start|동영상이 재생되면 자막 자동으로 시작
+auto_start_hint|이 브라우저에서는 확장 프로그램 버튼을 클릭한 탭에서만, 다른 사이트로 이동하기 전까지 작동합니다.
+fg_allow_all_sites|모든 사이트에서 허용
+extName|StreamRemaster
 extDescription|어떤 탭에서든 실시간 자막. 내 Whisper 서버가 받아쓰고 번역합니다.
 start|자막 켜기
 stop|자막 끄기
@@ -1485,7 +1859,7 @@ settings|설정
 first_load_hint|모델을 처음 불러올 때는 최대 1분 정도 걸릴 수 있습니다.
 options_locked|이 설정을 바꾸려면 자막을 끄세요.
 server_setup_title|서버 연결
-server_setup_hint|Stream Transcription을 쓰려면 컴퓨터나 네트워크에서 WhisperLive 서버가 실행 중이어야 합니다.
+server_setup_hint|StreamRemaster을 쓰려면 컴퓨터나 네트워크에서 WhisperLive 서버가 실행 중이어야 합니다.
 server_address|서버 주소
 server_placeholder|예: localhost:9090 또는 192.168.1.10:9090
 connect|연결
@@ -1500,7 +1874,7 @@ server_change|변경
 server_help|서버는 어떻게 준비하나요?
 server_help_1|컴퓨터에서 WhisperLive 서버(무료 오픈 소스)를 실행해야 합니다. NVIDIA 그래픽 카드가 있으면 가장 좋습니다. 작은 모델은 프로세서만으로도 돌아갑니다.
 server_help_2|그런 다음 여기에 주소를 입력하세요: 컴퓨터 IP와 포트, 예 192.168.1.10:9090. 같은 컴퓨터라면 localhost:9090.
-server_help_3|이 페이지에서 모델을 내려받고 관리하려면 서버에 Stream Transcription 애드온을 추가하세요.
+server_help_3|이 페이지에서 모델을 내려받고 관리하려면 서버에 StreamRemaster 애드온을 추가하세요.
 server_help_guide|단계별 안내
 error_capture|이 탭은 캡처할 수 없습니다(브라우저 페이지, 확장 프로그램 스토어, PDF는 제외).
 error_no_media|이 페이지에는 동영상이나 오디오가 없습니다.
@@ -1511,7 +1885,7 @@ warn_no_response|⚠ 소리가 나는데도 자막이 오지 않습니다. 모�
 warn_slow_load|⚠ 모델을 불러오는 데 너무 오래 걸립니다. 서버의 그래픽 메모리(VRAM)에 들어가지 않을 수 있습니다. 더 작은 모델을 고르거나 고급에서 ‘메모리 절약(int8)’을 켜세요.
 error_reload|페이지를 새로 고침(F5)하고 다시 시작하세요.
 error_no_server|먼저 서버를 설정하세요.
-settings_title|Stream Transcription · 설정
+settings_title|StreamRemaster · 설정
 section_server|서버
 section_models|모델
 section_subtitles|자막
@@ -1540,14 +1914,14 @@ job_extracting|압축 푸는 중…
 job_ready|설치됨
 job_error|실패: {0}
 retry|다시 시도
-plain_server_hint|표준 WhisperLive 서버입니다. 모델 크기(tiny, base, small, medium, large-v3, large-v3-turbo)를 입력하면 서버가 처음에 내려받습니다. 여기서 아무 모델이나 내려받으려면 서버에 Stream Transcription 애드온을 설치하세요.
+plain_server_hint|표준 WhisperLive 서버입니다. 모델 크기(tiny, base, small, medium, large-v3, large-v3-turbo)를 입력하면 서버가 처음에 내려받습니다. 여기서 아무 모델이나 내려받으려면 서버에 StreamRemaster 애드온을 설치하세요.
 model_name|모델 이름
 save|저장
 saved|저장됨
 reset_position|자막 위치 초기화
 position_reset_done|완료: 다시 아래로 갑니다.
 section_performance|성능
-performance_hint|서버 그래픽 카드의 메모리가 모자라면(자막이 오지 않거나 메모리 경고가 뜨면) 이 두 옵션으로 꽤 많이 확보할 수 있습니다. Stream Transcription 서버에서만 작동합니다.
+performance_hint|서버 그래픽 카드의 메모리가 모자라면(자막이 오지 않거나 메모리 경고가 뜨면) 이 두 옵션으로 꽤 많이 확보할 수 있습니다. StreamRemaster 서버에서만 작동합니다.
 precision|모델 정밀도
 precision_auto|자동
 precision_int8|메모리 절약(int8)
@@ -1591,7 +1965,7 @@ update_latest|최신 버전입니다 ({0}).
 update_rate_limited|GitHub가 잠시 확인 횟수를 제한하고 있습니다. 나중에 다시 시도하세요.
 update_failed|업데이트를 확인하지 못했습니다. 연결을 확인하고 다시 시도하세요.
 update_how_firefox|Firefox는 새 버전을 자동으로 설치합니다. 지금 바로 받으려면 about:addons를 열고 톱니바퀴 아이콘을 누른 뒤 ‘업데이트 확인’을 선택하세요. 갓 나온 버전은 부가 기능 사이트에 올라오기까지 며칠 걸릴 수 있습니다.
-update_how_chromium|업데이트하려면 버전 페이지에서 Chromium용 zip을 내려받아 기존 폴더에 덮어써서 압축을 풀고, chrome://extensions의 Stream Transcription 카드에서 새로고침 아이콘을 누르세요. 설정은 그대로 유지됩니다.
+update_how_chromium|업데이트하려면 버전 페이지에서 Chromium용 zip을 내려받아 기존 폴더에 덮어써서 압축을 풀고, chrome://extensions의 StreamRemaster 카드에서 새로고침 아이콘을 누르세요. 설정은 그대로 유지됩니다.
 update_privacy|확인할 때는 GitHub에 최신 버전 번호만 물어보며, 그 밖에는 아무것도 보내지 않습니다.
 server_update_available|서버는 {0} 버전이고 {1} 버전이 나왔습니다. 업데이트하려면 서버가 실행 중인 컴퓨터에서 다음을 실행하세요:
 server_version_unknown|서버가 버전을 알려 주지 않으므로 이 확인 기능보다 오래된 버전입니다. 업데이트하려면 서버가 실행 중인 컴퓨터에서 다음을 실행하세요:
@@ -1600,7 +1974,41 @@ server_update_note|모델은 Docker 볼륨에 남아 있어 다시 내려받지 
 """
 
 LANGS['th'] = """
-extName|Stream Transcription
+fg_sharpen|ความคมชัด
+fg_sharpen_off|ปิด
+fg_sharpen_soft|เบา
+fg_sharpen_medium|ปานกลาง
+fg_sharpen_strong|แรง
+fg_resolution|ความละเอียดเป้าหมายของการขยายภาพ
+fg_res_original|ต้นฉบับ (ไม่ขยายภาพ)
+fg_model|โมเดล AI
+fg_kind_sr|ขยายภาพ
+fg_kind_fi|เฟรมแทรก
+fg_builtin|ในตัว
+fg_model_none|ไม่มี (ไม่ใช้ AI)
+section_fgmodels|โมเดลวิดีโอลื่นไหล
+fg_models_hint|ดาวน์โหลดไฟล์โมเดล (.stmodel, .srmodel, .fimodel) แล้วเพิ่มที่นี่ โมเดลจะทำงานบนการ์ดจอของคุณ
+fg_add_model|เพิ่มไฟล์โมเดล
+fg_no_models|ยังไม่ได้เพิ่มโมเดล
+fg_model_bad|ไฟล์นี้ไม่ใช่โมเดลที่ถูกต้อง
+tab_subs|คำบรรยาย
+tab_fg|วิดีโอลื่นไหล
+fg_start|เปิดวิดีโอลื่นไหล
+fg_stop|ปิดวิดีโอลื่นไหล
+fg_target|อัตราเฟรมเป้าหมาย
+fg_target_display|เท่ากับหน้าจอ
+fg_state_off|ปิด
+fg_state_measuring|กำลังวัดวิดีโอ…
+fg_state_on|{0} fps (วิดีโอ {1} fps)
+fg_no_video|ไม่มีวิดีโอที่กำลังเล่นในหน้านี้
+fg_no_webgpu|เบราว์เซอร์นี้ใช้ GPU สำหรับงานนี้ไม่ได้ (ไม่มี WebGPU)
+fg_cannot_read|อ่านวิดีโอนี้ไม่ได้: วิดีโอได้รับการป้องกันหรือมาจากเว็บไซต์อื่น
+fg_unavailable|หน้านี้ไม่อนุญาตให้ใช้ส่วนขยาย
+fg_auto_start|เปิดวิดีโอลื่นไหลอัตโนมัติเมื่อเล่นวิดีโอ
+subs_auto_start|เริ่มคำบรรยายอัตโนมัติเมื่อเล่นวิดีโอ
+auto_start_hint|ในเบราว์เซอร์นี้ ใช้ได้เฉพาะในแท็บที่คุณคลิกปุ่มของส่วนขยายแล้ว จนกว่าแท็บนั้นจะไปยังเว็บไซต์อื่น
+fg_allow_all_sites|อนุญาตในทุกเว็บไซต์
+extName|StreamRemaster
 extDescription|คำบรรยายสดสำหรับทุกแท็บ ถอดความและแปลโดยเซิร์ฟเวอร์ Whisper ของคุณเอง
 start|เปิดคำบรรยาย
 stop|ปิดคำบรรยาย
@@ -1630,7 +2038,7 @@ settings|การตั้งค่า
 first_load_hint|การโหลดโมเดลครั้งแรกอาจใช้เวลาถึงหนึ่งนาที
 options_locked|ปิดคำบรรยายก่อนจึงจะเปลี่ยนตัวเลือกเหล่านี้ได้
 server_setup_title|เชื่อมต่อเซิร์ฟเวอร์ของคุณ
-server_setup_hint|Stream Transcription ต้องใช้เซิร์ฟเวอร์ WhisperLive ที่ทำงานบนคอมพิวเตอร์หรือในเครือข่ายของคุณ
+server_setup_hint|StreamRemaster ต้องใช้เซิร์ฟเวอร์ WhisperLive ที่ทำงานบนคอมพิวเตอร์หรือในเครือข่ายของคุณ
 server_address|ที่อยู่เซิร์ฟเวอร์
 server_placeholder|เช่น localhost:9090 หรือ 192.168.1.10:9090
 connect|เชื่อมต่อ
@@ -1645,7 +2053,7 @@ server_change|เปลี่ยน
 server_help|จะตั้งเซิร์ฟเวอร์อย่างไร
 server_help_1|คุณต้องมีเซิร์ฟเวอร์ WhisperLive (ฟรีและโอเพนซอร์ส) บนคอมพิวเตอร์ ถ้ามีการ์ดจอ NVIDIA จะดีที่สุด โมเดลเล็กใช้แค่ซีพียูก็ได้
 server_help_2|จากนั้นพิมพ์ที่อยู่ของมันที่นี่: IP ของคอมพิวเตอร์และพอร์ต เช่น 192.168.1.10:9090 ถ้าอยู่บนคอมพิวเตอร์เครื่องนี้ ให้ใช้ localhost:9090
-server_help_3|หากต้องการดาวน์โหลดและจัดการโมเดลจากหน้านี้ ให้ติดตั้งส่วนเสริม Stream Transcription บนเซิร์ฟเวอร์
+server_help_3|หากต้องการดาวน์โหลดและจัดการโมเดลจากหน้านี้ ให้ติดตั้งส่วนเสริม StreamRemaster บนเซิร์ฟเวอร์
 server_help_guide|คู่มือทีละขั้นตอน
 error_capture|จับภาพแท็บนี้ไม่ได้ (หน้าของเบราว์เซอร์ ร้านส่วนขยาย และ PDF ใช้ไม่ได้)
 error_no_media|หน้านี้ไม่มีวิดีโอหรือเสียง
@@ -1656,7 +2064,7 @@ warn_no_response|⚠ คำบรรยายหยุดมาทั้งท�
 warn_slow_load|⚠ โมเดลโหลดนานเกินไป อาจใส่ไม่พอในหน่วยความจำกราฟิก (VRAM) ของเซิร์ฟเวอร์ เลือกโมเดลที่เล็กลง หรือเปิด “ประหยัดหน่วยความจำ (int8)” ในขั้นสูง
 error_reload|โหลดหน้าใหม่ (F5) แล้วเริ่มอีกครั้ง
 error_no_server|ตั้งค่าเซิร์ฟเวอร์ก่อน
-settings_title|Stream Transcription · การตั้งค่า
+settings_title|StreamRemaster · การตั้งค่า
 section_server|เซิร์ฟเวอร์
 section_models|โมเดล
 section_subtitles|คำบรรยาย
@@ -1685,14 +2093,14 @@ job_extracting|กำลังแตกไฟล์…
 job_ready|ติดตั้งแล้ว
 job_error|ล้มเหลว: {0}
 retry|ลองอีกครั้ง
-plain_server_hint|นี่คือเซิร์ฟเวอร์ WhisperLive มาตรฐาน: พิมพ์ขนาดโมเดล (tiny, base, small, medium, large-v3, large-v3-turbo) แล้วเซิร์ฟเวอร์จะดาวน์โหลดในครั้งแรก หากต้องการดาวน์โหลดโมเดลใดก็ได้จากที่นี่ ให้ติดตั้งส่วนเสริม Stream Transcription บนเซิร์ฟเวอร์
+plain_server_hint|นี่คือเซิร์ฟเวอร์ WhisperLive มาตรฐาน: พิมพ์ขนาดโมเดล (tiny, base, small, medium, large-v3, large-v3-turbo) แล้วเซิร์ฟเวอร์จะดาวน์โหลดในครั้งแรก หากต้องการดาวน์โหลดโมเดลใดก็ได้จากที่นี่ ให้ติดตั้งส่วนเสริม StreamRemaster บนเซิร์ฟเวอร์
 model_name|ชื่อโมเดล
 save|บันทึก
 saved|บันทึกแล้ว
 reset_position|รีเซ็ตตำแหน่งคำบรรยาย
 position_reset_done|เรียบร้อย: จะกลับไปอยู่ด้านล่าง
 section_performance|ประสิทธิภาพ
-performance_hint|หากการ์ดจอของเซิร์ฟเวอร์หน่วยความจำไม่พอ (คำบรรยายไม่มาหรือมีคำเตือนเรื่องหน่วยความจำ) สองตัวเลือกนี้ช่วยคืนพื้นที่ได้มาก ใช้ได้กับเซิร์ฟเวอร์ Stream Transcription เท่านั้น
+performance_hint|หากการ์ดจอของเซิร์ฟเวอร์หน่วยความจำไม่พอ (คำบรรยายไม่มาหรือมีคำเตือนเรื่องหน่วยความจำ) สองตัวเลือกนี้ช่วยคืนพื้นที่ได้มาก ใช้ได้กับเซิร์ฟเวอร์ StreamRemaster เท่านั้น
 precision|ความแม่นยำของโมเดล
 precision_auto|อัตโนมัติ
 precision_int8|ประหยัดหน่วยความจำ (int8)
@@ -1736,7 +2144,7 @@ update_latest|คุณใช้เวอร์ชันล่าสุดแล
 update_rate_limited|GitHub จำกัดการตรวจสอบชั่วคราว ลองใหม่ภายหลัง
 update_failed|ตรวจหาการอัปเดตไม่ได้ ตรวจสอบการเชื่อมต่อแล้วลองใหม่
 update_how_firefox|Firefox ติดตั้งเวอร์ชันใหม่ให้เอง หากต้องการทันที ให้เปิด about:addons คลิกไอคอนเฟือง แล้วเลือก “ตรวจสอบการอัปเดต” เวอร์ชันที่เพิ่งออกอาจใช้เวลาสองสามวันกว่าจะขึ้นบนเว็บไซต์ส่วนเสริม
-update_how_chromium|วิธีอัปเดต: ดาวน์โหลดไฟล์ zip สำหรับ Chromium จากหน้าของเวอร์ชัน แตกไฟล์ทับโฟลเดอร์เดิม แล้วกดไอคอนโหลดใหม่บนการ์ด Stream Transcription ใน chrome://extensions การตั้งค่าของคุณจะยังอยู่
+update_how_chromium|วิธีอัปเดต: ดาวน์โหลดไฟล์ zip สำหรับ Chromium จากหน้าของเวอร์ชัน แตกไฟล์ทับโฟลเดอร์เดิม แล้วกดไอคอนโหลดใหม่บนการ์ด StreamRemaster ใน chrome://extensions การตั้งค่าของคุณจะยังอยู่
 update_privacy|การตรวจสอบจะถาม GitHub เพียงหมายเลขเวอร์ชันล่าสุด ไม่มีการส่งข้อมูลอื่นใด
 server_update_available|เซิร์ฟเวอร์ของคุณเป็นเวอร์ชัน {0} และมีเวอร์ชัน {1} แล้ว หากต้องการอัปเดต ให้รันคำสั่งนี้บนคอมพิวเตอร์ที่เซิร์ฟเวอร์ทำงานอยู่:
 server_version_unknown|เซิร์ฟเวอร์ของคุณไม่ได้บอกเวอร์ชัน จึงเก่ากว่าการตรวจสอบนี้ หากต้องการอัปเดต ให้รันคำสั่งนี้บนคอมพิวเตอร์ที่เซิร์ฟเวอร์ทำงานอยู่:
@@ -1745,7 +2153,41 @@ server_update_note|โมเดลยังอยู่ในวอลุ่ม�
 """
 
 LANGS['hi'] = """
-extName|Stream Transcription
+fg_sharpen|शार्पनेस
+fg_sharpen_off|बंद
+fg_sharpen_soft|हल्की
+fg_sharpen_medium|मध्यम
+fg_sharpen_strong|तेज़
+fg_resolution|अपस्केलिंग का लक्ष्य रिज़ॉल्यूशन
+fg_res_original|मूल (बिना अपस्केलिंग)
+fg_model|AI मॉडल
+fg_kind_sr|अपस्केलिंग
+fg_kind_fi|बीच के फ़्रेम
+fg_builtin|अंतर्निहित
+fg_model_none|कोई नहीं (AI के बिना)
+section_fgmodels|स्मूद वीडियो मॉडल
+fg_models_hint|मॉडल फ़ाइल (.stmodel, .srmodel, .fimodel) डाउनलोड करें और उसे यहाँ जोड़ें। यह आपके अपने ग्राफ़िक्स कार्ड पर चलता है।
+fg_add_model|मॉडल फ़ाइल जोड़ें
+fg_no_models|अभी तक कोई मॉडल नहीं जोड़ा गया।
+fg_model_bad|यह फ़ाइल मान्य मॉडल नहीं है।
+tab_subs|उपशीर्षक
+tab_fg|स्मूद वीडियो
+fg_start|स्मूद वीडियो चालू करें
+fg_stop|स्मूद वीडियो बंद करें
+fg_target|लक्ष्य फ़्रेम दर
+fg_target_display|स्क्रीन के अनुसार
+fg_state_off|बंद
+fg_state_measuring|वीडियो माप रहे हैं…
+fg_state_on|{0} fps (वीडियो {1} fps)
+fg_no_video|इस पेज पर कोई वीडियो नहीं चल रहा है।
+fg_no_webgpu|यह ब्राउज़र इसके लिए GPU का उपयोग नहीं कर सकता (WebGPU उपलब्ध नहीं है)।
+fg_cannot_read|यह वीडियो पढ़ा नहीं जा सकता: यह सुरक्षित है या किसी अन्य साइट से है।
+fg_unavailable|यह पेज एक्सटेंशन की अनुमति नहीं देता।
+fg_auto_start|वीडियो चलने पर स्मूद वीडियो अपने आप चालू करें
+subs_auto_start|वीडियो चलने पर उपशीर्षक अपने आप शुरू करें
+auto_start_hint|इस ब्राउज़र में यह केवल उन टैब में काम करता है जिनमें आपने एक्सटेंशन का बटन क्लिक किया है, जब तक वे किसी दूसरी साइट पर नहीं जाते।
+fg_allow_all_sites|सभी साइटों पर अनुमति दें
+extName|StreamRemaster
 extDescription|किसी भी टैब के लिए लाइव सबटाइटल, जिन्हें आपका अपना Whisper सर्वर लिखता और अनुवाद करता है।
 start|सबटाइटल चालू करें
 stop|सबटाइटल बंद करें
@@ -1775,7 +2217,7 @@ settings|सेटिंग
 first_load_hint|पहली बार मॉडल लोड होने में एक मिनट तक लग सकता है।
 options_locked|ये विकल्प बदलने के लिए सबटाइटल बंद करें।
 server_setup_title|अपना सर्वर कनेक्ट करें
-server_setup_hint|Stream Transcription को आपके कंप्यूटर या नेटवर्क पर चलता WhisperLive सर्वर चाहिए।
+server_setup_hint|StreamRemaster को आपके कंप्यूटर या नेटवर्क पर चलता WhisperLive सर्वर चाहिए।
 server_address|सर्वर का पता
 server_placeholder|जैसे localhost:9090 या 192.168.1.10:9090
 connect|कनेक्ट करें
@@ -1790,7 +2232,7 @@ server_change|बदलें
 server_help|सर्वर कैसे सेट करें?
 server_help_1|आपको किसी कंप्यूटर पर WhisperLive सर्वर (मुफ़्त और ओपन सोर्स) चलाना होगा, अच्छा हो कि NVIDIA ग्राफ़िक्स कार्ड हो। छोटे मॉडल सिर्फ़ प्रोसेसर पर भी चलते हैं।
 server_help_2|फिर उसका पता यहाँ लिखें: कंप्यूटर का IP और पोर्ट, जैसे 192.168.1.10:9090। अगर इसी कंप्यूटर पर है, तो localhost:9090।
-server_help_3|इस पेज से मॉडल डाउनलोड और प्रबंधित करने के लिए सर्वर में Stream Transcription ऐड-ऑन जोड़ें।
+server_help_3|इस पेज से मॉडल डाउनलोड और प्रबंधित करने के लिए सर्वर में StreamRemaster ऐड-ऑन जोड़ें।
 server_help_guide|क़दम-दर-क़दम गाइड
 error_capture|यह टैब कैप्चर नहीं हो सकता (ब्राउज़र के पेज, एक्सटेंशन स्टोर और PDF की अनुमति नहीं)।
 error_no_media|इस पेज पर न वीडियो है न ऑडियो।
@@ -1801,7 +2243,7 @@ warn_no_response|⚠ आवाज़ होते हुए भी सबटा�
 warn_slow_load|⚠ मॉडल लोड होने में बहुत देर लग रही है। शायद वह सर्वर की ग्राफ़िक्स मेमोरी (VRAM) में नहीं समाता: छोटा मॉडल चुनें या उन्नत में “मेमोरी बचाएँ (int8)” चालू करें।
 error_reload|पेज फिर से लोड करें (F5) और दोबारा शुरू करें।
 error_no_server|पहले सर्वर सेट करें।
-settings_title|Stream Transcription · सेटिंग
+settings_title|StreamRemaster · सेटिंग
 section_server|सर्वर
 section_models|मॉडल
 section_subtitles|सबटाइटल
@@ -1830,14 +2272,14 @@ job_extracting|खोला जा रहा है…
 job_ready|इंस्टॉल हो गया
 job_error|विफल: {0}
 retry|फिर कोशिश करें
-plain_server_hint|यह सामान्य WhisperLive सर्वर है: मॉडल का आकार लिखें (tiny, base, small, medium, large-v3, large-v3-turbo) और सर्वर पहली बार उसे डाउनलोड कर लेगा। यहाँ से कोई भी मॉडल डाउनलोड करने के लिए सर्वर पर Stream Transcription ऐड-ऑन इंस्टॉल करें।
+plain_server_hint|यह सामान्य WhisperLive सर्वर है: मॉडल का आकार लिखें (tiny, base, small, medium, large-v3, large-v3-turbo) और सर्वर पहली बार उसे डाउनलोड कर लेगा। यहाँ से कोई भी मॉडल डाउनलोड करने के लिए सर्वर पर StreamRemaster ऐड-ऑन इंस्टॉल करें।
 model_name|मॉडल का नाम
 save|सेव करें
 saved|सेव हो गया
 reset_position|सबटाइटल की जगह रीसेट करें
 position_reset_done|हो गया: वे फिर नीचे आ जाएँगे।
 section_performance|प्रदर्शन
-performance_hint|अगर सर्वर के ग्राफ़िक्स कार्ड की मेमोरी कम पड़ जाए (सबटाइटल न आएँ या मेमोरी की चेतावनी दिखे), तो ये दो विकल्प काफ़ी मेमोरी खाली करते हैं। ये सिर्फ़ Stream Transcription सर्वर के साथ काम करते हैं।
+performance_hint|अगर सर्वर के ग्राफ़िक्स कार्ड की मेमोरी कम पड़ जाए (सबटाइटल न आएँ या मेमोरी की चेतावनी दिखे), तो ये दो विकल्प काफ़ी मेमोरी खाली करते हैं। ये सिर्फ़ StreamRemaster सर्वर के साथ काम करते हैं।
 precision|मॉडल की सटीकता
 precision_auto|अपने-आप
 precision_int8|मेमोरी बचाएँ (int8)
@@ -1881,7 +2323,7 @@ update_latest|आपके पास नवीनतम संस्करण �
 update_rate_limited|GitHub कुछ समय के लिए जाँच सीमित कर रहा है। बाद में फिर कोशिश करें।
 update_failed|अपडेट की जाँच नहीं हो सकी। कनेक्शन जाँचें और फिर कोशिश करें।
 update_how_firefox|Firefox नए संस्करण अपने आप इंस्टॉल करता है। अभी पाने के लिए about:addons खोलें, गियर आइकन पर क्लिक करें और “अपडेट के लिए जाँचें” चुनें। अभी-अभी आया संस्करण ऐड-ऑन साइट पर पहुँचने में कुछ दिन ले सकता है।
-update_how_chromium|अपडेट करने के लिए संस्करण के पेज से Chromium वाली zip डाउनलोड करें, उसे पुराने फ़ोल्डर के ऊपर अनज़िप करें और chrome://extensions में Stream Transcription के कार्ड पर रीलोड आइकन दबाएँ। आपकी सेटिंग्स बनी रहती हैं।
+update_how_chromium|अपडेट करने के लिए संस्करण के पेज से Chromium वाली zip डाउनलोड करें, उसे पुराने फ़ोल्डर के ऊपर अनज़िप करें और chrome://extensions में StreamRemaster के कार्ड पर रीलोड आइकन दबाएँ। आपकी सेटिंग्स बनी रहती हैं।
 update_privacy|जाँच में GitHub से सिर्फ़ नवीनतम संस्करण का नंबर पूछा जाता है; और कुछ नहीं भेजा जाता।
 server_update_available|आपके सर्वर पर संस्करण {0} है और {1} उपलब्ध है। अपडेट करने के लिए, जिस कंप्यूटर पर सर्वर चलता है वहाँ यह चलाएँ:
 server_version_unknown|आपका सर्वर अपना संस्करण नहीं बताता, यानी वह इस जाँच से पुराना है। अपडेट करने के लिए, जिस कंप्यूटर पर सर्वर चलता है वहाँ यह चलाएँ:

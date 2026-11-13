@@ -1,6 +1,108 @@
 {
+  "fg_resolution": {
+    "message": "Resolución objetivo del reescalado"
+  },
+  "fg_res_original": {
+    "message": "Original (sin reescalar)"
+  },
+  "fg_model": {
+    "message": "Modelo de IA"
+  },
+  "fg_kind_sr": {
+    "message": "Reescalado"
+  },
+  "fg_kind_fi": {
+    "message": "Fotogramas intermedios"
+  },
+  "fg_builtin": {
+    "message": "Incluido"
+  },
+  "fg_model_none": {
+    "message": "Ninguno (sin IA)"
+  },
+  "fg_sharpen": {
+    "message": "Nitidez"
+  },
+  "fg_sharpen_off": {
+    "message": "Desactivada"
+  },
+  "fg_sharpen_soft": {
+    "message": "Suave"
+  },
+  "fg_sharpen_medium": {
+    "message": "Media"
+  },
+  "fg_sharpen_strong": {
+    "message": "Fuerte"
+  },
+  "section_fgmodels": {
+    "message": "Modelos de vídeo fluido"
+  },
+  "fg_models_hint": {
+    "message": "Descarga un archivo de modelo (.stmodel, .srmodel, .fimodel) y añádelo aquí. Funciona en tu propia tarjeta gráfica."
+  },
+  "fg_add_model": {
+    "message": "Añadir archivo de modelo"
+  },
+  "fg_no_models": {
+    "message": "Todavía no has añadido ningún modelo."
+  },
+  "fg_model_bad": {
+    "message": "Ese archivo no es un modelo válido."
+  },
+  "tab_subs": {
+    "message": "Subtítulos"
+  },
+  "tab_fg": {
+    "message": "Vídeo fluido"
+  },
+  "fg_start": {
+    "message": "Activar vídeo fluido"
+  },
+  "fg_stop": {
+    "message": "Quitar vídeo fluido"
+  },
+  "fg_target": {
+    "message": "FPS objetivo"
+  },
+  "fg_target_display": {
+    "message": "Igual que la pantalla"
+  },
+  "fg_state_off": {
+    "message": "Apagado"
+  },
+  "fg_state_measuring": {
+    "message": "Midiendo el vídeo…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (vídeo a {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "No hay ningún vídeo reproduciéndose en esta página."
+  },
+  "fg_no_webgpu": {
+    "message": "Este navegador no puede usar la GPU para esto (no tiene WebGPU)."
+  },
+  "fg_cannot_read": {
+    "message": "Este vídeo no se puede leer: está protegido o viene de otro sitio."
+  },
+  "fg_unavailable": {
+    "message": "Esta página no admite extensiones."
+  },
+  "fg_auto_start": {
+    "message": "Activar el vídeo fluido al reproducirse un vídeo"
+  },
+  "subs_auto_start": {
+    "message": "Iniciar los subtítulos al reproducirse un vídeo"
+  },
+  "auto_start_hint": {
+    "message": "En este navegador solo funciona en las pestañas en las que hayas pulsado el botón de la extensión, hasta que pasen a otro sitio web."
+  },
+  "fg_allow_all_sites": {
+    "message": "Permitir en todos los sitios web"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Subtítulos en directo para cualquier pestaña, transcritos y traducidos por tu propio servidor Whisper."
@@ -90,7 +192,7 @@
     "message": "Conecta tu servidor"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription necesita un servidor WhisperLive en tu ordenador o en tu red."
+    "message": "StreamRemaster necesita un servidor WhisperLive en tu ordenador o en tu red."
   },
   "server_address": {
     "message": "Dirección del servidor"
@@ -135,7 +237,7 @@
     "message": "Luego escribe aquí su dirección: la IP del ordenador y el puerto, p. ej. 192.168.1.10:9090. Si está en este mismo ordenador, localhost:9090."
   },
   "server_help_3": {
-    "message": "Para descargar y gestionar modelos desde esta página, añade al servidor el complemento de Stream Transcription."
+    "message": "Para descargar y gestionar modelos desde esta página, añade al servidor el complemento de StreamRemaster."
   },
   "server_help_guide": {
     "message": "Guía paso a paso"
@@ -168,7 +270,7 @@
     "message": "Primero configura el servidor."
   },
   "settings_title": {
-    "message": "Stream Transcription · Ajustes"
+    "message": "StreamRemaster · Ajustes"
   },
   "section_server": {
     "message": "Servidor"
@@ -255,7 +357,7 @@
     "message": "Reintentar"
   },
   "plain_server_hint": {
-    "message": "Es un servidor WhisperLive estándar: escribe un tamaño de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) y el servidor lo descarga la primera vez. Para descargar cualquier modelo desde aquí, instala el complemento de Stream Transcription en el servidor."
+    "message": "Es un servidor WhisperLive estándar: escribe un tamaño de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) y el servidor lo descarga la primera vez. Para descargar cualquier modelo desde aquí, instala el complemento de StreamRemaster en el servidor."
   },
   "model_name": {
     "message": "Nombre del modelo"
@@ -276,7 +378,7 @@
     "message": "Rendimiento"
   },
   "performance_hint": {
-    "message": "Si la tarjeta gráfica del servidor se queda sin memoria (los subtítulos no llegan o sale un aviso de memoria), estas dos opciones liberan bastante. Solo funcionan con el servidor de Stream Transcription."
+    "message": "Si la tarjeta gráfica del servidor se queda sin memoria (los subtítulos no llegan o sale un aviso de memoria), estas dos opciones liberan bastante. Solo funcionan con el servidor de StreamRemaster."
   },
   "precision": {
     "message": "Precisión del modelo"
@@ -348,7 +450,7 @@
     "message": "Firefox instala solo las versiones nuevas. Para tenerla ya, abre about:addons, pulsa el icono del engranaje y elige «Buscar actualizaciones». Una versión recién salida puede tardar unos días en llegar a la web de complementos."
   },
   "update_how_chromium": {
-    "message": "Para actualizar, descarga el zip de Chromium de la página de la versión, descomprímelo encima de la carpeta antigua y pulsa el icono de recargar en la tarjeta de Stream Transcription de chrome://extensions. Los ajustes se conservan."
+    "message": "Para actualizar, descarga el zip de Chromium de la página de la versión, descomprímelo encima de la carpeta antigua y pulsa el icono de recargar en la tarjeta de StreamRemaster de chrome://extensions. Los ajustes se conservan."
   },
   "update_privacy": {
     "message": "Al buscar, solo se pregunta a GitHub el número de la última versión; no se envía nada más."

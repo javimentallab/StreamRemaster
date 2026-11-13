@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "ความคมชัด"
+  },
+  "fg_sharpen_off": {
+    "message": "ปิด"
+  },
+  "fg_sharpen_soft": {
+    "message": "เบา"
+  },
+  "fg_sharpen_medium": {
+    "message": "ปานกลาง"
+  },
+  "fg_sharpen_strong": {
+    "message": "แรง"
+  },
+  "fg_resolution": {
+    "message": "ความละเอียดเป้าหมายของการขยายภาพ"
+  },
+  "fg_res_original": {
+    "message": "ต้นฉบับ (ไม่ขยายภาพ)"
+  },
+  "fg_model": {
+    "message": "โมเดล AI"
+  },
+  "fg_kind_sr": {
+    "message": "ขยายภาพ"
+  },
+  "fg_kind_fi": {
+    "message": "เฟรมแทรก"
+  },
+  "fg_builtin": {
+    "message": "ในตัว"
+  },
+  "fg_model_none": {
+    "message": "ไม่มี (ไม่ใช้ AI)"
+  },
+  "section_fgmodels": {
+    "message": "โมเดลวิดีโอลื่นไหล"
+  },
+  "fg_models_hint": {
+    "message": "ดาวน์โหลดไฟล์โมเดล (.stmodel, .srmodel, .fimodel) แล้วเพิ่มที่นี่ โมเดลจะทำงานบนการ์ดจอของคุณ"
+  },
+  "fg_add_model": {
+    "message": "เพิ่มไฟล์โมเดล"
+  },
+  "fg_no_models": {
+    "message": "ยังไม่ได้เพิ่มโมเดล"
+  },
+  "fg_model_bad": {
+    "message": "ไฟล์นี้ไม่ใช่โมเดลที่ถูกต้อง"
+  },
+  "tab_subs": {
+    "message": "คำบรรยาย"
+  },
+  "tab_fg": {
+    "message": "วิดีโอลื่นไหล"
+  },
+  "fg_start": {
+    "message": "เปิดวิดีโอลื่นไหล"
+  },
+  "fg_stop": {
+    "message": "ปิดวิดีโอลื่นไหล"
+  },
+  "fg_target": {
+    "message": "อัตราเฟรมเป้าหมาย"
+  },
+  "fg_target_display": {
+    "message": "เท่ากับหน้าจอ"
+  },
+  "fg_state_off": {
+    "message": "ปิด"
+  },
+  "fg_state_measuring": {
+    "message": "กำลังวัดวิดีโอ…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (วิดีโอ {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "ไม่มีวิดีโอที่กำลังเล่นในหน้านี้"
+  },
+  "fg_no_webgpu": {
+    "message": "เบราว์เซอร์นี้ใช้ GPU สำหรับงานนี้ไม่ได้ (ไม่มี WebGPU)"
+  },
+  "fg_cannot_read": {
+    "message": "อ่านวิดีโอนี้ไม่ได้: วิดีโอได้รับการป้องกันหรือมาจากเว็บไซต์อื่น"
+  },
+  "fg_unavailable": {
+    "message": "หน้านี้ไม่อนุญาตให้ใช้ส่วนขยาย"
+  },
+  "fg_auto_start": {
+    "message": "เปิดวิดีโอลื่นไหลอัตโนมัติเมื่อเล่นวิดีโอ"
+  },
+  "subs_auto_start": {
+    "message": "เริ่มคำบรรยายอัตโนมัติเมื่อเล่นวิดีโอ"
+  },
+  "auto_start_hint": {
+    "message": "ในเบราว์เซอร์นี้ ใช้ได้เฉพาะในแท็บที่คุณคลิกปุ่มของส่วนขยายแล้ว จนกว่าแท็บนั้นจะไปยังเว็บไซต์อื่น"
+  },
+  "fg_allow_all_sites": {
+    "message": "อนุญาตในทุกเว็บไซต์"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "คำบรรยายสดสำหรับทุกแท็บ ถอดความและแปลโดยเซิร์ฟเวอร์ Whisper ของคุณเอง"
@@ -90,7 +192,7 @@
     "message": "เชื่อมต่อเซิร์ฟเวอร์ของคุณ"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription ต้องใช้เซิร์ฟเวอร์ WhisperLive ที่ทำงานบนคอมพิวเตอร์หรือในเครือข่ายของคุณ"
+    "message": "StreamRemaster ต้องใช้เซิร์ฟเวอร์ WhisperLive ที่ทำงานบนคอมพิวเตอร์หรือในเครือข่ายของคุณ"
   },
   "server_address": {
     "message": "ที่อยู่เซิร์ฟเวอร์"
@@ -135,7 +237,7 @@
     "message": "จากนั้นพิมพ์ที่อยู่ของมันที่นี่: IP ของคอมพิวเตอร์และพอร์ต เช่น 192.168.1.10:9090 ถ้าอยู่บนคอมพิวเตอร์เครื่องนี้ ให้ใช้ localhost:9090"
   },
   "server_help_3": {
-    "message": "หากต้องการดาวน์โหลดและจัดการโมเดลจากหน้านี้ ให้ติดตั้งส่วนเสริม Stream Transcription บนเซิร์ฟเวอร์"
+    "message": "หากต้องการดาวน์โหลดและจัดการโมเดลจากหน้านี้ ให้ติดตั้งส่วนเสริม StreamRemaster บนเซิร์ฟเวอร์"
   },
   "server_help_guide": {
     "message": "คู่มือทีละขั้นตอน"
@@ -168,7 +270,7 @@
     "message": "ตั้งค่าเซิร์ฟเวอร์ก่อน"
   },
   "settings_title": {
-    "message": "Stream Transcription · การตั้งค่า"
+    "message": "StreamRemaster · การตั้งค่า"
   },
   "section_server": {
     "message": "เซิร์ฟเวอร์"
@@ -255,7 +357,7 @@
     "message": "ลองอีกครั้ง"
   },
   "plain_server_hint": {
-    "message": "นี่คือเซิร์ฟเวอร์ WhisperLive มาตรฐาน: พิมพ์ขนาดโมเดล (tiny, base, small, medium, large-v3, large-v3-turbo) แล้วเซิร์ฟเวอร์จะดาวน์โหลดในครั้งแรก หากต้องการดาวน์โหลดโมเดลใดก็ได้จากที่นี่ ให้ติดตั้งส่วนเสริม Stream Transcription บนเซิร์ฟเวอร์"
+    "message": "นี่คือเซิร์ฟเวอร์ WhisperLive มาตรฐาน: พิมพ์ขนาดโมเดล (tiny, base, small, medium, large-v3, large-v3-turbo) แล้วเซิร์ฟเวอร์จะดาวน์โหลดในครั้งแรก หากต้องการดาวน์โหลดโมเดลใดก็ได้จากที่นี่ ให้ติดตั้งส่วนเสริม StreamRemaster บนเซิร์ฟเวอร์"
   },
   "model_name": {
     "message": "ชื่อโมเดล"
@@ -276,7 +378,7 @@
     "message": "ประสิทธิภาพ"
   },
   "performance_hint": {
-    "message": "หากการ์ดจอของเซิร์ฟเวอร์หน่วยความจำไม่พอ (คำบรรยายไม่มาหรือมีคำเตือนเรื่องหน่วยความจำ) สองตัวเลือกนี้ช่วยคืนพื้นที่ได้มาก ใช้ได้กับเซิร์ฟเวอร์ Stream Transcription เท่านั้น"
+    "message": "หากการ์ดจอของเซิร์ฟเวอร์หน่วยความจำไม่พอ (คำบรรยายไม่มาหรือมีคำเตือนเรื่องหน่วยความจำ) สองตัวเลือกนี้ช่วยคืนพื้นที่ได้มาก ใช้ได้กับเซิร์ฟเวอร์ StreamRemaster เท่านั้น"
   },
   "precision": {
     "message": "ความแม่นยำของโมเดล"
@@ -408,7 +510,7 @@
     "message": "Firefox ติดตั้งเวอร์ชันใหม่ให้เอง หากต้องการทันที ให้เปิด about:addons คลิกไอคอนเฟือง แล้วเลือก “ตรวจสอบการอัปเดต” เวอร์ชันที่เพิ่งออกอาจใช้เวลาสองสามวันกว่าจะขึ้นบนเว็บไซต์ส่วนเสริม"
   },
   "update_how_chromium": {
-    "message": "วิธีอัปเดต: ดาวน์โหลดไฟล์ zip สำหรับ Chromium จากหน้าของเวอร์ชัน แตกไฟล์ทับโฟลเดอร์เดิม แล้วกดไอคอนโหลดใหม่บนการ์ด Stream Transcription ใน chrome://extensions การตั้งค่าของคุณจะยังอยู่"
+    "message": "วิธีอัปเดต: ดาวน์โหลดไฟล์ zip สำหรับ Chromium จากหน้าของเวอร์ชัน แตกไฟล์ทับโฟลเดอร์เดิม แล้วกดไอคอนโหลดใหม่บนการ์ด StreamRemaster ใน chrome://extensions การตั้งค่าของคุณจะยังอยู่"
   },
   "update_privacy": {
     "message": "การตรวจสอบจะถาม GitHub เพียงหมายเลขเวอร์ชันล่าสุด ไม่มีการส่งข้อมูลอื่นใด"

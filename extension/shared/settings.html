@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Stream Transcription</title>
+  <title>StreamRemaster</title>
   <link rel="icon" href="icons/icon32.png">
   <link rel="stylesheet" href="ui.css">
   <link rel="stylesheet" href="settings.css">
@@ -18,6 +18,7 @@
     <nav class="toc">
       <a href="#server" data-i18n="section_server"></a>
       <a href="#models" data-i18n="section_models"></a>
+      <a href="#fgmodels" data-i18n="section_fgmodels"></a>
       <a href="#subtitles" data-i18n="section_subtitles"></a>
       <a href="#performance" data-i18n="section_performance"></a>
       <a href="#interface" data-i18n="section_interface"></a>
@@ -89,6 +90,23 @@
       <p class="msg" id="modelsMsg" role="status"></p>
     </section>
 
+    <!-- Smooth video models -->
+    <section class="panel" id="fgmodels">
+      <h2 data-i18n="section_fgmodels"></h2>
+      <div class="field">
+        <label class="check"><input type="checkbox" id="fgAutoStart"><span data-i18n="fg_auto_start"></span></label>
+        <p class="hint" id="fgAutoHint" hidden><span data-i18n="auto_start_hint"></span> <a class="link small" id="fgAllowAll" href="#" data-i18n="fg_allow_all_sites"></a></p>
+      </div>
+      <p class="muted" data-i18n="fg_models_hint"></p>
+      <ul class="models" id="fgModelList"></ul>
+      <p class="muted" id="fgNoModels" data-i18n="fg_no_models" hidden></p>
+      <div class="row">
+        <input type="file" id="fgModelFile" accept=".stmodel,.srmodel,.fimodel" hidden>
+        <button class="btn" id="fgModelAdd" data-i18n="fg_add_model"></button>
+      </div>
+      <p class="msg" id="fgModelMsg" role="status"></p>
+    </section>
+
     <!-- Subtitles -->
     <section class="panel" id="subtitles">
       <h2 data-i18n="section_subtitles"></h2>
@@ -107,6 +125,10 @@
       </div>
       <label class="check"><input type="checkbox" id="saveSrt"><span data-i18n="save_srt"></span></label>
       <label class="check"><input type="checkbox" id="useVad"><span data-i18n="use_vad"></span></label>
+      <div class="field">
+        <label class="check"><input type="checkbox" id="subsAutoStart"><span data-i18n="subs_auto_start"></span></label>
+        <p class="hint auto-hint" data-i18n="auto_start_hint" hidden></p>
+      </div>
       <div class="row">
         <button class="btn ghost" id="resetPos" data-i18n="reset_position"></button>
         <span class="msg ok" id="resetMsg"></span>
@@ -187,6 +209,9 @@
 
   <script src="common.js"></script>
   <script src="i18n.js"></script>
+  <script src="framegen-sr.js"></script>
+  <script src="framegen-fi.js"></script>
+  <script src="framegen-model.js"></script>
   <script src="settings.js"></script>
 </body>
 </html>

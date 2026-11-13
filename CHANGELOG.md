@@ -1,6 +1,48 @@
 # Changelog
 
-All notable changes to Stream Transcription. Versions follow [semantic versioning](https://semver.org/).
+All notable changes to StreamRemaster, called Stream Transcription up to version 2.2.0. Versions follow [semantic versioning](https://semver.org/).
+
+<!-- TODO: date. -->
+## 1.0.0 — date to be decided
+
+### Added
+- **Start automatically**: two separate boxes, one in each tab of the popup and in Settings, turn on the
+  smooth video or the subtitles by themselves when a video starts playing on the page. Both are off by
+  default. If you stop either by hand, it stays off until the page reloads or you go to another page.
+  In Chromium browsers the subtitles can only start by themselves on tabs where you have pressed the
+  extension's button, because only then can the extension capture a tab. The smooth video can start on
+  any website if you allow it: the permission is asked for when you tick its box.
+- **Smooth video**, a new tab in the popup next to **Subtitles**. It raises the frame rate of the video on
+  the page up to your screen's by generating in-between frames with AI, and upscales it ×2 with AI. It
+  runs in the browser, on your own graphics card, through WebGPU: no server is needed for it. For Firefox,
+  Zen and Chromium browsers (tested in Brave).
+- The tab's controls: a large on/off button; **Target frame rate** (Match the screen, or 60, 75, 90, 100,
+  120, 144, 165, 180 or 240); **AI model**; and **Upscaling target resolution** (Original (no upscaling),
+  Match the screen, 1080p, 1440p or 4K). While it is on, a meter on the page shows the frame rate.
+- A built-in model, **StreamRemaster**: two small networks, one for upscaling and one for motion, trained
+  from scratch by the author, with no third-party weights. How it was made and on what data:
+  [docs/MODEL.md](docs/MODEL.md).
+- Settings → **Smooth video models**: add model files (`.stmodel`, and the older `.srmodel` and
+  `.fimodel`) and pick one. The built-in model is marked **Built-in** and cannot be deleted. **None** in
+  the **AI model** list uses a plain cross-fade and plain scaling instead. Model files contain weights
+  only, and the extension reads and checks them strictly before using them.
+- The interface in Catalan, Galician and Basque: 18 languages in all.
+
+### Changed
+- **New name: StreamRemaster.** Stream Transcription is now called StreamRemaster, and this is its first
+  version under the new name, so the numbering starts again at 1.0.0. The subtitles work as before.
+- Licence: from this version on, the code and the models are under the
+  [PolyForm Noncommercial License 1.0.0](LICENSE). Versions up to 2.2.0 remain under the MIT licence.
+- `NOTICE` credits the training data of the built-in model.
+
+### Fixed
+- Chromium browsers: fullscreen while the subtitles were capturing the tab stayed inside the tab. Now the
+  window goes fullscreen too, and it is restored afterwards.
+
+### Security
+- No new required permissions. Chromium browsers get one optional permission, to read all
+  websites, only asked for when you tick the box that starts the smooth video automatically.
+  <!-- TODO: say whether any vulnerability was fixed, as in 2.2.0 ("No vulnerabilities fixed in this release."). -->
 
 ## 2.2.0 — 2026-11-07
 

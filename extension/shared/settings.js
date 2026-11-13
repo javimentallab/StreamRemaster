@@ -15,15 +15,18 @@ async function init() {
   ST.i18n.apply();
   document.title = t("settings_title");
   settings = await ST.getSettings();
-  $("version").textContent = "Stream Transcription " + ext.runtime.getManifest().version;
+  $("version").textContent = "StreamRemaster " + ext.runtime.getManifest().version;
 
   initServer();
   initModels();
+  initFgModels();
   initSubtitles();
   initPerformance();
   initInterface();
   initUpdates();
   initToc();
+  // Chromium only lets the extension start things in the tabs where the user clicked its button.
+  for (const hint of document.querySelectorAll(".auto-hint")) hint.hidden = ST.isFirefox();
 
   if (settings.serverUrl) refreshModels();
   else showModelsMsg(t("error_no_server"), "warn");
@@ -328,6 +331,112 @@ function schedulePoll(active) {
   if (active) pollTimer = setTimeout(refreshModels, 2000);
 }
 
+// ------------------------------------------------------------------- smooth video models
+// The user downloads a model file and adds it here. It stays in the browser's own storage.
+
+function initFgModels() {
+  $("fgAutoStart").checked = !!settings.fgAutoStart;
+  // Ticking it asks Chromium for every site, straight from the click. Said no: it stays ticked and
+  // works where the user clicked the extension's button, as the note says.
+  $("fgAutoStart").addEventListener("change", async (e) => {
+    const asked = e.target.checked ? ST.askAllSites() : null;
+    settings = await ST.setSettings({ fgAutoStart: e.target.checked });
+    if (asked) asked.then(renderFgAutoHint);
+  });
+  $("fgAllowAll").addEventListener("click", (e) => {
+    e.preventDefault();
+    ST.askAllSites().then(renderFgAutoHint);
+  });
+  renderFgAutoHint();
+  $("fgModelAdd").addEventListener("click", () => $("fgModelFile").click());
+  $("fgModelFile").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (file) await addFgModel(file);
+  });
+  renderFgModels();
+}
+
+async function renderFgAutoHint() {
+  $("fgAutoHint").hidden = await ST.hasAllSites();
+}
+
+async function storedFgModels() {
+  const { fgModels } = await ext.storage.local.get("fgModels");
+  return fgModels || {};
+}
+
+// One choice for every kind of model file. Models added before there were kinds are upscalers.
+const fgKind = (model) => model.kind || "sr";
+const FG_KIND_BADGES = { sr: ["fg_kind_sr"], fi: ["fg_kind_fi"], st: ["fg_kind_sr", "fg_kind_fi"] };
+
+async function addFgModel(file) {
+  let model;
+  let buffer;
+  let kind;
+  try {
+    if (file.size > STFramegenModel.MAX_MODEL_BYTES) throw new Error("too big");
+    buffer = await file.arrayBuffer();
+    model = STFramegenModel.parse(buffer);
+    kind = model.kind;
+  } catch (error) {
+    setMsg($("fgModelMsg"), t("fg_model_bad"), "bad");
+    return;
+  }
+  const id = `${kind}-${model.name}-${file.size}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const models = await storedFgModels();
+  models[id] = { id, kind, name: model.name, size: file.size, data: ST.bufferToBase64(buffer) };
+  await ext.storage.local.set({ fgModels: models });
+  settings = await ST.setSettings({ fgModel: id });
+  setMsg($("fgModelMsg"), "");
+  renderFgModels();
+}
+
+async function renderFgModels() {
+  const models = Object.values(await storedFgModels());
+  const list = $("fgModelList");
+  list.textContent = "";
+  $("fgNoModels").hidden = models.length > 0;
+  models.forEach((model) => {
+    const item = document.createElement("li");
+    const selected = model.id === settings.fgModel;
+    item.className = "model" + (selected ? " selected" : "");
+    const details = document.createElement("div");
+    details.className = "info";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = model.name;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.append(document.createTextNode(ST.formatBytes(model.size)));
+    for (const key of FG_KIND_BADGES[fgKind(model)] || []) meta.append(badge(t(key), ""));
+    if (model.builtin) meta.append(badge(t("fg_builtin"), ""));
+    if (selected) meta.append(badge(t("badge_selected"), "accent"));
+    details.append(name, meta);
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    if (!selected) {
+      actions.append(button(t("use_model"), "btn ghost sm", async () => {
+        settings = await ST.setSettings({ fgModel: model.id });
+        renderFgModels();
+      }));
+    }
+    if (!model.builtin) actions.append(button(t("delete_model"), "btn danger sm", () => deleteFgModel(model)));
+    item.append(details, actions);
+    list.append(item);
+  });
+}
+
+async function deleteFgModel(model) {
+  if (model.builtin) return;
+  if (!confirm(t("confirm_delete", model.name, ST.formatBytes(model.size)))) return;
+  const models = await storedFgModels();
+  delete models[model.id];
+  await ext.storage.local.set({ fgModels: models });
+  if (settings.fgModel === model.id) settings = await ST.setSettings({ fgModel: "" });
+  renderFgModels();
+}
+
 // ----------------------------------------------------------------------------- subtitles
 
 function initSubtitles() {
@@ -342,6 +451,7 @@ function initSubtitles() {
   $("fontSize").value = settings.fontSize;
   $("saveSrt").checked = settings.saveSrt;
   $("useVad").checked = settings.useVad;
+  $("subsAutoStart").checked = !!settings.subsAutoStart;
   paint();
 
   $("lines").addEventListener("click", async (e) => {
@@ -354,6 +464,7 @@ function initSubtitles() {
   $("fontSize").addEventListener("change", async (e) => { settings = await ST.setSettings({ fontSize: Number(e.target.value) }); });
   $("saveSrt").addEventListener("change", async (e) => { settings = await ST.setSettings({ saveSrt: e.target.checked }); });
   $("useVad").addEventListener("change", async (e) => { settings = await ST.setSettings({ useVad: e.target.checked }); });
+  $("subsAutoStart").addEventListener("change", async (e) => { settings = await ST.setSettings({ subsAutoStart: e.target.checked }); });
   $("resetPos").addEventListener("click", async () => {
     await ext.storage.local.remove("overlayPos");
     $("resetMsg").textContent = t("position_reset_done");

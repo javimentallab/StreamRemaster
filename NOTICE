@@ -1,5 +1,6 @@
-Stream Transcription
+StreamRemaster (formerly Stream Transcription)
 Copyright (c) 2026 javimentallab
+Licensed under the PolyForm Noncommercial License 1.0.0 (see LICENSE).
 
 The server patches and parts of the extension are based on WhisperLive
 (https://github.com/collabora/WhisperLive), distributed under the following license:
@@ -49,6 +50,30 @@ Models the server downloads when you ask for them, not included either:
 - SMALL100 translator (alirezamsh/small100): MIT License,
   https://huggingface.co/alirezamsh/small100
 - Any other model you add from Hugging Face or a direct link stays under its own licence.
+
+Training data of the built-in model
+-----------------------------------
+The built-in smooth video model, StreamRemaster
+(extension/shared/models/streamremaster.stmodel), was trained from scratch by
+javimentallab. It contains no third-party weights and is under the PolyForm
+Noncommercial License 1.0.0, like the code. None of the data below is included in
+this repository or in the extension. More in docs/MODEL.md.
+
+- REDS dataset: Seungjun Nah, Sungyong Baik, Seokil Hong, Gyeongsik Moon, Sanghyun Son,
+  Radu Timofte and Kyoung Mu Lee, "NTIRE 2019 Challenge on Video Deblurring and
+  Super-Resolution: Dataset and Study", CVPR Workshops 2019.
+  https://seungjunnah.github.io/Datasets/reds.html
+  Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0),
+  https://creativecommons.org/licenses/by/4.0/
+  Changes: the 120 fps originals were used; to make the training inputs, the frames
+  were halved in resolution and compressed as JPEG.
+- Gameplay footage of Xonotic (https://xonotic.org), an open-source game, recorded at
+  120 fps by javimentallab. The inputs were made in the same way.
+- Synthetic stream overlays (fixed text, scrolling chat, a camera box, logos) drawn with
+  the DejaVu and Liberation fonts and made-up text. The fonts were used only to make
+  training images and are not included.
+
+No Twitch footage and no footage of commercial games was used.
 
 Development only (tools/requirements.txt, not part of the extension or the server):
 Pillow (MIT-CMU), to draw the icons.

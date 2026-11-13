@@ -10,8 +10,44 @@ import re
 import os
 
 M = {
+    # --- frame generation tab ---------------------------------------------------------
+    'fg_resolution': ('Upscaling target resolution', 'Resolución objetivo del reescalado'),
+    'fg_res_original': ('Original (no upscaling)', 'Original (sin reescalar)'),
+    'fg_model': ('AI model', 'Modelo de IA'),
+    'fg_kind_sr': ('Upscaling', 'Reescalado'),
+    'fg_kind_fi': ('In-between frames', 'Fotogramas intermedios'),
+    'fg_builtin': ('Built-in', 'Incluido'),
+    'fg_model_none': ('None (no AI)', 'Ninguno (sin IA)'),
+    'fg_sharpen': ('Sharpness', 'Nitidez'),
+    'fg_sharpen_off': ('Off', 'Desactivada'),
+    'fg_sharpen_soft': ('Soft', 'Suave'),
+    'fg_sharpen_medium': ('Medium', 'Media'),
+    'fg_sharpen_strong': ('Strong', 'Fuerte'),
+    'section_fgmodels': ('Smooth video models', 'Modelos de vídeo fluido'),
+    'fg_models_hint': ('Download a model file (.stmodel, .srmodel, .fimodel) and add it here. It runs on your own graphics card.', 'Descarga un archivo de modelo (.stmodel, .srmodel, .fimodel) y añádelo aquí. Funciona en tu propia tarjeta gráfica.'),
+    'fg_add_model': ('Add model file', 'Añadir archivo de modelo'),
+    'fg_no_models': ('No models added yet.', 'Todavía no has añadido ningún modelo.'),
+    'fg_model_bad': ('That file is not a valid model.', 'Ese archivo no es un modelo válido.'),
+    "tab_subs": ("Subtitles", "Subtítulos"),
+    "tab_fg": ("Smooth video", "Vídeo fluido"),
+    "fg_start": ("Turn on smooth video", "Activar vídeo fluido"),
+    "fg_stop": ("Turn off smooth video", "Quitar vídeo fluido"),
+    "fg_target": ("Target frame rate", "FPS objetivo"),
+    "fg_target_display": ("Match the screen", "Igual que la pantalla"),
+    "fg_state_off": ("Off", "Apagado"),
+    "fg_state_measuring": ("Measuring the video…", "Midiendo el vídeo…"),
+    "fg_state_on": ("{0} fps (video at {1} fps)", "{0} fps (vídeo a {1} fps)"),
+    "fg_no_video": ("There is no video playing on this page.", "No hay ningún vídeo reproduciéndose en esta página."),
+    "fg_no_webgpu": ("This browser cannot use the GPU for this (WebGPU is not available).", "Este navegador no puede usar la GPU para esto (no tiene WebGPU)."),
+    "fg_cannot_read": ("This video cannot be read: it is protected or comes from another site.", "Este vídeo no se puede leer: está protegido o viene de otro sitio."),
+    "fg_unavailable": ("This page does not allow extensions.", "Esta página no admite extensiones."),
+    "fg_auto_start": ("Turn on smooth video when a video plays", "Activar el vídeo fluido al reproducirse un vídeo"),
+    "subs_auto_start": ("Start the subtitles when a video plays", "Iniciar los subtítulos al reproducirse un vídeo"),
+    "auto_start_hint": ("In this browser it only works on tabs where you have clicked the extension's button, until they go to another site.", "En este navegador solo funciona en las pestañas en las que hayas pulsado el botón de la extensión, hasta que pasen a otro sitio web."),
+    "fg_allow_all_sites": ("Allow on all sites", "Permitir en todos los sitios web"),
+
     # --- manifest --------------------------------------------------------------------
-    "extName": ("Stream Transcription", "Stream Transcription"),
+    "extName": ("StreamRemaster", "StreamRemaster"),
     "extDescription": (
         "Live subtitles for any tab, transcribed and translated by your own Whisper server.",
         "Subtítulos en directo para cualquier pestaña, transcritos y traducidos por tu propio servidor Whisper."),
@@ -50,8 +86,8 @@ M = {
     # --- server ----------------------------------------------------------------------
     "server_setup_title": ("Connect your server", "Conecta tu servidor"),
     "server_setup_hint": (
-        "Stream Transcription needs a WhisperLive server running on your computer or on your network.",
-        "Stream Transcription necesita un servidor WhisperLive en tu ordenador o en tu red."),
+        "StreamRemaster needs a WhisperLive server running on your computer or on your network.",
+        "StreamRemaster necesita un servidor WhisperLive en tu ordenador o en tu red."),
     "server_address": ("Server address", "Dirección del servidor"),
     "server_placeholder": ("e.g. localhost:9090 or 192.168.1.10:9090", "p. ej. localhost:9090 o 192.168.1.10:9090"),
     "connect": ("Connect", "Conectar"),
@@ -79,8 +115,8 @@ M = {
         "Luego escribe aquí su dirección: la IP del ordenador y el puerto, p. ej. 192.168.1.10:9090. Si está en "
         "este mismo ordenador, localhost:9090."),
     "server_help_3": (
-        "To download and manage models from this page, add the Stream Transcription add-on to the server.",
-        "Para descargar y gestionar modelos desde esta página, añade al servidor el complemento de Stream Transcription."),
+        "To download and manage models from this page, add the StreamRemaster add-on to the server.",
+        "Para descargar y gestionar modelos desde esta página, añade al servidor el complemento de StreamRemaster."),
     "server_help_guide": ("Step-by-step guide", "Guía paso a paso"),
 
     # --- capture errors --------------------------------------------------------------
@@ -109,7 +145,7 @@ M = {
     "error_no_server": ("Set up the server first.", "Primero configura el servidor."),
 
     # --- settings page ---------------------------------------------------------------
-    "settings_title": ("Stream Transcription · Settings", "Stream Transcription · Ajustes"),
+    "settings_title": ("StreamRemaster · Settings", "StreamRemaster · Ajustes"),
     "section_server": ("Server", "Servidor"),
     "section_models": ("Models", "Modelos"),
     "section_subtitles": ("Subtitles", "Subtítulos"),
@@ -151,10 +187,10 @@ M = {
     "plain_server_hint": (
         "This is a standard WhisperLive server: type a model size (tiny, base, small, medium, large-v3, "
         "large-v3-turbo) and the server downloads it the first time. To download any model from here, install "
-        "the Stream Transcription add-on on the server.",
+        "the StreamRemaster add-on on the server.",
         "Es un servidor WhisperLive estándar: escribe un tamaño de modelo (tiny, base, small, medium, large-v3, "
         "large-v3-turbo) y el servidor lo descarga la primera vez. Para descargar cualquier modelo desde aquí, "
-        "instala el complemento de Stream Transcription en el servidor."),
+        "instala el complemento de StreamRemaster en el servidor."),
     "model_name": ("Model name", "Nombre del modelo"),
     "save": ("Save", "Guardar"),
     "saved": ("Saved", "Guardado"),
@@ -163,9 +199,9 @@ M = {
     "section_performance": ("Performance", "Rendimiento"),
     "performance_hint": (
         "If the server's graphics card runs out of memory (subtitles that never arrive, or a memory warning), "
-        "these two options free a lot of it. They only work with the Stream Transcription server.",
+        "these two options free a lot of it. They only work with the StreamRemaster server.",
         "Si la tarjeta gráfica del servidor se queda sin memoria (los subtítulos no llegan o sale un aviso de "
-        "memoria), estas dos opciones liberan bastante. Solo funcionan con el servidor de Stream Transcription."),
+        "memoria), estas dos opciones liberan bastante. Solo funcionan con el servidor de StreamRemaster."),
     "precision": ("Model precision", "Precisión del modelo"),
     "precision_auto": ("Automatic", "Automática"),
     "precision_int8": ("Save memory (int8)", "Ahorrar memoria (int8)"),
@@ -207,9 +243,9 @@ M = {
         "y elige «Buscar actualizaciones». Una versión recién salida puede tardar unos días en llegar a la web de complementos."),
     "update_how_chromium": (
         "To update, download the Chromium zip from the release page, unzip it over the old folder and press the "
-        "reload icon on the Stream Transcription card in chrome://extensions. Your settings are kept.",
+        "reload icon on the StreamRemaster card in chrome://extensions. Your settings are kept.",
         "Para actualizar, descarga el zip de Chromium de la página de la versión, descomprímelo encima de la carpeta "
-        "antigua y pulsa el icono de recargar en la tarjeta de Stream Transcription de chrome://extensions. Los ajustes se conservan."),
+        "antigua y pulsa el icono de recargar en la tarjeta de StreamRemaster de chrome://extensions. Los ajustes se conservan."),
     "update_privacy": (
         "Checking only asks GitHub for the number of the latest version; nothing else is sent.",
         "Al buscar, solo se pregunta a GitHub el número de la última versión; no se envía nada más."),

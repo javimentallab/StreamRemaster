@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "锐度"
+  },
+  "fg_sharpen_off": {
+    "message": "关闭"
+  },
+  "fg_sharpen_soft": {
+    "message": "柔和"
+  },
+  "fg_sharpen_medium": {
+    "message": "中等"
+  },
+  "fg_sharpen_strong": {
+    "message": "强"
+  },
+  "fg_resolution": {
+    "message": "放大目标分辨率"
+  },
+  "fg_res_original": {
+    "message": "原始（不放大）"
+  },
+  "fg_model": {
+    "message": "AI 模型"
+  },
+  "fg_kind_sr": {
+    "message": "放大"
+  },
+  "fg_kind_fi": {
+    "message": "插帧"
+  },
+  "fg_builtin": {
+    "message": "内置"
+  },
+  "fg_model_none": {
+    "message": "无（不使用 AI）"
+  },
+  "section_fgmodels": {
+    "message": "流畅视频模型"
+  },
+  "fg_models_hint": {
+    "message": "下载模型文件（.stmodel、.srmodel、.fimodel）并在此添加。它在您自己的显卡上运行。"
+  },
+  "fg_add_model": {
+    "message": "添加模型文件"
+  },
+  "fg_no_models": {
+    "message": "尚未添加任何模型。"
+  },
+  "fg_model_bad": {
+    "message": "该文件不是有效的模型。"
+  },
+  "tab_subs": {
+    "message": "字幕"
+  },
+  "tab_fg": {
+    "message": "流畅视频"
+  },
+  "fg_start": {
+    "message": "开启流畅视频"
+  },
+  "fg_stop": {
+    "message": "关闭流畅视频"
+  },
+  "fg_target": {
+    "message": "目标帧率"
+  },
+  "fg_target_display": {
+    "message": "与屏幕相同"
+  },
+  "fg_state_off": {
+    "message": "已关闭"
+  },
+  "fg_state_measuring": {
+    "message": "正在测量视频…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps（视频 {1} fps）"
+  },
+  "fg_no_video": {
+    "message": "此页面上没有正在播放的视频。"
+  },
+  "fg_no_webgpu": {
+    "message": "此浏览器无法为此使用 GPU（WebGPU 不可用）。"
+  },
+  "fg_cannot_read": {
+    "message": "无法读取此视频：它受保护或来自其他网站。"
+  },
+  "fg_unavailable": {
+    "message": "此页面不允许使用扩展程序。"
+  },
+  "fg_auto_start": {
+    "message": "播放视频时自动开启流畅视频"
+  },
+  "subs_auto_start": {
+    "message": "播放视频时自动开始字幕"
+  },
+  "auto_start_hint": {
+    "message": "在此浏览器中，仅在您点击过扩展按钮的标签页中有效，直到该标签页转到其他网站。"
+  },
+  "fg_allow_all_sites": {
+    "message": "在所有网站上允许"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "为任意标签页提供实时字幕，由你自己的 Whisper 服务器转写和翻译。"
@@ -90,7 +192,7 @@
     "message": "连接你的服务器"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription 需要在你的电脑或网络中运行 WhisperLive 服务器。"
+    "message": "StreamRemaster 需要在你的电脑或网络中运行 WhisperLive 服务器。"
   },
   "server_address": {
     "message": "服务器地址"
@@ -135,7 +237,7 @@
     "message": "然后在这里输入它的地址：电脑的 IP 和端口，例如 192.168.1.10:9090。如果就在这台电脑上，填 localhost:9090。"
   },
   "server_help_3": {
-    "message": "要在此页面下载和管理模型，请给服务器加装 Stream Transcription 插件。"
+    "message": "要在此页面下载和管理模型，请给服务器加装 StreamRemaster 插件。"
   },
   "server_help_guide": {
     "message": "分步指南"
@@ -168,7 +270,7 @@
     "message": "请先设置服务器。"
   },
   "settings_title": {
-    "message": "Stream Transcription · 设置"
+    "message": "StreamRemaster · 设置"
   },
   "section_server": {
     "message": "服务器"
@@ -255,7 +357,7 @@
     "message": "重试"
   },
   "plain_server_hint": {
-    "message": "这是标准的 WhisperLive 服务器：输入模型大小（tiny、base、small、medium、large-v3、large-v3-turbo），服务器会在首次使用时下载。要从这里下载任意模型，请在服务器上安装 Stream Transcription 插件。"
+    "message": "这是标准的 WhisperLive 服务器：输入模型大小（tiny、base、small、medium、large-v3、large-v3-turbo），服务器会在首次使用时下载。要从这里下载任意模型，请在服务器上安装 StreamRemaster 插件。"
   },
   "model_name": {
     "message": "模型名称"
@@ -276,7 +378,7 @@
     "message": "性能"
   },
   "performance_hint": {
-    "message": "如果服务器显卡内存不足（字幕不出现或出现内存警告），这两个选项可以释放大量内存。仅适用于 Stream Transcription 服务器。"
+    "message": "如果服务器显卡内存不足（字幕不出现或出现内存警告），这两个选项可以释放大量内存。仅适用于 StreamRemaster 服务器。"
   },
   "precision": {
     "message": "模型精度"
@@ -408,7 +510,7 @@
     "message": "Firefox 会自动安装新版本。想立即获取，请打开 about:addons，点击齿轮图标，选择“检查更新”。刚发布的版本可能要过几天才会出现在附加组件网站上。"
   },
   "update_how_chromium": {
-    "message": "更新方法：从版本页面下载 Chromium 版 zip，解压覆盖旧文件夹，然后在 chrome://extensions 中点击 Stream Transcription 卡片上的重新加载图标。你的设置会保留。"
+    "message": "更新方法：从版本页面下载 Chromium 版 zip，解压覆盖旧文件夹，然后在 chrome://extensions 中点击 StreamRemaster 卡片上的重新加载图标。你的设置会保留。"
   },
   "update_privacy": {
     "message": "检查时只会向 GitHub 询问最新版本号，不会发送其他任何内容。"

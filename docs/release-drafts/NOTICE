@@ -1,0 +1,79 @@
+StreamRemaster (formerly Stream Transcription)
+Copyright (c) 2026 javimentallab
+Licensed under the PolyForm Noncommercial License 1.0.0 (see LICENSE).
+
+The server patches and parts of the extension are based on WhisperLive
+(https://github.com/collabora/WhisperLive), distributed under the following license:
+
+-------------------------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2023 Vineet Suryan, Collabora Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+Third-party software used by the server
+---------------------------------------
+None of this is included in this repository. Docker downloads it when you build the
+server image on your own computer, and it stays under its own licence.
+
+- WhisperLive base image (ghcr.io/collabora/whisperlive-gpu): WhisperLive is under the
+  MIT License above. The image also contains faster-whisper, CTranslate2, PyTorch and
+  their dependencies, each under its own licence.
+- nvidia-cublas-cu12 and nvidia-cuda-nvrtc-cu12 (server/requirements.txt): proprietary
+  NVIDIA licence, not free software. The licence text comes inside each package
+  (License.txt). https://developer.nvidia.com/cuda-zone
+
+Models the server downloads when you ask for them, not included either:
+
+- Whisper models in faster-whisper format (by default Systran/faster-whisper-small):
+  MIT License, https://huggingface.co/Systran/faster-whisper-small
+- SMALL100 translator (alirezamsh/small100): MIT License,
+  https://huggingface.co/alirezamsh/small100
+- Any other model you add from Hugging Face or a direct link stays under its own licence.
+
+Training data of the built-in model
+-----------------------------------
+The built-in smooth video model, StreamRemaster
+(extension/shared/models/streamremaster.stmodel), was trained from scratch by
+javimentallab. It contains no third-party weights and is under the PolyForm
+Noncommercial License 1.0.0, like the code. None of the data below is included in
+this repository or in the extension. More in docs/MODEL.md.
+
+- REDS dataset: Seungjun Nah, Sungyong Baik, Seokil Hong, Gyeongsik Moon, Sanghyun Son,
+  Radu Timofte and Kyoung Mu Lee, "NTIRE 2019 Challenge on Video Deblurring and
+  Super-Resolution: Dataset and Study", CVPR Workshops 2019.
+  https://seungjunnah.github.io/Datasets/reds.html
+  Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0),
+  https://creativecommons.org/licenses/by/4.0/
+  Changes: the 120 fps originals were used; to make the training inputs, the frames
+  were halved in resolution and compressed as JPEG.
+- Gameplay footage of Xonotic (https://xonotic.org), an open-source game, recorded at
+  120 fps by javimentallab. The inputs were made in the same way.
+- Synthetic stream overlays (fixed text, scrolling chat, a camera box, logos) drawn with
+  the DejaVu and Liberation fonts and made-up text. The fonts were used only to make
+  training images and are not included.
+
+No Twitch footage and no footage of commercial games was used.
+
+Development only (tools/requirements.txt, not part of the extension or the server):
+Pillow (MIT-CMU), to draw the icons.

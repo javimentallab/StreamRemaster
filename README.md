@@ -1,10 +1,13 @@
-# Stream Transcription
+# StreamRemaster
 
-**Live subtitles for any browser tab — transcribed and translated by your own Whisper server.**
+**Live subtitles and smooth video for any browser tab, on your own hardware.**
 
 Watch a Twitch stream, a YouTube video or a call in a language you don't speak, and read it
 in yours, in real time. The audio never leaves your network: it goes only to the
-[WhisperLive](https://github.com/collabora/WhisperLive) server you run.
+[WhisperLive](https://github.com/collabora/WhisperLive) server you run. The **Smooth video** tab raises
+the frame rate of the video and upscales it with AI, on your own graphics card.
+
+StreamRemaster was called Stream Transcription up to version 2.2.0. The subtitles work as before.
 
 [Versión en español](README.es.md)
 
@@ -24,19 +27,59 @@ in yours, in real time. The audio never leaves your network: it goes only to the
   text, the translator can run on the CPU, and if the model doesn't fit you get a clear
   **VRAM warning** instead of subtitles that silently freeze.
 - **Save the subtitles** as an `.srt` file when you stop.
+- **Smooth video**: in-between frames generated with AI raise the video's frame rate up to your
+  screen's, and AI upscaling doubles its resolution. On your own graphics card, with no server.
+  [More below](#smooth-video).
 - **Check for updates** from the extension: it says whether a newer version exists, for the
   extension and for the server, and takes you to it. Only when you ask.
-- Interface in English, Spanish, Portuguese, French, German, Italian, Dutch, Polish, Russian, Ukrainian, Chinese,
-  Japanese, Korean, Thai and Hindi; it follows the browser or can be picked in the settings.
-- No accounts, no tracking, no analytics. Open source (MIT).
+- Interface in English, Spanish, Catalan, Galician, Basque, Portuguese, French, German, Italian, Dutch, Polish,
+  Russian, Ukrainian, Chinese, Japanese, Korean, Thai and Hindi; it follows the browser or can be picked in the settings.
+- No accounts, no tracking, no analytics. Source code available (PolyForm Noncommercial).
 
 | Popup | Settings · models |
 |---|---|
 | ![Popup](store/screenshot-2-popup.png) | ![Models](store/screenshot-3-models.png) |
 
+## Smooth video
+
+The **Smooth video** tab, next to **Subtitles** in the popup, makes the video on the page play more
+smoothly and look sharper. It does two things with AI:
+
+- **In-between frames.** A stream at 30 or 60 fps on a 144 Hz screen shows each frame several times. The
+  extension generates the frames in between, so the video plays at up to your screen's frame rate.
+- **Upscaling.** It doubles the resolution of the video, for example from 720p to 1440p.
+
+It all runs in the browser, on your own graphics card, through WebGPU. This tab needs no server: it works
+without the WhisperLive server, and the video never leaves your computer. It works in Firefox, Zen and
+Chromium browsers (tested in Brave).
+
+<!-- TODO: captura de la pestaña Vídeo fluido -->
+
+The controls:
+
+- **The large button** turns it on and off for the current tab.
+- **Target frame rate**: **Match the screen**, or a fixed value: 60, 75, 90, 100, 120, 144, 165, 180 or
+  240 fps.
+- **AI model**: **StreamRemaster**, the model built into the extension; any model you have added; or
+  **None (no AI)**, which uses a plain cross-fade between frames and plain scaling.
+- **Upscaling target resolution**: **Original (no upscaling)**, **Match the screen**, 1080p, 1440p or 4K.
+
+While it is on, a meter on the page shows the frame rate you get and the video's own.
+
+**Models.** In Settings → **Smooth video models** you can add model files (`.stmodel`, and the older
+`.srmodel` and `.fimodel`) and pick one. The built-in model is marked **Built-in** and cannot be deleted.
+A model file holds weights only, no code, and the extension checks it strictly before using it. How
+StreamRemaster was made, on what data and with what limits: [model card](docs/MODEL.md).
+
+**Limits.** You need a graphics card and a browser with WebGPU. The upscaling draws plausible detail that
+was not in the original, so it is not the place to read small text you need to trust. Protected (DRM)
+video shows as black to any extension and cannot be processed.
+
 ## Install the extension
 
-- **Firefox** (and Zen, LibreWolf, Floorp…): [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
+<!-- TODO: the AMO link, if StreamRemaster gets a new listing or ID; and how to buy it on Chromium, once
+the payment and licence mechanism is decided. -->
+- **Firefox** (and Zen, LibreWolf, Floorp…), free: [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
 - **Chromium** (Chrome, Brave, Edge, Opera, Vivaldi…): download
   `stream-transcription-chromium-<version>.zip` from the
   [latest release](https://github.com/javimentallab/stream-transcription/releases/latest),
@@ -58,7 +101,7 @@ Then click the extension's icon, type your server's address (e.g. `192.168.1.10:
 You need a WhisperLive server, ideally on a computer with an NVIDIA graphics card (small
 models also run on the CPU). Two options:
 
-### Option A — Stream Transcription server (recommended)
+### Option A — StreamRemaster server (recommended)
 
 WhisperLive plus the patches that make everything in the extension work (model management,
 switching models, int8, translator on the CPU, VRAM warnings). With Docker and the
@@ -122,7 +165,7 @@ The translator adds ~0.7 GB on the GPU (or nothing, set to run on the CPU).
 ## Privacy
 
 The extension sends the tab's audio **only** to the server address you enter, and nothing
-else anywhere. Only when you press **Check for updates** does it ask GitHub for the number of
+else anywhere. **Smooth video** sends nothing: the video is processed on your own graphics card. Only when you press **Check for updates** does it ask GitHub for the number of
 the latest release. It stores its settings in your browser. See [PRIVACY.md](PRIVACY.md).
 
 ## Building
@@ -142,7 +185,10 @@ What changed in each version: [CHANGELOG](CHANGELOG.md). See [CONTRIBUTING](CONT
 
 ## Credits and license
 
-MIT ([LICENSE](LICENSE)). Built on [WhisperLive](https://github.com/collabora/WhisperLive) by Collabora (MIT, see
+[PolyForm Noncommercial 1.0.0](LICENSE): any noncommercial use is allowed; commercial use needs the author's permission. Versions up to 2.2.0 were released under the MIT licence. Built on [WhisperLive](https://github.com/collabora/WhisperLive) by Collabora (MIT, see
 [NOTICE](NOTICE)) and
 [faster-whisper](https://github.com/SYSTRAN/faster-whisper). Translation uses
-[SMALL100](https://huggingface.co/alirezamsh/small100).
+[SMALL100](https://huggingface.co/alirezamsh/small100). The smooth video model, also called StreamRemaster, was trained
+from scratch by the author on the [REDS](https://seungjunnah.github.io/Datasets/reds.html) dataset
+(CC BY 4.0) and on footage of [Xonotic](https://xonotic.org); details in the [model card](docs/MODEL.md)
+and in [NOTICE](NOTICE).

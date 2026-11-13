@@ -1,0 +1,105 @@
+# ca
+fg_sharpen|Nitidesa
+fg_sharpen_off|Desactivada
+fg_sharpen_soft|Suau
+fg_sharpen_medium|Mitjana
+fg_sharpen_strong|Forta
+auto_start_hint|En aquest navegador només funciona a les pestanyes on hagis fet clic al botó de l'extensió, fins que passin a un altre lloc web.
+fg_add_model|Afegeix un fitxer de model
+fg_allow_all_sites|Permet-ho a tots els llocs web
+fg_auto_start|Activa el vídeo fluid en reproduir-se un vídeo
+fg_builtin|Inclòs
+fg_cannot_read|No es pot llegir aquest vídeo: està protegit o ve d'un altre lloc.
+fg_kind_fi|Fotogrames intermedis
+fg_kind_sr|Ampliació
+fg_model|Model d'IA
+fg_model_bad|Aquest fitxer no és un model vàlid.
+fg_model_none|Cap (sense IA)
+fg_models_hint|Baixa un fitxer de model (.stmodel, .srmodel, .fimodel) i afegeix-lo aquí. Funciona amb la teva pròpia targeta gràfica.
+fg_no_models|Encara no has afegit cap model.
+fg_no_video|No s'està reproduint cap vídeo en aquesta pàgina.
+fg_no_webgpu|Aquest navegador no pot fer servir la GPU per a això (no té WebGPU).
+fg_res_original|Original (sense ampliar)
+fg_resolution|Resolució final de l'ampliació
+fg_start|Activa el vídeo fluid
+fg_state_measuring|Mesurant el vídeo…
+fg_state_off|Apagat
+fg_state_on|{0} fps (vídeo a {1} fps)
+fg_stop|Treu el vídeo fluid
+fg_target|FPS desitjats
+fg_target_display|Igual que la pantalla
+fg_unavailable|Aquesta pàgina no admet extensions.
+section_fgmodels|Models de vídeo fluid
+subs_auto_start|Inicia els subtítols en reproduir-se un vídeo
+tab_fg|Vídeo fluid
+tab_subs|Subtítols
+# gl
+fg_sharpen|Nitidez
+fg_sharpen_off|Desactivada
+fg_sharpen_soft|Suave
+fg_sharpen_medium|Media
+fg_sharpen_strong|Forte
+auto_start_hint|Neste navegador só funciona nas lapelas nas que premiches o botón da extensión, ata que pasen a outro sitio web.
+fg_add_model|Engadir un ficheiro de modelo
+fg_allow_all_sites|Permitir en todos os sitios web
+fg_auto_start|Activar o vídeo fluído ao reproducirse un vídeo
+fg_builtin|Incluído
+fg_cannot_read|Este vídeo non se pode ler: está protexido ou vén doutro sitio.
+fg_kind_fi|Fotogramas intermedios
+fg_kind_sr|Ampliación
+fg_model|Modelo de IA
+fg_model_bad|Ese ficheiro non é un modelo válido.
+fg_model_none|Ningún (sen IA)
+fg_models_hint|Descarga un ficheiro de modelo (.stmodel, .srmodel, .fimodel) e engádeo aquí. Funciona na túa propia tarxeta gráfica.
+fg_no_models|Aínda non engadiches ningún modelo.
+fg_no_video|Non se está a reproducir ningún vídeo nesta páxina.
+fg_no_webgpu|Este navegador non pode usar a GPU para isto (non ten WebGPU).
+fg_res_original|Orixinal (sen ampliar)
+fg_resolution|Resolución final da ampliación
+fg_start|Activar vídeo fluído
+fg_state_measuring|Medindo o vídeo…
+fg_state_off|Apagado
+fg_state_on|{0} fps (vídeo a {1} fps)
+fg_stop|Quitar vídeo fluído
+fg_target|FPS desexados
+fg_target_display|Igual que a pantalla
+fg_unavailable|Esta páxina non admite extensións.
+section_fgmodels|Modelos de vídeo fluído
+subs_auto_start|Iniciar os subtítulos ao reproducirse un vídeo
+tab_fg|Vídeo fluído
+tab_subs|Subtítulos
+# eu
+fg_sharpen|Garbitasuna
+fg_sharpen_off|Desaktibatuta
+fg_sharpen_soft|Leuna
+fg_sharpen_medium|Ertaina
+fg_sharpen_strong|Indartsua
+auto_start_hint|Nabigatzaile honetan, gehigarriaren botoia sakatu duzun fitxetan bakarrik dabil, beste webgune batera joan arte.
+fg_add_model|Gehitu eredu-fitxategi bat
+fg_allow_all_sites|Baimendu webgune guztietan
+fg_auto_start|Aktibatu bideo leuna bideo bat erreproduzitzean
+fg_builtin|Integratua
+fg_cannot_read|Ezin da bideo hau irakurri: babestuta dago edo beste webgune batetik dator.
+fg_kind_fi|Tarteko fotogramak
+fg_kind_sr|Bereizmena handitzea
+fg_model|AA eredua
+fg_model_bad|Fitxategi hori ez da eredu baliozko bat.
+fg_model_none|Bat ere ez (AArik gabe)
+fg_models_hint|Deskargatu eredu-fitxategi bat (.stmodel, .srmodel, .fimodel) eta gehitu hemen. Zure txartel grafikoan bertan exekutatzen da.
+fg_no_models|Oraindik ez duzu eredurik gehitu.
+fg_no_video|Orri honetan ez da bideorik erreproduzitzen ari.
+fg_no_webgpu|Nabigatzaile honek ezin du GPUa erabili horretarako (WebGPU ez dago erabilgarri).
+fg_res_original|Jatorrizkoa (handitu gabe)
+fg_resolution|Helburuko bereizmena
+fg_start|Aktibatu bideo leuna
+fg_state_measuring|Bideoa neurtzen…
+fg_state_off|Itzalita
+fg_state_on|{0} fps (bideoa: {1} fps)
+fg_stop|Kendu bideo leuna
+fg_target|Helburuko FPSak
+fg_target_display|Pantailarena
+fg_unavailable|Orri honek ez du gehigarririk onartzen.
+section_fgmodels|Bideo leunerako ereduak
+subs_auto_start|Hasi azpitituluak bideo bat erreproduzitzean
+tab_fg|Bideo leuna
+tab_subs|Azpitituluak

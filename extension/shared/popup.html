@@ -2,20 +2,26 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Stream Transcription</title>
+  <title>StreamRemaster</title>
   <link rel="stylesheet" href="ui.css">
   <link rel="stylesheet" href="popup.css">
 </head>
 <body class="popup">
   <header class="bar">
     <img class="logo" src="icons/icon48.png" alt="">
-    <span class="title">Stream Transcription</span>
+    <span class="title">StreamRemaster</span>
     <span class="pill" id="statusPill" data-state="idle"><span class="dot"></span><span id="statusText" data-i18n="status_idle"></span></span>
     <button class="icon-btn" id="openSettings" data-i18n-title="settings" data-i18n-aria="settings">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6a.5.5 0 0 0 .1-.6l-2-3.5a.5.5 0 0 0-.6-.2l-2.5 1a7.4 7.4 0 0 0-1.7-1l-.4-2.6a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 0-.5.4l-.4 2.7a7.4 7.4 0 0 0-1.7 1l-2.5-1a.5.5 0 0 0-.6.2l-2 3.5a.5.5 0 0 0 .1.6L4.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6a.5.5 0 0 0-.1.6l2 3.5c.1.2.4.3.6.2l2.5-1c.5.4 1.1.7 1.7 1l.4 2.7c0 .2.3.4.5.4h4c.2 0 .5-.2.5-.4l.4-2.7c.6-.3 1.2-.6 1.7-1l2.5 1c.2.1.5 0 .6-.2l2-3.5a.5.5 0 0 0-.1-.6L19.4 13zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
     </button>
   </header>
 
+  <nav class="tabs" id="tabs" role="tablist">
+    <button id="tabSubs" role="tab" data-tab="subs" data-i18n="tab_subs"></button>
+    <button id="tabFg" role="tab" data-tab="fg" data-i18n="tab_fg"></button>
+  </nav>
+
+  <div id="panelSubs" role="tabpanel">
   <!-- First run / server not reachable -->
   <section class="card setup" id="setupCard" hidden>
     <h2 data-i18n="server_setup_title"></h2>
@@ -72,6 +78,10 @@
       </div>
 
       <label class="check"><input type="checkbox" id="saveSrt"><span data-i18n="save_srt"></span></label>
+      <div class="field">
+        <label class="check"><input type="checkbox" id="subsAutoStart"><span data-i18n="subs_auto_start"></span></label>
+        <p class="hint auto-hint" data-i18n="auto_start_hint" hidden></p>
+      </div>
 
       <details class="adv">
         <summary data-i18n="advanced"></summary>
@@ -102,6 +112,37 @@
     <span class="muted" id="srvText"></span>
     <a class="link small" id="srvChange" href="#" data-i18n="server_change"></a>
   </footer>
+  </div>
+
+  <div id="panelFg" role="tabpanel" hidden>
+    <section class="card">
+      <button class="big-btn" id="fgToggle">
+        <span class="big-icon" aria-hidden="true"></span>
+        <span id="fgToggleLabel" data-i18n="fg_start"></span>
+      </button>
+      <p class="msg center" id="fgMsg" role="status"></p>
+      <label class="field">
+        <span data-i18n="fg_target"></span>
+        <select id="fgTarget"></select>
+      </label>
+      <label class="field">
+        <span class="field-head"><span data-i18n="fg_model"></span><a class="link small" id="fgManageModels" href="#" data-i18n="manage_models"></a></span>
+        <select id="fgModel"></select>
+      </label>
+      <label class="field">
+        <span data-i18n="fg_resolution"></span>
+        <select id="fgResolution"></select>
+      </label>
+      <label class="field">
+        <span data-i18n="fg_sharpen"></span>
+        <select id="fgSharpen"></select>
+      </label>
+      <div class="field">
+        <label class="check"><input type="checkbox" id="fgAutoStart"><span data-i18n="fg_auto_start"></span></label>
+        <p class="hint" id="fgAutoHint" hidden><span data-i18n="auto_start_hint"></span> <a class="link small" id="fgAllowAll" href="#" data-i18n="fg_allow_all_sites"></a></p>
+      </div>
+    </section>
+  </div>
 
   <!-- Updates: only checked when the user asks -->
   <div class="upd" id="updRow">
@@ -113,5 +154,6 @@
   <script src="common.js"></script>
   <script src="i18n.js"></script>
   <script src="popup.js"></script>
+  <script src="popup-framegen.js"></script>
 </body>
 </html>

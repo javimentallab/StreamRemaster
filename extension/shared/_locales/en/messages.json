@@ -1,6 +1,108 @@
 {
+  "fg_resolution": {
+    "message": "Upscaling target resolution"
+  },
+  "fg_res_original": {
+    "message": "Original (no upscaling)"
+  },
+  "fg_model": {
+    "message": "AI model"
+  },
+  "fg_kind_sr": {
+    "message": "Upscaling"
+  },
+  "fg_kind_fi": {
+    "message": "In-between frames"
+  },
+  "fg_builtin": {
+    "message": "Built-in"
+  },
+  "fg_model_none": {
+    "message": "None (no AI)"
+  },
+  "fg_sharpen": {
+    "message": "Sharpness"
+  },
+  "fg_sharpen_off": {
+    "message": "Off"
+  },
+  "fg_sharpen_soft": {
+    "message": "Soft"
+  },
+  "fg_sharpen_medium": {
+    "message": "Medium"
+  },
+  "fg_sharpen_strong": {
+    "message": "Strong"
+  },
+  "section_fgmodels": {
+    "message": "Smooth video models"
+  },
+  "fg_models_hint": {
+    "message": "Download a model file (.stmodel, .srmodel, .fimodel) and add it here. It runs on your own graphics card."
+  },
+  "fg_add_model": {
+    "message": "Add model file"
+  },
+  "fg_no_models": {
+    "message": "No models added yet."
+  },
+  "fg_model_bad": {
+    "message": "That file is not a valid model."
+  },
+  "tab_subs": {
+    "message": "Subtitles"
+  },
+  "tab_fg": {
+    "message": "Smooth video"
+  },
+  "fg_start": {
+    "message": "Turn on smooth video"
+  },
+  "fg_stop": {
+    "message": "Turn off smooth video"
+  },
+  "fg_target": {
+    "message": "Target frame rate"
+  },
+  "fg_target_display": {
+    "message": "Match the screen"
+  },
+  "fg_state_off": {
+    "message": "Off"
+  },
+  "fg_state_measuring": {
+    "message": "Measuring the video…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (video at {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "There is no video playing on this page."
+  },
+  "fg_no_webgpu": {
+    "message": "This browser cannot use the GPU for this (WebGPU is not available)."
+  },
+  "fg_cannot_read": {
+    "message": "This video cannot be read: it is protected or comes from another site."
+  },
+  "fg_unavailable": {
+    "message": "This page does not allow extensions."
+  },
+  "fg_auto_start": {
+    "message": "Turn on smooth video when a video plays"
+  },
+  "subs_auto_start": {
+    "message": "Start the subtitles when a video plays"
+  },
+  "auto_start_hint": {
+    "message": "In this browser it only works on tabs where you have clicked the extension's button, until they go to another site."
+  },
+  "fg_allow_all_sites": {
+    "message": "Allow on all sites"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Live subtitles for any tab, transcribed and translated by your own Whisper server."
@@ -90,7 +192,7 @@
     "message": "Connect your server"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription needs a WhisperLive server running on your computer or on your network."
+    "message": "StreamRemaster needs a WhisperLive server running on your computer or on your network."
   },
   "server_address": {
     "message": "Server address"
@@ -135,7 +237,7 @@
     "message": "Then type its address here: the computer's IP and the port, e.g. 192.168.1.10:9090. If it runs on this same computer, localhost:9090."
   },
   "server_help_3": {
-    "message": "To download and manage models from this page, add the Stream Transcription add-on to the server."
+    "message": "To download and manage models from this page, add the StreamRemaster add-on to the server."
   },
   "server_help_guide": {
     "message": "Step-by-step guide"
@@ -168,7 +270,7 @@
     "message": "Set up the server first."
   },
   "settings_title": {
-    "message": "Stream Transcription · Settings"
+    "message": "StreamRemaster · Settings"
   },
   "section_server": {
     "message": "Server"
@@ -255,7 +357,7 @@
     "message": "Retry"
   },
   "plain_server_hint": {
-    "message": "This is a standard WhisperLive server: type a model size (tiny, base, small, medium, large-v3, large-v3-turbo) and the server downloads it the first time. To download any model from here, install the Stream Transcription add-on on the server."
+    "message": "This is a standard WhisperLive server: type a model size (tiny, base, small, medium, large-v3, large-v3-turbo) and the server downloads it the first time. To download any model from here, install the StreamRemaster add-on on the server."
   },
   "model_name": {
     "message": "Model name"
@@ -276,7 +378,7 @@
     "message": "Performance"
   },
   "performance_hint": {
-    "message": "If the server's graphics card runs out of memory (subtitles that never arrive, or a memory warning), these two options free a lot of it. They only work with the Stream Transcription server."
+    "message": "If the server's graphics card runs out of memory (subtitles that never arrive, or a memory warning), these two options free a lot of it. They only work with the StreamRemaster server."
   },
   "precision": {
     "message": "Model precision"
@@ -348,7 +450,7 @@
     "message": "Firefox installs new versions by itself. To get it now, open about:addons, click the gear icon and choose ‘Check for Updates’. A version that has just come out can take a few days to reach the add-ons site."
   },
   "update_how_chromium": {
-    "message": "To update, download the Chromium zip from the release page, unzip it over the old folder and press the reload icon on the Stream Transcription card in chrome://extensions. Your settings are kept."
+    "message": "To update, download the Chromium zip from the release page, unzip it over the old folder and press the reload icon on the StreamRemaster card in chrome://extensions. Your settings are kept."
   },
   "update_privacy": {
     "message": "Checking only asks GitHub for the number of the latest version; nothing else is sent."

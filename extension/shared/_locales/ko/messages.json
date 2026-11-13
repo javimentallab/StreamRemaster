@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "선명도"
+  },
+  "fg_sharpen_off": {
+    "message": "끄기"
+  },
+  "fg_sharpen_soft": {
+    "message": "약하게"
+  },
+  "fg_sharpen_medium": {
+    "message": "보통"
+  },
+  "fg_sharpen_strong": {
+    "message": "강하게"
+  },
+  "fg_resolution": {
+    "message": "업스케일 목표 해상도"
+  },
+  "fg_res_original": {
+    "message": "원본 (업스케일 없음)"
+  },
+  "fg_model": {
+    "message": "AI 모델"
+  },
+  "fg_kind_sr": {
+    "message": "업스케일"
+  },
+  "fg_kind_fi": {
+    "message": "중간 프레임"
+  },
+  "fg_builtin": {
+    "message": "기본 제공"
+  },
+  "fg_model_none": {
+    "message": "없음(AI 사용 안 함)"
+  },
+  "section_fgmodels": {
+    "message": "부드러운 영상 모델"
+  },
+  "fg_models_hint": {
+    "message": "모델 파일(.stmodel, .srmodel, .fimodel)을 다운로드하여 여기에 추가하세요. 사용자의 그래픽 카드에서 실행됩니다."
+  },
+  "fg_add_model": {
+    "message": "모델 파일 추가"
+  },
+  "fg_no_models": {
+    "message": "추가된 모델이 없습니다."
+  },
+  "fg_model_bad": {
+    "message": "유효한 모델 파일이 아닙니다."
+  },
+  "tab_subs": {
+    "message": "자막"
+  },
+  "tab_fg": {
+    "message": "부드러운 영상"
+  },
+  "fg_start": {
+    "message": "부드러운 영상 켜기"
+  },
+  "fg_stop": {
+    "message": "부드러운 영상 끄기"
+  },
+  "fg_target": {
+    "message": "목표 프레임 속도"
+  },
+  "fg_target_display": {
+    "message": "화면에 맞춤"
+  },
+  "fg_state_off": {
+    "message": "꺼짐"
+  },
+  "fg_state_measuring": {
+    "message": "영상 측정 중…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (영상 {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "이 페이지에서 재생 중인 영상이 없습니다."
+  },
+  "fg_no_webgpu": {
+    "message": "이 브라우저는 이 기능에 GPU를 사용할 수 없습니다(WebGPU를 사용할 수 없음)."
+  },
+  "fg_cannot_read": {
+    "message": "이 영상은 읽을 수 없습니다. 보호되어 있거나 다른 사이트에서 제공됩니다."
+  },
+  "fg_unavailable": {
+    "message": "이 페이지는 확장 프로그램을 허용하지 않습니다."
+  },
+  "fg_auto_start": {
+    "message": "동영상이 재생되면 부드러운 영상 자동으로 켜기"
+  },
+  "subs_auto_start": {
+    "message": "동영상이 재생되면 자막 자동으로 시작"
+  },
+  "auto_start_hint": {
+    "message": "이 브라우저에서는 확장 프로그램 버튼을 클릭한 탭에서만, 다른 사이트로 이동하기 전까지 작동합니다."
+  },
+  "fg_allow_all_sites": {
+    "message": "모든 사이트에서 허용"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "어떤 탭에서든 실시간 자막. 내 Whisper 서버가 받아쓰고 번역합니다."
@@ -90,7 +192,7 @@
     "message": "서버 연결"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription을 쓰려면 컴퓨터나 네트워크에서 WhisperLive 서버가 실행 중이어야 합니다."
+    "message": "StreamRemaster을 쓰려면 컴퓨터나 네트워크에서 WhisperLive 서버가 실행 중이어야 합니다."
   },
   "server_address": {
     "message": "서버 주소"
@@ -135,7 +237,7 @@
     "message": "그런 다음 여기에 주소를 입력하세요: 컴퓨터 IP와 포트, 예 192.168.1.10:9090. 같은 컴퓨터라면 localhost:9090."
   },
   "server_help_3": {
-    "message": "이 페이지에서 모델을 내려받고 관리하려면 서버에 Stream Transcription 애드온을 추가하세요."
+    "message": "이 페이지에서 모델을 내려받고 관리하려면 서버에 StreamRemaster 애드온을 추가하세요."
   },
   "server_help_guide": {
     "message": "단계별 안내"
@@ -168,7 +270,7 @@
     "message": "먼저 서버를 설정하세요."
   },
   "settings_title": {
-    "message": "Stream Transcription · 설정"
+    "message": "StreamRemaster · 설정"
   },
   "section_server": {
     "message": "서버"
@@ -255,7 +357,7 @@
     "message": "다시 시도"
   },
   "plain_server_hint": {
-    "message": "표준 WhisperLive 서버입니다. 모델 크기(tiny, base, small, medium, large-v3, large-v3-turbo)를 입력하면 서버가 처음에 내려받습니다. 여기서 아무 모델이나 내려받으려면 서버에 Stream Transcription 애드온을 설치하세요."
+    "message": "표준 WhisperLive 서버입니다. 모델 크기(tiny, base, small, medium, large-v3, large-v3-turbo)를 입력하면 서버가 처음에 내려받습니다. 여기서 아무 모델이나 내려받으려면 서버에 StreamRemaster 애드온을 설치하세요."
   },
   "model_name": {
     "message": "모델 이름"
@@ -276,7 +378,7 @@
     "message": "성능"
   },
   "performance_hint": {
-    "message": "서버 그래픽 카드의 메모리가 모자라면(자막이 오지 않거나 메모리 경고가 뜨면) 이 두 옵션으로 꽤 많이 확보할 수 있습니다. Stream Transcription 서버에서만 작동합니다."
+    "message": "서버 그래픽 카드의 메모리가 모자라면(자막이 오지 않거나 메모리 경고가 뜨면) 이 두 옵션으로 꽤 많이 확보할 수 있습니다. StreamRemaster 서버에서만 작동합니다."
   },
   "precision": {
     "message": "모델 정밀도"
@@ -408,7 +510,7 @@
     "message": "Firefox는 새 버전을 자동으로 설치합니다. 지금 바로 받으려면 about:addons를 열고 톱니바퀴 아이콘을 누른 뒤 ‘업데이트 확인’을 선택하세요. 갓 나온 버전은 부가 기능 사이트에 올라오기까지 며칠 걸릴 수 있습니다."
   },
   "update_how_chromium": {
-    "message": "업데이트하려면 버전 페이지에서 Chromium용 zip을 내려받아 기존 폴더에 덮어써서 압축을 풀고, chrome://extensions의 Stream Transcription 카드에서 새로고침 아이콘을 누르세요. 설정은 그대로 유지됩니다."
+    "message": "업데이트하려면 버전 페이지에서 Chromium용 zip을 내려받아 기존 폴더에 덮어써서 압축을 풀고, chrome://extensions의 StreamRemaster 카드에서 새로고침 아이콘을 누르세요. 설정은 그대로 유지됩니다."
   },
   "update_privacy": {
     "message": "확인할 때는 GitHub에 최신 버전 번호만 물어보며, 그 밖에는 아무것도 보내지 않습니다."

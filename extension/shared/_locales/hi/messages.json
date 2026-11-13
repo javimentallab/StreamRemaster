@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "शार्पनेस"
+  },
+  "fg_sharpen_off": {
+    "message": "बंद"
+  },
+  "fg_sharpen_soft": {
+    "message": "हल्की"
+  },
+  "fg_sharpen_medium": {
+    "message": "मध्यम"
+  },
+  "fg_sharpen_strong": {
+    "message": "तेज़"
+  },
+  "fg_resolution": {
+    "message": "अपस्केलिंग का लक्ष्य रिज़ॉल्यूशन"
+  },
+  "fg_res_original": {
+    "message": "मूल (बिना अपस्केलिंग)"
+  },
+  "fg_model": {
+    "message": "AI मॉडल"
+  },
+  "fg_kind_sr": {
+    "message": "अपस्केलिंग"
+  },
+  "fg_kind_fi": {
+    "message": "बीच के फ़्रेम"
+  },
+  "fg_builtin": {
+    "message": "अंतर्निहित"
+  },
+  "fg_model_none": {
+    "message": "कोई नहीं (AI के बिना)"
+  },
+  "section_fgmodels": {
+    "message": "स्मूद वीडियो मॉडल"
+  },
+  "fg_models_hint": {
+    "message": "मॉडल फ़ाइल (.stmodel, .srmodel, .fimodel) डाउनलोड करें और उसे यहाँ जोड़ें। यह आपके अपने ग्राफ़िक्स कार्ड पर चलता है।"
+  },
+  "fg_add_model": {
+    "message": "मॉडल फ़ाइल जोड़ें"
+  },
+  "fg_no_models": {
+    "message": "अभी तक कोई मॉडल नहीं जोड़ा गया।"
+  },
+  "fg_model_bad": {
+    "message": "यह फ़ाइल मान्य मॉडल नहीं है।"
+  },
+  "tab_subs": {
+    "message": "उपशीर्षक"
+  },
+  "tab_fg": {
+    "message": "स्मूद वीडियो"
+  },
+  "fg_start": {
+    "message": "स्मूद वीडियो चालू करें"
+  },
+  "fg_stop": {
+    "message": "स्मूद वीडियो बंद करें"
+  },
+  "fg_target": {
+    "message": "लक्ष्य फ़्रेम दर"
+  },
+  "fg_target_display": {
+    "message": "स्क्रीन के अनुसार"
+  },
+  "fg_state_off": {
+    "message": "बंद"
+  },
+  "fg_state_measuring": {
+    "message": "वीडियो माप रहे हैं…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (वीडियो {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "इस पेज पर कोई वीडियो नहीं चल रहा है।"
+  },
+  "fg_no_webgpu": {
+    "message": "यह ब्राउज़र इसके लिए GPU का उपयोग नहीं कर सकता (WebGPU उपलब्ध नहीं है)।"
+  },
+  "fg_cannot_read": {
+    "message": "यह वीडियो पढ़ा नहीं जा सकता: यह सुरक्षित है या किसी अन्य साइट से है।"
+  },
+  "fg_unavailable": {
+    "message": "यह पेज एक्सटेंशन की अनुमति नहीं देता।"
+  },
+  "fg_auto_start": {
+    "message": "वीडियो चलने पर स्मूद वीडियो अपने आप चालू करें"
+  },
+  "subs_auto_start": {
+    "message": "वीडियो चलने पर उपशीर्षक अपने आप शुरू करें"
+  },
+  "auto_start_hint": {
+    "message": "इस ब्राउज़र में यह केवल उन टैब में काम करता है जिनमें आपने एक्सटेंशन का बटन क्लिक किया है, जब तक वे किसी दूसरी साइट पर नहीं जाते।"
+  },
+  "fg_allow_all_sites": {
+    "message": "सभी साइटों पर अनुमति दें"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "किसी भी टैब के लिए लाइव सबटाइटल, जिन्हें आपका अपना Whisper सर्वर लिखता और अनुवाद करता है।"
@@ -90,7 +192,7 @@
     "message": "अपना सर्वर कनेक्ट करें"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription को आपके कंप्यूटर या नेटवर्क पर चलता WhisperLive सर्वर चाहिए।"
+    "message": "StreamRemaster को आपके कंप्यूटर या नेटवर्क पर चलता WhisperLive सर्वर चाहिए।"
   },
   "server_address": {
     "message": "सर्वर का पता"
@@ -135,7 +237,7 @@
     "message": "फिर उसका पता यहाँ लिखें: कंप्यूटर का IP और पोर्ट, जैसे 192.168.1.10:9090। अगर इसी कंप्यूटर पर है, तो localhost:9090।"
   },
   "server_help_3": {
-    "message": "इस पेज से मॉडल डाउनलोड और प्रबंधित करने के लिए सर्वर में Stream Transcription ऐड-ऑन जोड़ें।"
+    "message": "इस पेज से मॉडल डाउनलोड और प्रबंधित करने के लिए सर्वर में StreamRemaster ऐड-ऑन जोड़ें।"
   },
   "server_help_guide": {
     "message": "क़दम-दर-क़दम गाइड"
@@ -168,7 +270,7 @@
     "message": "पहले सर्वर सेट करें।"
   },
   "settings_title": {
-    "message": "Stream Transcription · सेटिंग"
+    "message": "StreamRemaster · सेटिंग"
   },
   "section_server": {
     "message": "सर्वर"
@@ -255,7 +357,7 @@
     "message": "फिर कोशिश करें"
   },
   "plain_server_hint": {
-    "message": "यह सामान्य WhisperLive सर्वर है: मॉडल का आकार लिखें (tiny, base, small, medium, large-v3, large-v3-turbo) और सर्वर पहली बार उसे डाउनलोड कर लेगा। यहाँ से कोई भी मॉडल डाउनलोड करने के लिए सर्वर पर Stream Transcription ऐड-ऑन इंस्टॉल करें।"
+    "message": "यह सामान्य WhisperLive सर्वर है: मॉडल का आकार लिखें (tiny, base, small, medium, large-v3, large-v3-turbo) और सर्वर पहली बार उसे डाउनलोड कर लेगा। यहाँ से कोई भी मॉडल डाउनलोड करने के लिए सर्वर पर StreamRemaster ऐड-ऑन इंस्टॉल करें।"
   },
   "model_name": {
     "message": "मॉडल का नाम"
@@ -276,7 +378,7 @@
     "message": "प्रदर्शन"
   },
   "performance_hint": {
-    "message": "अगर सर्वर के ग्राफ़िक्स कार्ड की मेमोरी कम पड़ जाए (सबटाइटल न आएँ या मेमोरी की चेतावनी दिखे), तो ये दो विकल्प काफ़ी मेमोरी खाली करते हैं। ये सिर्फ़ Stream Transcription सर्वर के साथ काम करते हैं।"
+    "message": "अगर सर्वर के ग्राफ़िक्स कार्ड की मेमोरी कम पड़ जाए (सबटाइटल न आएँ या मेमोरी की चेतावनी दिखे), तो ये दो विकल्प काफ़ी मेमोरी खाली करते हैं। ये सिर्फ़ StreamRemaster सर्वर के साथ काम करते हैं।"
   },
   "precision": {
     "message": "मॉडल की सटीकता"
@@ -408,7 +510,7 @@
     "message": "Firefox नए संस्करण अपने आप इंस्टॉल करता है। अभी पाने के लिए about:addons खोलें, गियर आइकन पर क्लिक करें और “अपडेट के लिए जाँचें” चुनें। अभी-अभी आया संस्करण ऐड-ऑन साइट पर पहुँचने में कुछ दिन ले सकता है।"
   },
   "update_how_chromium": {
-    "message": "अपडेट करने के लिए संस्करण के पेज से Chromium वाली zip डाउनलोड करें, उसे पुराने फ़ोल्डर के ऊपर अनज़िप करें और chrome://extensions में Stream Transcription के कार्ड पर रीलोड आइकन दबाएँ। आपकी सेटिंग्स बनी रहती हैं।"
+    "message": "अपडेट करने के लिए संस्करण के पेज से Chromium वाली zip डाउनलोड करें, उसे पुराने फ़ोल्डर के ऊपर अनज़िप करें और chrome://extensions में StreamRemaster के कार्ड पर रीलोड आइकन दबाएँ। आपकी सेटिंग्स बनी रहती हैं।"
   },
   "update_privacy": {
     "message": "जाँच में GitHub से सिर्फ़ नवीनतम संस्करण का नंबर पूछा जाता है; और कुछ नहीं भेजा जाता।"

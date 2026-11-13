@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "Nitidez"
+  },
+  "fg_sharpen_off": {
+    "message": "Desativada"
+  },
+  "fg_sharpen_soft": {
+    "message": "Suave"
+  },
+  "fg_sharpen_medium": {
+    "message": "Média"
+  },
+  "fg_sharpen_strong": {
+    "message": "Forte"
+  },
+  "fg_resolution": {
+    "message": "Resolução de destino da ampliação"
+  },
+  "fg_res_original": {
+    "message": "Original (sem ampliar)"
+  },
+  "fg_model": {
+    "message": "Modelo de IA"
+  },
+  "fg_kind_sr": {
+    "message": "Ampliação"
+  },
+  "fg_kind_fi": {
+    "message": "Quadros intermediários"
+  },
+  "fg_builtin": {
+    "message": "Incluído"
+  },
+  "fg_model_none": {
+    "message": "Nenhum (sem IA)"
+  },
+  "section_fgmodels": {
+    "message": "Modelos de vídeo fluido"
+  },
+  "fg_models_hint": {
+    "message": "Baixe um arquivo de modelo (.stmodel, .srmodel, .fimodel) e adicione-o aqui. Ele roda na sua própria placa de vídeo."
+  },
+  "fg_add_model": {
+    "message": "Adicionar arquivo de modelo"
+  },
+  "fg_no_models": {
+    "message": "Nenhum modelo adicionado ainda."
+  },
+  "fg_model_bad": {
+    "message": "Esse arquivo não é um modelo válido."
+  },
+  "tab_subs": {
+    "message": "Legendas"
+  },
+  "tab_fg": {
+    "message": "Vídeo fluido"
+  },
+  "fg_start": {
+    "message": "Ativar vídeo fluido"
+  },
+  "fg_stop": {
+    "message": "Desativar vídeo fluido"
+  },
+  "fg_target": {
+    "message": "FPS desejado"
+  },
+  "fg_target_display": {
+    "message": "Igual à tela"
+  },
+  "fg_state_off": {
+    "message": "Desligado"
+  },
+  "fg_state_measuring": {
+    "message": "Medindo o vídeo…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (vídeo a {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "Não há nenhum vídeo em reprodução nesta página."
+  },
+  "fg_no_webgpu": {
+    "message": "Este navegador não pode usar a GPU para isto (WebGPU não está disponível)."
+  },
+  "fg_cannot_read": {
+    "message": "Este vídeo não pode ser lido: está protegido ou vem de outro site."
+  },
+  "fg_unavailable": {
+    "message": "Esta página não permite extensões."
+  },
+  "fg_auto_start": {
+    "message": "Ativar o vídeo fluido ao reproduzir um vídeo"
+  },
+  "subs_auto_start": {
+    "message": "Iniciar as legendas ao reproduzir um vídeo"
+  },
+  "auto_start_hint": {
+    "message": "Neste navegador, só funciona nas abas em que você clicou no botão da extensão, até que mudem para outro site."
+  },
+  "fg_allow_all_sites": {
+    "message": "Permitir em todos os sites"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Legendas ao vivo para qualquer aba, transcritas e traduzidas pelo seu próprio servidor Whisper."
@@ -90,7 +192,7 @@
     "message": "Conecte seu servidor"
   },
   "server_setup_hint": {
-    "message": "O Stream Transcription precisa de um servidor WhisperLive rodando no seu computador ou na sua rede."
+    "message": "O StreamRemaster precisa de um servidor WhisperLive rodando no seu computador ou na sua rede."
   },
   "server_address": {
     "message": "Endereço do servidor"
@@ -135,7 +237,7 @@
     "message": "Depois digite aqui o endereço dele: o IP do computador e a porta, ex.: 192.168.1.10:9090. Se estiver neste mesmo computador, localhost:9090."
   },
   "server_help_3": {
-    "message": "Para baixar e gerenciar modelos por esta página, adicione ao servidor o complemento do Stream Transcription."
+    "message": "Para baixar e gerenciar modelos por esta página, adicione ao servidor o complemento do StreamRemaster."
   },
   "server_help_guide": {
     "message": "Guia passo a passo"
@@ -168,7 +270,7 @@
     "message": "Primeiro configure o servidor."
   },
   "settings_title": {
-    "message": "Stream Transcription · Configurações"
+    "message": "StreamRemaster · Configurações"
   },
   "section_server": {
     "message": "Servidor"
@@ -255,7 +357,7 @@
     "message": "Tentar de novo"
   },
   "plain_server_hint": {
-    "message": "É um servidor WhisperLive padrão: digite um tamanho de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) e o servidor o baixa na primeira vez. Para baixar qualquer modelo por aqui, instale no servidor o complemento do Stream Transcription."
+    "message": "É um servidor WhisperLive padrão: digite um tamanho de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) e o servidor o baixa na primeira vez. Para baixar qualquer modelo por aqui, instale no servidor o complemento do StreamRemaster."
   },
   "model_name": {
     "message": "Nome do modelo"
@@ -276,7 +378,7 @@
     "message": "Desempenho"
   },
   "performance_hint": {
-    "message": "Se a placa de vídeo do servidor ficar sem memória (legendas que não chegam ou um aviso de memória), estas duas opções liberam bastante. Só funcionam com o servidor do Stream Transcription."
+    "message": "Se a placa de vídeo do servidor ficar sem memória (legendas que não chegam ou um aviso de memória), estas duas opções liberam bastante. Só funcionam com o servidor do StreamRemaster."
   },
   "precision": {
     "message": "Precisão do modelo"
@@ -408,7 +510,7 @@
     "message": "O Firefox instala as versões novas sozinho. Para tê-la agora, abra about:addons, clique no ícone de engrenagem e escolha “Procurar atualizações”. Uma versão recém-lançada pode levar alguns dias para chegar ao site de extensões."
   },
   "update_how_chromium": {
-    "message": "Para atualizar, baixe o zip do Chromium na página da versão, descompacte por cima da pasta antiga e clique no ícone de recarregar no cartão do Stream Transcription em chrome://extensions. Suas configurações são mantidas."
+    "message": "Para atualizar, baixe o zip do Chromium na página da versão, descompacte por cima da pasta antiga e clique no ícone de recarregar no cartão do StreamRemaster em chrome://extensions. Suas configurações são mantidas."
   },
   "update_privacy": {
     "message": "Ao procurar, só se pergunta ao GitHub o número da versão mais recente; nada mais é enviado."

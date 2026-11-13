@@ -19,11 +19,180 @@ ST.DEFAULTS = {
   precision: "auto",      // auto | int8 (half the GPU memory, same output)
   translatorDevice: "auto", // auto | cpu
   uiLang: "auto",         // auto | en | es
+  popupTab: "subs",       // subs | fg
+  fgTarget: "display",    // display | a number of frames per second
+  fgResolution: "original", // original | display | an output height
+  fgSharpen: "medium",       // off | soft | medium | strong: adaptive sharpening of what is shown
+  fgModel: "builtin-st",  // id of the smooth video model ("" = none: plain cross-fade and scaling)
+  fgAutoStart: false,     // turn smooth video on by itself when the page plays a video
+  subsAutoStart: false,   // start the subtitles by themselves when the page plays a video
+};
+
+// ---------------------------------------------------------------------------- auto start
+// autostart.js watches the page and turns the two features on by themselves when a video plays,
+// if the user ticked those options. The rules live here so they can be tested without a browser.
+
+// What the page side of smooth video needs, and the watcher after it.
+ST.FG_FILES = ["common.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-page.js"];
+ST.AUTO_FILES = ST.FG_FILES.concat("autostart.js");
+// The watcher alone, for the subtitles (they start from the background).
+ST.WATCHER_FILES = ["common.js", "autostart.js"];
+
+// Chromium: optional access to every site, asked for when the user ticks "turn on smooth video when a
+// video plays". With it the watcher runs on every page; without it, only on the tabs where the user
+// clicked the extension's button (activeTab). Firefox already has it from the install.
+ST.ALL_SITES = { origins: ["<all_urls>"] };
+ST.AUTO_SCRIPT_ID = "streamremaster-autostart";
+
+ST.hasAllSites = async function () {
+  if (ST.isFirefox()) return true;
+  try {
+    return !!(ext.permissions && (await ext.permissions.contains(ST.ALL_SITES)));
+  } catch (e) {
+    return false;
+  }
+};
+
+// Call it straight from the click, before anything is awaited: the browser only asks during a user
+// gesture. Resolves true when granted (or nothing had to be asked).
+ST.askAllSites = function () {
+  if (ST.isFirefox()) return Promise.resolve(true);
+  if (!ext.permissions || !ext.permissions.request) return Promise.resolve(false);
+  try {
+    return Promise.resolve(ext.permissions.request(ST.ALL_SITES)).then((granted) => !!granted, () => false);
+  } catch (e) {
+    return Promise.resolve(false);
+  }
+};
+
+// Whether the watcher and smooth video should be registered on every page (Chromium).
+ST.wantsAutoScripts = function (settings, allSites) {
+  return !!(allSites && settings && settings.fgAutoStart);
+};
+
+// Smaller than this it is a preview, an advert in a corner or a thumbnail playing on hover.
+ST.AUTO_MIN_WIDTH = 200;
+ST.AUTO_MIN_HEIGHT = 150;
+
+// v: {paused, ended, readyState, videoWidth, width, height}, width and height in CSS pixels on screen.
+ST.isAutoStartVideo = function (v) {
+  return !!v && !v.paused && !v.ended && v.readyState >= 2 && v.videoWidth > 0 &&
+    v.width >= ST.AUTO_MIN_WIDTH && v.height >= ST.AUTO_MIN_HEIGHT;
+};
+
+// The address of the page, without the part after "#": a new key means the user went elsewhere.
+ST.autoStartPageKey = function (href) {
+  const text = String(href || "");
+  const hash = text.indexOf("#");
+  return hash < 0 ? text : text.slice(0, hash);
+};
+
+// Remembers, for one page, which videos each feature has already been started on and whether the
+// user turned it off by hand. A new address forgets both; a reload makes a new tracker.
+ST.autoStartTracker = function (pageKey) {
+  const FEATURES = ["fg", "subs"];
+  let page = pageKey;
+  let tried;
+  let held;
+  const forget = () => {
+    tried = {};
+    held = {};
+    for (const feature of FEATURES) { tried[feature] = new WeakSet(); held[feature] = false; }
+  };
+  forget();
+  return {
+    // true when the address changed.
+    visit(key) {
+      if (key === page) return false;
+      page = key;
+      forget();
+      return true;
+    },
+    hold(feature) { if (feature in held) held[feature] = true; },
+    held(feature) { return !!held[feature]; },
+    // true once per video and feature, and never while the user's "off" holds.
+    take(feature, video) {
+      if (!(feature in tried) || held[feature] || tried[feature].has(video)) return false;
+      tried[feature].add(video);
+      return true;
+    },
+  };
+};
+
+// Models that ship inside the extension. The background copies them into storage.local next to the
+// ones the user adds, so every page reads them the same way; they cannot be deleted.
+ST.BUILTIN_FG_MODELS = [
+  { id: "builtin-st", kind: "st", name: "StreamRemaster", file: "models/streamremaster.stmodel" },
+];
+
+// When the page goes fullscreen, the window follows. Chromium keeps a captured tab's fullscreen
+// inside the tab (the subtitles capture it), so the window has to be made fullscreen here; where
+// the browser already did it, nothing changes. On the way out the window goes back to how it was
+// (maximized, normal…), and only if it was this code that made it fullscreen.
+ST.windowFullscreen = async function (windowId, on) {
+  try {
+    const { fsWindows } = await ext.storage.local.get("fsWindows");
+    const before = fsWindows || {};
+    const win = await ext.windows.get(windowId);
+    if (on) {
+      if (win.state === "fullscreen") return;
+      before[windowId] = win.state;
+      await ext.storage.local.set({ fsWindows: before });
+      await ext.windows.update(windowId, { state: "fullscreen" });
+    } else {
+      const state = before[windowId];
+      if (!state) return;
+      delete before[windowId];
+      await ext.storage.local.set({ fsWindows: before });
+      if (win.state === "fullscreen") await ext.windows.update(windowId, { state });
+    }
+  } catch (e) {
+    console.warn("[streamremaster] window fullscreen:", e);
+  }
+};
+
+ST.installBuiltinModels = async function () {
+  const { fgModels } = await ext.storage.local.get("fgModels");
+  const models = {};
+  for (const model of ST.BUILTIN_FG_MODELS) {
+    try {
+      const response = await fetch(ext.runtime.getURL(model.file));
+      if (!response.ok) throw new Error(response.status);
+      const buffer = await response.arrayBuffer();
+      models[model.id] = { id: model.id, kind: model.kind, name: model.name, size: buffer.byteLength, builtin: true, data: ST.bufferToBase64(buffer) };
+    } catch (error) {
+      console.warn("[streamremaster] built-in model not installed:", model.file, error);
+    }
+  }
+  // Built-in models first, then the user's own; an old built-in entry is replaced.
+  for (const [id, model] of Object.entries(fgModels || {})) {
+    if (!model.builtin) models[id] = model;
+  }
+  await ext.storage.local.set({ fgModels: models });
+};
+
+// Small binary payloads (the video models) travel through storage.local as base64.
+ST.bufferToBase64 = function (buffer) {
+  const bytes = new Uint8Array(buffer);
+  let text = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(text);
+};
+
+ST.base64ToBuffer = function (data) {
+  const text = atob(data);
+  const bytes = new Uint8Array(text.length);
+  for (let i = 0; i < text.length; i++) bytes[i] = text.charCodeAt(i);
+  return bytes.buffer;
 };
 
 ST.getSettings = async function () {
   const { settings } = await ext.storage.local.get("settings");
-  return Object.assign({}, ST.DEFAULTS, settings || {});
+  const merged = Object.assign({}, ST.DEFAULTS, settings || {});
+  // the two built-in models of before became one, and so did their two choices
+  if (merged.fgModel === "builtin-sr" || merged.fgModel === "builtin-fi") merged.fgModel = "builtin-st";
+  delete merged.fgInterpModel;
+  return merged;
 };
 
 ST.setSettings = async function (patch) {
@@ -105,7 +274,8 @@ ST.connectedText = function (n) {
 ST.formatBytes = function (n) {
   if (!n) return "0 MB";
   if (n >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, "") + " GB";
-  return Math.max(1, Math.round(n / 1e6)) + " MB";
+  if (n < 1e6) return Math.max(1, Math.round(n / 1e3)) + " KB";
+  return Math.round(n / 1e6) + " MB";
 };
 
 // "Systran/faster-whisper-large-v3" -> {name: "faster-whisper-large-v3", org: "Systran"}

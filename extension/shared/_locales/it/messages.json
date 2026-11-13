@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "Nitidezza"
+  },
+  "fg_sharpen_off": {
+    "message": "Disattivata"
+  },
+  "fg_sharpen_soft": {
+    "message": "Leggera"
+  },
+  "fg_sharpen_medium": {
+    "message": "Media"
+  },
+  "fg_sharpen_strong": {
+    "message": "Forte"
+  },
+  "fg_resolution": {
+    "message": "Risoluzione di destinazione dell'ingrandimento"
+  },
+  "fg_res_original": {
+    "message": "Originale (senza ingrandimento)"
+  },
+  "fg_model": {
+    "message": "Modello di IA"
+  },
+  "fg_kind_sr": {
+    "message": "Ingrandimento"
+  },
+  "fg_kind_fi": {
+    "message": "Fotogrammi intermedi"
+  },
+  "fg_builtin": {
+    "message": "Integrato"
+  },
+  "fg_model_none": {
+    "message": "Nessuno (senza IA)"
+  },
+  "section_fgmodels": {
+    "message": "Modelli per video fluido"
+  },
+  "fg_models_hint": {
+    "message": "Scarica un file di modello (.stmodel, .srmodel, .fimodel) e aggiungilo qui. Funziona sulla tua scheda grafica."
+  },
+  "fg_add_model": {
+    "message": "Aggiungi file di modello"
+  },
+  "fg_no_models": {
+    "message": "Nessun modello aggiunto."
+  },
+  "fg_model_bad": {
+    "message": "Questo file non è un modello valido."
+  },
+  "tab_subs": {
+    "message": "Sottotitoli"
+  },
+  "tab_fg": {
+    "message": "Video fluido"
+  },
+  "fg_start": {
+    "message": "Attiva video fluido"
+  },
+  "fg_stop": {
+    "message": "Disattiva video fluido"
+  },
+  "fg_target": {
+    "message": "FPS desiderati"
+  },
+  "fg_target_display": {
+    "message": "Come lo schermo"
+  },
+  "fg_state_off": {
+    "message": "Disattivato"
+  },
+  "fg_state_measuring": {
+    "message": "Misurazione del video…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (video a {1} fps)"
+  },
+  "fg_no_video": {
+    "message": "In questa pagina non è in riproduzione alcun video."
+  },
+  "fg_no_webgpu": {
+    "message": "Questo browser non può usare la GPU per questo (WebGPU non è disponibile)."
+  },
+  "fg_cannot_read": {
+    "message": "Questo video non può essere letto: è protetto o proviene da un altro sito."
+  },
+  "fg_unavailable": {
+    "message": "Questa pagina non consente le estensioni."
+  },
+  "fg_auto_start": {
+    "message": "Attiva il video fluido quando parte un video"
+  },
+  "subs_auto_start": {
+    "message": "Avvia i sottotitoli quando parte un video"
+  },
+  "auto_start_hint": {
+    "message": "In questo browser funziona solo nelle schede in cui hai fatto clic sul pulsante dell'estensione, finché non passano a un altro sito."
+  },
+  "fg_allow_all_sites": {
+    "message": "Consenti su tutti i siti"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "Sottotitoli in diretta per qualsiasi scheda, trascritti e tradotti dal tuo server Whisper."
@@ -90,7 +192,7 @@
     "message": "Collega il tuo server"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription ha bisogno di un server WhisperLive sul tuo computer o nella tua rete."
+    "message": "StreamRemaster ha bisogno di un server WhisperLive sul tuo computer o nella tua rete."
   },
   "server_address": {
     "message": "Indirizzo del server"
@@ -135,7 +237,7 @@
     "message": "Poi scrivi qui il suo indirizzo: l’IP del computer e la porta, es. 192.168.1.10:9090. Se è su questo stesso computer, localhost:9090."
   },
   "server_help_3": {
-    "message": "Per scaricare e gestire i modelli da questa pagina, aggiungi al server il componente di Stream Transcription."
+    "message": "Per scaricare e gestire i modelli da questa pagina, aggiungi al server il componente di StreamRemaster."
   },
   "server_help_guide": {
     "message": "Guida passo passo"
@@ -168,7 +270,7 @@
     "message": "Prima configura il server."
   },
   "settings_title": {
-    "message": "Stream Transcription · Impostazioni"
+    "message": "StreamRemaster · Impostazioni"
   },
   "section_server": {
     "message": "Server"
@@ -255,7 +357,7 @@
     "message": "Riprova"
   },
   "plain_server_hint": {
-    "message": "È un server WhisperLive standard: scrivi una dimensione di modello (tiny, base, small, medium, large-v3, large-v3-turbo) e il server la scarica la prima volta. Per scaricare qualsiasi modello da qui, installa sul server il componente di Stream Transcription."
+    "message": "È un server WhisperLive standard: scrivi una dimensione di modello (tiny, base, small, medium, large-v3, large-v3-turbo) e il server la scarica la prima volta. Per scaricare qualsiasi modello da qui, installa sul server il componente di StreamRemaster."
   },
   "model_name": {
     "message": "Nome del modello"
@@ -276,7 +378,7 @@
     "message": "Prestazioni"
   },
   "performance_hint": {
-    "message": "Se la scheda grafica del server resta senza memoria (sottotitoli che non arrivano o un avviso di memoria), queste due opzioni ne liberano parecchia. Funzionano solo con il server di Stream Transcription."
+    "message": "Se la scheda grafica del server resta senza memoria (sottotitoli che non arrivano o un avviso di memoria), queste due opzioni ne liberano parecchia. Funzionano solo con il server di StreamRemaster."
   },
   "precision": {
     "message": "Precisione del modello"
@@ -408,7 +510,7 @@
     "message": "Firefox installa da solo le nuove versioni. Per averla subito, apri about:addons, fai clic sull’icona dell’ingranaggio e scegli “Controlla aggiornamenti”. Una versione appena uscita può impiegare qualche giorno ad arrivare al sito dei componenti aggiuntivi."
   },
   "update_how_chromium": {
-    "message": "Per aggiornare, scarica lo zip per Chromium dalla pagina della versione, estrailo sopra la vecchia cartella e fai clic sull’icona di ricarica nella scheda di Stream Transcription in chrome://extensions. Le impostazioni restano."
+    "message": "Per aggiornare, scarica lo zip per Chromium dalla pagina della versione, estrailo sopra la vecchia cartella e fai clic sull’icona di ricarica nella scheda di StreamRemaster in chrome://extensions. Le impostazioni restano."
   },
   "update_privacy": {
     "message": "La ricerca chiede a GitHub solo il numero dell’ultima versione; non viene inviato nient’altro."

@@ -52,15 +52,47 @@ async function start(tabId) {
   });
 }
 
-async function stop({ quiet = false } = {}) {
+async function stop({ quiet = false, byUser = false } = {}) {
   const { runState } = await browser.storage.local.get("runState");
   const settings = await ST.getSettings();
+  // Turned off by hand: the page must not start them again by itself (autostart.js).
+  if (byUser && runState && typeof runState.tabId === "number") {
+    await toTab(runState.tabId, { st: "auto", cmd: "hold", feature: "subs" });
+  }
   if (runState && typeof runState.tabId === "number") {
     await toTab(runState.tabId, { st: "engine", cmd: "stop" });
     await toTab(runState.tabId, { st: "overlay", op: "stop", saveSrt: settings.saveSrt });
   }
   if (!quiet || (runState && runState.state !== "error")) {
     await Engine.setRun({ state: "idle", tabId: null, error: null });
+  }
+}
+
+// The page in a tab saw a video playing and the user wants the subtitles started by themselves.
+// A run in another tab, or an error still on screen, is left alone.
+const START_GRACE_MS = 5000;
+let autoStarting = false;
+
+async function autoStart(tabId) {
+  if (autoStarting) return "busy";
+  autoStarting = true;
+  try {
+    const settings = await ST.getSettings();
+    if (!settings.subsAutoStart || !settings.serverUrl) return "off";
+    const { runState } = await browser.storage.local.get("runState");
+    if (runState && typeof runState.tabId === "number") {
+      if (runState.state === "error") return "busy";
+      if (Engine.ACTIVE.includes(runState.state)) {
+        // A reloaded page loses its engine, and its "hello" may come after this message.
+        const fresh = Date.now() - (runState.startedAt || 0) < START_GRACE_MS;
+        const res = fresh ? null : await ping(runState.tabId);
+        if (fresh || (res && res.capturing)) return runState.tabId === tabId ? "running" : "busy";
+      }
+    }
+    await start(tabId);
+    return "started";
+  } finally {
+    autoStarting = false;
   }
 }
 
@@ -91,16 +123,23 @@ async function onEngine(msg, sender) {
 
 browser.runtime.onMessage.addListener((msg, sender) => {
   if (!msg) return;
+  if (msg.cmd === "pageFullscreen") {
+    if (sender.tab) ST.windowFullscreen(sender.tab.windowId, !!msg.on);
+    return;
+  }
   if (msg.from === "engine") {
     onEngine(msg, sender);
     return;
+  }
+  if (msg.cmd === "autoStart") {
+    return sender.tab ? autoStart(sender.tab.id).then((result) => ({ result })) : undefined;
   }
   switch (msg.cmd) {
     case "start":
       start(msg.tabId);
       break;
     case "stop":
-      stop();
+      stop({ byUser: true });
       break;
     case "verify":
       (async () => {
@@ -126,5 +165,11 @@ browser.tabs.onRemoved.addListener(async (tabId) => {
   if (runState && runState.tabId === tabId) Engine.setRun({ state: "idle", tabId: null });
 });
 
-browser.runtime.onStartup.addListener(() => Engine.setRun({ state: "idle", tabId: null }));
-browser.runtime.onInstalled.addListener(() => Engine.setRun({ state: "idle", tabId: null }));
+browser.runtime.onStartup.addListener(() => {
+  Engine.setRun({ state: "idle", tabId: null });
+  ST.installBuiltinModels();
+});
+browser.runtime.onInstalled.addListener(() => {
+  Engine.setRun({ state: "idle", tabId: null });
+  ST.installBuiltinModels();
+});

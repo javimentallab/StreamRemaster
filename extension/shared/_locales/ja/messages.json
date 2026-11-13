@@ -1,6 +1,108 @@
 {
+  "fg_sharpen": {
+    "message": "シャープネス"
+  },
+  "fg_sharpen_off": {
+    "message": "オフ"
+  },
+  "fg_sharpen_soft": {
+    "message": "弱"
+  },
+  "fg_sharpen_medium": {
+    "message": "中"
+  },
+  "fg_sharpen_strong": {
+    "message": "強"
+  },
+  "fg_resolution": {
+    "message": "アップスケール後の解像度"
+  },
+  "fg_res_original": {
+    "message": "オリジナル（アップスケールなし）"
+  },
+  "fg_model": {
+    "message": "AIモデル"
+  },
+  "fg_kind_sr": {
+    "message": "アップスケール"
+  },
+  "fg_kind_fi": {
+    "message": "中間フレーム"
+  },
+  "fg_builtin": {
+    "message": "内蔵"
+  },
+  "fg_model_none": {
+    "message": "なし（AI なし）"
+  },
+  "section_fgmodels": {
+    "message": "なめらか動画のモデル"
+  },
+  "fg_models_hint": {
+    "message": "モデルファイル（.stmodel、.srmodel、.fimodel）をダウンロードしてここに追加します。お使いのグラフィックカードで動作します。"
+  },
+  "fg_add_model": {
+    "message": "モデルファイルを追加"
+  },
+  "fg_no_models": {
+    "message": "モデルはまだ追加されていません。"
+  },
+  "fg_model_bad": {
+    "message": "このファイルは有効なモデルではありません。"
+  },
+  "tab_subs": {
+    "message": "字幕"
+  },
+  "tab_fg": {
+    "message": "なめらか動画"
+  },
+  "fg_start": {
+    "message": "なめらか動画をオン"
+  },
+  "fg_stop": {
+    "message": "なめらか動画をオフ"
+  },
+  "fg_target": {
+    "message": "目標フレームレート"
+  },
+  "fg_target_display": {
+    "message": "画面に合わせる"
+  },
+  "fg_state_off": {
+    "message": "オフ"
+  },
+  "fg_state_measuring": {
+    "message": "動画を測定中…"
+  },
+  "fg_state_on": {
+    "message": "{0} fps（動画 {1} fps）"
+  },
+  "fg_no_video": {
+    "message": "このページで再生中の動画はありません。"
+  },
+  "fg_no_webgpu": {
+    "message": "このブラウザーではこの機能に GPU を使用できません（WebGPU が利用できません）。"
+  },
+  "fg_cannot_read": {
+    "message": "この動画は読み取れません。保護されているか、別のサイトのものです。"
+  },
+  "fg_unavailable": {
+    "message": "このページでは拡張機能を使用できません。"
+  },
+  "fg_auto_start": {
+    "message": "動画の再生時になめらか動画を自動でオン"
+  },
+  "subs_auto_start": {
+    "message": "動画の再生時に字幕を自動で開始"
+  },
+  "auto_start_hint": {
+    "message": "このブラウザーでは、拡張機能のボタンをクリックしたタブでのみ、別のサイトに移動するまで機能します。"
+  },
+  "fg_allow_all_sites": {
+    "message": "すべてのサイトで許可"
+  },
   "extName": {
-    "message": "Stream Transcription"
+    "message": "StreamRemaster"
   },
   "extDescription": {
     "message": "どのタブにもリアルタイム字幕。自分の Whisper サーバーが文字起こしと翻訳をします。"
@@ -90,7 +192,7 @@
     "message": "サーバーに接続"
   },
   "server_setup_hint": {
-    "message": "Stream Transcription には、パソコンかネットワーク上で動く WhisperLive サーバーが必要です。"
+    "message": "StreamRemaster には、パソコンかネットワーク上で動く WhisperLive サーバーが必要です。"
   },
   "server_address": {
     "message": "サーバーのアドレス"
@@ -135,7 +237,7 @@
     "message": "次にここにアドレスを入力します：パソコンの IP とポート、例 192.168.1.10:9090。同じパソコンで動かすなら localhost:9090。"
   },
   "server_help_3": {
-    "message": "このページからモデルをダウンロード・管理するには、サーバーに Stream Transcription のアドオンを追加してください。"
+    "message": "このページからモデルをダウンロード・管理するには、サーバーに StreamRemaster のアドオンを追加してください。"
   },
   "server_help_guide": {
     "message": "手順ガイド"
@@ -168,7 +270,7 @@
     "message": "先にサーバーを設定してください。"
   },
   "settings_title": {
-    "message": "Stream Transcription · 設定"
+    "message": "StreamRemaster · 設定"
   },
   "section_server": {
     "message": "サーバー"
@@ -255,7 +357,7 @@
     "message": "再試行"
   },
   "plain_server_hint": {
-    "message": "標準の WhisperLive サーバーです。モデルのサイズ（tiny、base、small、medium、large-v3、large-v3-turbo）を入力すると、初回にサーバーがダウンロードします。ここから任意のモデルをダウンロードするには、サーバーに Stream Transcription のアドオンを入れてください。"
+    "message": "標準の WhisperLive サーバーです。モデルのサイズ（tiny、base、small、medium、large-v3、large-v3-turbo）を入力すると、初回にサーバーがダウンロードします。ここから任意のモデルをダウンロードするには、サーバーに StreamRemaster のアドオンを入れてください。"
   },
   "model_name": {
     "message": "モデル名"
@@ -276,7 +378,7 @@
     "message": "パフォーマンス"
   },
   "performance_hint": {
-    "message": "サーバーのグラフィックボードのメモリが足りないとき（字幕が届かない、メモリの警告が出る）、この 2 つの設定で大きく空けられます。Stream Transcription のサーバーでのみ有効です。"
+    "message": "サーバーのグラフィックボードのメモリが足りないとき（字幕が届かない、メモリの警告が出る）、この 2 つの設定で大きく空けられます。StreamRemaster のサーバーでのみ有効です。"
   },
   "precision": {
     "message": "モデルの精度"
@@ -408,7 +510,7 @@
     "message": "Firefox は新しいバージョンを自動でインストールします。すぐに入れるには about:addons を開き、歯車アイコンから「今すぐ更新を確認」を選んでください。出たばかりのバージョンはアドオンサイトに載るまで数日かかることがあります。"
   },
   "update_how_chromium": {
-    "message": "アップデートするには、バージョンのページから Chromium 用の zip をダウンロードして古いフォルダーに上書きで展開し、chrome://extensions の Stream Transcription のカードで再読み込みアイコンを押してください。設定はそのまま残ります。"
+    "message": "アップデートするには、バージョンのページから Chromium 用の zip をダウンロードして古いフォルダーに上書きで展開し、chrome://extensions の StreamRemaster のカードで再読み込みアイコンを押してください。設定はそのまま残ります。"
   },
   "update_privacy": {
     "message": "確認では GitHub に最新バージョンの番号を問い合わせるだけで、ほかには何も送信しません。"
