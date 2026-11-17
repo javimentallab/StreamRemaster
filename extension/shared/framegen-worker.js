@@ -52,7 +52,9 @@ globalThis.STFramegenWorkerMain = function (self) {
   async function init(message) {
     canvas = message.canvas;
     target = Number(message.target) || 0;
-    const adapter = self.navigator.gpu ? await self.navigator.gpu.requestAdapter() : null;
+    // The same graphics card as the page and the video decoder: a frame shared between two cards
+    // can arrive with its colour corrupted (green).
+    const adapter = self.navigator.gpu ? await self.navigator.gpu.requestAdapter({ powerPreference: "high-performance" }) : null;
     if (!adapter) throw Object.assign(new Error("no adapter"), { code: "no_webgpu" });
     device = await adapter.requestDevice({
       requiredLimits: {
@@ -96,9 +98,12 @@ globalThis.STFramegenWorkerMain = function (self) {
         onFrame(frame);
       } catch (error) {
         report(error);
-      } finally {
-        frame.close(); // the copy into the ring is already submitted
       }
+      // Closed only once the graphics card has finished the copy into the ring: closing it as soon
+      // as the copy was submitted could hand the decoder's surface back before it was read, and a
+      // recycled surface reads as green.
+      if (device) device.queue.onSubmittedWorkDone().then(() => frame.close(), () => frame.close());
+      else frame.close();
     }
   }
 
