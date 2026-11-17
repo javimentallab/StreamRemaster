@@ -98,12 +98,11 @@ globalThis.STFramegenWorkerMain = function (self) {
         onFrame(frame);
       } catch (error) {
         report(error);
+      } finally {
+        // Closed right away: the copy into the ring is already submitted. Holding frames until the
+        // graphics card was done (tried on 17-nov) starved the decoder and froze Twitch.
+        frame.close();
       }
-      // Closed only once the graphics card has finished the copy into the ring: closing it as soon
-      // as the copy was submitted could hand the decoder's surface back before it was read, and a
-      // recycled surface reads as green.
-      if (device) device.queue.onSubmittedWorkDone().then(() => frame.close(), () => frame.close());
-      else frame.close();
     }
   }
 
