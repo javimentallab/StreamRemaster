@@ -16,6 +16,8 @@
   const METER_EVERY_MS = 250;
   // How long the worker may take to set up its GPU before the main thread takes over.
   const WORKER_START_TIMEOUT_MS = 8000;
+  // A worker that has not painted for this long has its canvas hidden (see onWorkerMessage).
+  const STALE_PAINT_MS = 400;
   // Frames waiting for the worker while the page is busy: about half a second at 60 fps.
   const FRAME_QUEUE = 30;
   // Same level as the subtitles: a fixed element in its own shadow root, above everything on the
@@ -167,7 +169,14 @@
 
   function onWorkerMessage(state, message) {
     if (run !== state) return;
-    if (message.type === "status") state.remote = message;
+    if (message.type === "status") {
+      state.remote = message;
+      // The worker shows its canvas but has painted nothing for a while: take the canvas away so the
+      // video itself shows, never a frozen picture over it. The worker shows it again when it paints.
+      if (message.sincePaintMs > STALE_PAINT_MS && state.canvas.style.visibility !== "hidden") {
+        state.canvas.style.visibility = "hidden";
+      }
+    }
     else if (message.type === "visible") state.canvas.style.visibility = message.visible ? "visible" : "hidden";
     else if (message.type === "ended") restart(state); // the video changed source: a new track
     else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
@@ -355,7 +364,8 @@
       onFullscreen: () => placeMeter(state),
       // Back from the background: the worker starts its timing afresh (see forgetLateness).
       onVisibility: () => {
-        if (state.worker && document.visibilityState === "visible") state.worker.postMessage({ type: "resume" });
+        if (!state.worker) return;
+        state.worker.postMessage({ type: document.visibilityState === "visible" ? "resume" : "hidden" });
       },
     };
 
