@@ -81,6 +81,23 @@
     return { kind: "fi", name: String(name || "model").slice(0, 80), shape: clean, weights };
   }
 
+  // Compiled pipelines per device and shader text, as in framegen-sr.js: a change of the video's
+  // size rebuilds the interpolator without compiling its shaders again.
+  const compiled = new WeakMap();
+  function cachedPipeline(device, text) {
+    let cache = compiled.get(device);
+    if (!cache) compiled.set(device, (cache = new Map()));
+    let pipeline = cache.get(text);
+    if (!pipeline) {
+      pipeline = device.createComputePipelineAsync({
+        layout: "auto", compute: { module: device.createShaderModule({ code: text }), entryPoint: "main" },
+      });
+      pipeline.catch(() => cache.delete(text));
+      cache.set(text, pipeline);
+    }
+    return pipeline;
+  }
+
   const PARAMS = "struct P { w: u32, h: u32 }; @group(0) @binding(3) var<uniform> p: P;";
   const HEAD = "@compute @workgroup_size(64, 1) fn main(@builtin(global_invocation_id) id: vec3u) {\n"
     + "  if (id.x >= p.w || id.y >= p.h) { return; }";
@@ -257,9 +274,7 @@ ${copies}}`;
     async compile() {
       const code = buildShaders(this.model);
       const device = this.device;
-      const make = (text) => device.createComputePipelineAsync({
-        layout: "auto", compute: { module: device.createShaderModule({ code: text }), entryPoint: "main" },
-      });
+      const make = (text) => cachedPipeline(device, text);
       const B = this.buffers;
       const byName = {
         in4: B.in4, q0: B.q[0], q1: B.q[1], q2: B.q[2], qs: B.qs, u8: B.u8, e0: B.e[0], e1: B.e[1], e2: B.e[2], es: B.es,
