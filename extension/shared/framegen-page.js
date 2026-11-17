@@ -353,6 +353,10 @@
       meter: createMeter(),
       meterAt: 0,
       onFullscreen: () => placeMeter(state),
+      // Back from the background: the worker starts its timing afresh (see forgetLateness).
+      onVisibility: () => {
+        if (state.worker && document.visibilityState === "visible") state.worker.postMessage({ type: "resume" });
+      },
     };
 
     if (!options.mainThread && workerPossible(video)) {
@@ -382,6 +386,7 @@
     video.addEventListener("emptied", state.onSource);
     video.addEventListener("loadedmetadata", state.onSource);
     document.addEventListener("fullscreenchange", state.onFullscreen);
+    document.addEventListener("visibilitychange", state.onVisibility);
     document.addEventListener("webkitfullscreenchange", state.onFullscreen);
     placeMeter(state);
     run = state;
@@ -414,6 +419,7 @@
     state.video.removeEventListener("emptied", state.onSource);
     state.video.removeEventListener("loadedmetadata", state.onSource);
     document.removeEventListener("fullscreenchange", state.onFullscreen);
+    document.removeEventListener("visibilitychange", state.onVisibility);
     document.removeEventListener("webkitfullscreenchange", state.onFullscreen);
     state.meter.host.remove();
     endWorker(state);

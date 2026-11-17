@@ -17,6 +17,8 @@ globalThis.STFramegenWorkerMain = function (self) {
   // Frames come in bursts after a stall: let the networks queue a little more work than on the main
   // thread before a frame goes without them.
   const MAX_IN_FLIGHT = 4;
+  // A gap between animation frames this long means the window was in the background or covered.
+  const RESUME_GAP_MS = 100;
 
   let device = null;
   let canvas = null;
@@ -125,6 +127,9 @@ globalThis.STFramegenWorkerMain = function (self) {
   function loop(now) {
     if (stopped) return;
     raf = self.requestAnimationFrame(loop);
+    // No animation frames for a while: the window was in the background or covered. Start the
+    // timing afresh from the frames arriving now.
+    if (lastLoop && now - lastLoop > RESUME_GAP_MS) timer.forgetLateness();
     if (lastLoop && now - lastLoop > 20) gaps20++;
     lastLoop = now;
     while (paints.length && paints[0] <= now - 1000) paints.shift();
@@ -181,6 +186,8 @@ globalThis.STFramegenWorkerMain = function (self) {
       } catch (error) {
         report(error);
       }
+    } else if (message.type === "resume") {
+      timer.forgetLateness();
     } else if (message.type === "target") {
       target = Number(message.target) || 0;
       if (gen) {

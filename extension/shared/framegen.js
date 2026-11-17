@@ -277,6 +277,19 @@
       return { index, reset };
     }
 
+    // The window was in the background (its animation frames stopped): frames came in as the
+    // browser pleased meanwhile, and the lateness measured then says nothing about now. Without
+    // this the output kept up to 200 ms of delay for many seconds after coming back, looked for
+    // frames already gone and stuttered.
+    forgetLateness() {
+      this.offsets = [];
+      this.offset = NaN;
+      this.lates = [];
+      this.delay = 0;
+      this.lastArrival = NaN;
+      this.lastPosition = -Infinity;
+    }
+
     observeArrival(ts, arrival) {
       const gap = arrival - ts;
       this.offsets.push([arrival, gap]);
