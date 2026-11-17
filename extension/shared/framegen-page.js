@@ -16,6 +16,9 @@
   const METER_EVERY_MS = 250;
   // How long the worker may take to set up its GPU before the main thread takes over.
   const WORKER_START_TIMEOUT_MS = 8000;
+  // After the video changes source, how long it has to play undisturbed before the worker gets its
+  // new track (players switch source several times in a row while they start up).
+  const SOURCE_SETTLE_MS = 400;
   // Frames waiting for the worker while the page is busy: about half a second at 60 fps.
   const FRAME_QUEUE = 30;
   // Same level as the subtitles: a fixed element in its own shadow root, above everything on the
@@ -169,7 +172,7 @@
     if (run !== state) return;
     if (message.type === "status") state.remote = message;
     else if (message.type === "visible") state.canvas.style.visibility = message.visible ? "visible" : "hidden";
-    else if (message.type === "ended") restart(state); // the video changed source: a new track
+    else if (message.type === "ended") resubscribe(state); // the video changed source: a new track
     else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
   }
 
@@ -185,12 +188,29 @@
     }
   }
 
-  // The video started playing something else: on the worker path the captured track goes with the
-  // old source, so it all starts again on the new one.
-  function restart(state) {
-    if (state.restarting) return;
-    state.restarting = true;
-    setTimeout(() => { if (run === state) start(target); }, 300);
+  // The video started playing something else (an ad, another quality, the stream after the ad): on
+  // the worker path the captured track goes with the old source. The worker, its graphics device
+  // and its compiled shaders stay; a new track is handed over once the new source plays and has
+  // been quiet for a moment (step() does it). Starting everything again on each change, several
+  // times while a player starts up, made the smooth video lag or start badly.
+  function resubscribe(state) {
+    state.pendingSource = true;
+    state.sourceAt = performance.now();
+  }
+
+  function swapTrack(state) {
+    state.pendingSource = false;
+    const stream = state.video.captureStream();
+    for (const track of stream.getAudioTracks()) track.stop();
+    const track = stream.getVideoTracks()[0];
+    if (!track) {
+      resubscribe(state); // not ready yet: try again in a moment
+      return;
+    }
+    if (state.track) state.track.stop();
+    state.track = track;
+    const processor = new MediaStreamTrackProcessor({ track, maxBufferSize: FRAME_QUEUE });
+    state.worker.postMessage({ type: "source", readable: processor.readable }, [processor.readable]);
   }
 
   // ---- what both paths share --------------------------------------------------------------------
@@ -279,6 +299,10 @@
       }
       state.layoutKey = "";
     }
+    if (state.worker && state.pendingSource && video.readyState >= 2 && !video.paused && video.videoWidth
+        && performance.now() - state.sourceAt > SOURCE_SETTLE_MS) {
+      swapTrack(state);
+    }
     if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
 
     if (state.lastTick) {
@@ -341,13 +365,13 @@
 
     const state = {
       device: null, video, canvas: makeCanvas(video), options: settings, plan: null, gen: null,
-      worker: null, track: null, remote: null, restarting: false,
+      worker: null, track: null, remote: null, pendingSource: false, sourceAt: 0,
       ticks: 0, lastPaint: 0, lastTick: 0, paints: [],
       gaps20: 0, gaps50: 0, raf: 0, layoutKey: "", sourceWidth: 0, sourceHeight: 0,
       sourceResets: 0,
       onSource: () => {
         state.sourceResets++;
-        if (state.worker) restart(state);
+        if (state.worker) resubscribe(state);
         else if (state.gen) state.gen.resetSource();
       },
       meter: createMeter(),

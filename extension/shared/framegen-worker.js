@@ -68,7 +68,7 @@ globalThis.STFramegenWorkerMain = function (self) {
     build(message.plan);
     post({ type: "ready" });
     reader = message.readable.getReader();
-    read();
+    read(reader);
     raf = self.requestAnimationFrame(loop);
     statusTimer = self.setInterval(sendStatus, STATUS_EVERY_MS);
   }
@@ -80,17 +80,23 @@ globalThis.STFramegenWorkerMain = function (self) {
     gen.targetFps = target;
   }
 
-  async function read() {
-    while (!stopped) {
+  // Reads one track's frames until it ends. A track that was swapped for a new one (see "source")
+  // just stops here without a word.
+  async function read(own) {
+    while (!stopped && own === reader) {
       let result;
       try {
-        result = await reader.read();
+        result = await own.read();
       } catch (error) {
-        report(error);
+        if (own === reader) report(error);
         return;
       }
       if (result.done) {
-        if (!stopped) post({ type: "ended" });
+        if (!stopped && own === reader) post({ type: "ended" });
+        return;
+      }
+      if (own !== reader) {
+        result.value.close();
         return;
       }
       const frame = result.value;
@@ -179,6 +185,16 @@ globalThis.STFramegenWorkerMain = function (self) {
     const message = event.data || {};
     if (message.type === "init") {
       init(message).catch(report);
+    } else if (message.type === "source") {
+      // The video plays something else (an ad, another quality, a new stream): a new track's frames,
+      // with the same device and the same compiled shaders. Only the numbering starts over.
+      const old = reader;
+      reader = message.readable.getReader();
+      if (old) old.cancel().catch(() => {});
+      timer.reset();
+      lastIndex = null;
+      if (gen) gen.reset();
+      read(reader);
     } else if (message.type === "plan") {
       try {
         build(message.plan);
