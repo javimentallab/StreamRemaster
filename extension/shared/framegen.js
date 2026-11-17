@@ -233,9 +233,14 @@
     frame(ts, arrival) {
       let reset = false;
       if (Number.isFinite(this.lastTs) && (ts < this.lastTs - 0.001 || ts - this.lastTs > 1)) {
+        // A seek, a loop or a gap (the window went to the background, the stream stalled): the
+        // numbering starts over. After a gap forward the video is the same one at the same rate, so
+        // the measured rate stays and the picture goes on at once instead of measuring it again.
+        const keep = ts > this.lastTs ? { deltas: this.deltas, guess: this.guess } : null;
         const delay = this.delay;
         this.reset();
         this.delay = delay; // the page stalls just as much as before
+        if (keep) Object.assign(this, keep);
         reset = true;
       }
       if (ts === this.lastTs) return { index: null, reset };

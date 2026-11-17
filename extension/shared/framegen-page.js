@@ -19,6 +19,9 @@
   // After the video changes source, how long it has to play undisturbed before the worker gets its
   // new track (players switch source several times in a row while they start up).
   const SOURCE_SETTLE_MS = 400;
+  // After handing the worker a new track: how long before the old one is stopped, and during which
+  // an "ended" from the worker is the old track going away, not a new change of source.
+  const SWAP_GRACE_MS = 1500;
   // Frames waiting for the worker while the page is busy: about half a second at 60 fps.
   const FRAME_QUEUE = 30;
   // Same level as the subtitles: a fixed element in its own shadow root, above everything on the
@@ -172,7 +175,9 @@
     if (run !== state) return;
     if (message.type === "status") state.remote = message;
     else if (message.type === "visible") state.canvas.style.visibility = message.visible ? "visible" : "hidden";
-    else if (message.type === "ended") resubscribe(state); // the video changed source: a new track
+    else if (message.type === "ended") { // the video changed source: a new track
+      if (performance.now() - state.swappedAt > SWAP_GRACE_MS) resubscribe(state);
+    }
     else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
   }
 
@@ -207,10 +212,15 @@
       resubscribe(state); // not ready yet: try again in a moment
       return;
     }
-    if (state.track) state.track.stop();
+    const old = state.track;
     state.track = track;
     const processor = new MediaStreamTrackProcessor({ track, maxBufferSize: FRAME_QUEUE });
     state.worker.postMessage({ type: "source", readable: processor.readable }, [processor.readable]);
+    // The old track is stopped only once the worker has moved to the new one, and its end is not
+    // taken for another change of source: stopping it first made the worker report "ended", which
+    // asked for a new track again, over and over.
+    state.swappedAt = performance.now();
+    if (old) setTimeout(() => old.stop(), SWAP_GRACE_MS);
   }
 
   // ---- what both paths share --------------------------------------------------------------------
@@ -365,7 +375,7 @@
 
     const state = {
       device: null, video, canvas: makeCanvas(video), options: settings, plan: null, gen: null,
-      worker: null, track: null, remote: null, pendingSource: false, sourceAt: 0,
+      worker: null, track: null, remote: null, pendingSource: false, sourceAt: 0, swappedAt: 0,
       ticks: 0, lastPaint: 0, lastTick: 0, paints: [],
       gaps20: 0, gaps50: 0, raf: 0, layoutKey: "", sourceWidth: 0, sourceHeight: 0,
       sourceResets: 0,
