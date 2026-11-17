@@ -16,12 +16,6 @@
   const METER_EVERY_MS = 250;
   // How long the worker may take to set up its GPU before the main thread takes over.
   const WORKER_START_TIMEOUT_MS = 8000;
-  // After the video changes source, how long it has to play undisturbed before the worker gets its
-  // new track (players switch source several times in a row while they start up).
-  const SOURCE_SETTLE_MS = 400;
-  // After handing the worker a new track: how long before the old one is stopped, and during which
-  // an "ended" from the worker is the old track going away, not a new change of source.
-  const SWAP_GRACE_MS = 1500;
   // Frames waiting for the worker while the page is busy: about half a second at 60 fps.
   const FRAME_QUEUE = 30;
   // Same level as the subtitles: a fixed element in its own shadow root, above everything on the
@@ -175,9 +169,7 @@
     if (run !== state) return;
     if (message.type === "status") state.remote = message;
     else if (message.type === "visible") state.canvas.style.visibility = message.visible ? "visible" : "hidden";
-    else if (message.type === "ended") { // the video changed source: a new track
-      if (performance.now() - state.swappedAt > SWAP_GRACE_MS) resubscribe(state);
-    }
+    else if (message.type === "ended") restart(state); // the video changed source: a new track
     else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
   }
 
@@ -193,34 +185,12 @@
     }
   }
 
-  // The video started playing something else (an ad, another quality, the stream after the ad): on
-  // the worker path the captured track goes with the old source. The worker, its graphics device
-  // and its compiled shaders stay; a new track is handed over once the new source plays and has
-  // been quiet for a moment (step() does it). Starting everything again on each change, several
-  // times while a player starts up, made the smooth video lag or start badly.
-  function resubscribe(state) {
-    state.pendingSource = true;
-    state.sourceAt = performance.now();
-  }
-
-  function swapTrack(state) {
-    state.pendingSource = false;
-    const stream = state.video.captureStream();
-    for (const track of stream.getAudioTracks()) track.stop();
-    const track = stream.getVideoTracks()[0];
-    if (!track) {
-      resubscribe(state); // not ready yet: try again in a moment
-      return;
-    }
-    const old = state.track;
-    state.track = track;
-    const processor = new MediaStreamTrackProcessor({ track, maxBufferSize: FRAME_QUEUE });
-    state.worker.postMessage({ type: "source", readable: processor.readable }, [processor.readable]);
-    // The old track is stopped only once the worker has moved to the new one, and its end is not
-    // taken for another change of source: stopping it first made the worker report "ended", which
-    // asked for a new track again, over and over.
-    state.swappedAt = performance.now();
-    if (old) setTimeout(() => old.stop(), SWAP_GRACE_MS);
+  // The video started playing something else: on the worker path the captured track goes with the
+  // old source, so it all starts again on the new one.
+  function restart(state) {
+    if (state.restarting) return;
+    state.restarting = true;
+    setTimeout(() => { if (run === state) start(target); }, 300);
   }
 
   // ---- what both paths share --------------------------------------------------------------------
@@ -298,8 +268,6 @@
     // The extension was reloaded or removed: this copy can no longer be reached from the popup,
     // so it takes its canvas away instead of staying over the video for good.
     if (!ext.runtime || !ext.runtime.id) { stop(); return; }
-    // A newer copy took this one's canvas away (see clearLeftovers): this one is the old copy.
-    if (!state.canvas.isConnected) { stop(); return; }
     if (video.videoWidth && (video.videoWidth !== state.sourceWidth || video.videoHeight !== state.sourceHeight)) {
       if (state.worker) {
         state.plan = planSizes(video, state.options);
@@ -310,10 +278,6 @@
         build(state);
       }
       state.layoutKey = "";
-    }
-    if (state.worker && state.pendingSource && video.readyState >= 2 && !video.paused && video.videoWidth
-        && performance.now() - state.sourceAt > SOURCE_SETTLE_MS) {
-      swapTrack(state);
     }
     if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
 
@@ -352,32 +316,14 @@
 
   function makeCanvas(video) {
     const canvas = document.createElement("canvas");
-    canvas.dataset.streamRemaster = "";
     canvas.style.cssText = "position:absolute;pointer-events:none;margin:0;padding:0;border:0;visibility:hidden;";
     video.insertAdjacentElement("afterend", canvas);
     return canvas;
   }
 
   // options.mainThread: skip the worker (the test bench uses it to compare both paths).
-  // A copy of this script from before the extension was reloaded can leave its canvas and its meter
-  // over the video for good (Firefox does not always let the old copy run again to take them away):
-  // the new copy clears whatever is not its own. Canvases made before they were marked are known by
-  // their place right after a video and their style.
-  function clearLeftovers() {
-    const own = run ? [run.canvas, run.meter.host] : [];
-    const found = [...document.querySelectorAll("canvas[data-stream-remaster], stream-remaster-fps")];
-    for (const video of document.querySelectorAll("video")) {
-      const next = video.nextElementSibling;
-      if (next && next.tagName === "CANVAS" && !next.id && !next.className
-          && next.style.pointerEvents === "none" && next.style.position === "absolute") found.push(next);
-    }
-    for (const element of found) if (!own.includes(element)) element.remove();
-  }
-  clearLeftovers();
-
   async function start(targetFps, options = {}) {
     stop();
-    clearLeftovers();
     lastError = null;
     lastDetail = null;
     target = Number(targetFps) || 0;
@@ -395,13 +341,13 @@
 
     const state = {
       device: null, video, canvas: makeCanvas(video), options: settings, plan: null, gen: null,
-      worker: null, track: null, remote: null, pendingSource: false, sourceAt: 0, swappedAt: 0,
+      worker: null, track: null, remote: null, restarting: false,
       ticks: 0, lastPaint: 0, lastTick: 0, paints: [],
       gaps20: 0, gaps50: 0, raf: 0, layoutKey: "", sourceWidth: 0, sourceHeight: 0,
       sourceResets: 0,
       onSource: () => {
         state.sourceResets++;
-        if (state.worker) resubscribe(state);
+        if (state.worker) restart(state);
         else if (state.gen) state.gen.resetSource();
       },
       meter: createMeter(),

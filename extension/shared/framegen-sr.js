@@ -57,24 +57,6 @@
     return { name: String(name || "model").slice(0, 80), channels, blocks, weights, aligned: format === 2 };
   }
 
-  // Compiled pipelines per device and shader text. The shaders depend only on the model, not on the
-  // video's size, so when the video changes size (an ad, another quality) the upscaler is rebuilt
-  // with the pipelines already compiled instead of going without the model for seconds.
-  const compiled = new WeakMap();
-  function cachedPipeline(device, text) {
-    let cache = compiled.get(device);
-    if (!cache) compiled.set(device, (cache = new Map()));
-    let pipeline = cache.get(text);
-    if (!pipeline) {
-      pipeline = device.createComputePipelineAsync({
-        layout: "auto", compute: { module: device.createShaderModule({ code: text }), entryPoint: "main" },
-      });
-      pipeline.catch(() => cache.delete(text));
-      cache.set(text, pipeline);
-    }
-    return pipeline;
-  }
-
   const literal = (x) => x.toExponential(8);
   const PARAMS = "struct P { w: u32, h: u32 }; @group(0) @binding(3) var<uniform> p: P;";
   const VECTORS = `
@@ -287,7 +269,10 @@ ${body}}`;
     // Asynchronous: a pipeline compiled on the first frame would freeze the video for seconds.
     async compile(model) {
       const code = buildShaders(model);
-      const make = (text) => cachedPipeline(this.device, text);
+      const make = (text) => {
+        const module = this.device.createShaderModule({ code: text });
+        return this.device.createComputePipelineAsync({ layout: "auto", compute: { module, entryPoint: "main" } });
+      };
       const [unpack, head, tail, compose, depth, mix] = await Promise.all([
         make(code.unpack), make(code.head), make(code.tail), make(code.compose),
         Promise.all(code.depthwise.map(make)), Promise.all(code.mix.map(make)),
