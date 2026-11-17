@@ -1,5 +1,6 @@
 """Model management on the server: what it accepts to download, and archives that try to escape."""
 import importlib.util
+import base64
 import io
 import json
 import os
@@ -161,6 +162,72 @@ class Version(unittest.TestCase):
 
     def test_not_a_control_message(self):
         self.assertFalse(M.handle_control(None, {"uid": "x"}, ""))
+
+
+def video_file(name="Mine", magic=b"SFM1"):
+    text = json.dumps({"format": 1, "name": name, "sr": 0, "fi": 4}).encode()
+    text += b" " * ((4 - len(text) % 4) % 4)
+    return magic + len(text).to_bytes(4, "little") + text + b"\0\0\0\0"
+
+
+class VideoModels(unittest.TestCase):
+    """The smooth video models the server keeps for the extension (they run in the browser)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.old = M.VIDEO_DIR
+        M.VIDEO_DIR = self.tmp.name
+
+    def tearDown(self):
+        M.VIDEO_DIR = self.old
+        self.tmp.cleanup()
+
+    def put(self, file_name, data):
+        with open(os.path.join(self.tmp.name, file_name), "wb") as fh:
+            fh.write(data)
+
+    def test_list_reads_the_names_and_skips_what_is_not_a_model(self):
+        self.put("a.stmodel", video_file("StreamRemaster"))
+        self.put("b.srmodel", video_file("Up", b"SRM1"))
+        self.put("notes.txt", b"hello")
+        self.put("fake.stmodel", b"MZ\x90\x00 not a model")
+        got = M.list_video_models()
+        self.assertTrue(got["ok"])
+        self.assertEqual([(m["id"], m["name"], m["kind"]) for m in got["models"]],
+                         [("a.stmodel", "StreamRemaster", "st"), ("b.srmodel", "Up", "sr")])
+
+    def test_no_folder_is_an_empty_list(self):
+        M.VIDEO_DIR = os.path.join(self.tmp.name, "missing")
+        self.assertEqual(M.list_video_models(), {"ok": True, "models": []})
+
+    def test_get_gives_the_file(self):
+        data = video_file("StreamRemaster")
+        self.put("a.stmodel", data)
+        got = M.get_video_model("a.stmodel")
+        self.assertTrue(got["ok"])
+        self.assertEqual(base64.b64decode(got["data"]), data)
+        self.assertEqual(got["name"], "StreamRemaster")
+
+    def test_get_and_delete_stay_in_the_folder(self):
+        outside = os.path.join(os.path.dirname(self.tmp.name), "outside.stmodel")
+        for bad in ("../outside.stmodel", "/etc/passwd", "..", "", None, 5, "a.exe", ".hidden.stmodel"):
+            self.assertEqual(M.get_video_model(bad), {"ok": False, "error": "not_found"}, repr(bad))
+            self.assertEqual(M.delete_video_model(bad), {"ok": False, "error": "not_found"}, repr(bad))
+        self.assertFalse(os.path.exists(outside))
+
+    def test_delete(self):
+        self.put("a.stmodel", video_file())
+        self.assertEqual(M.delete_video_model("a.stmodel"), {"ok": True})
+        self.assertEqual(M.list_video_models()["models"], [])
+
+    def test_download_refuses_what_is_not_an_address(self):
+        for bad in ("", None, "file:///etc/passwd", "ftp://x/y.stmodel", "not an url"):
+            self.assertEqual(M.download_video_model(bad)["error"], "invalid_source", repr(bad))
+
+    def test_safe_file_names(self):
+        self.assertEqual(M._video_file_name("https://x.example/m/My%20Model.stmodel", "n"), "My-Model.stmodel")
+        self.assertEqual(M._video_file_name("https://x.example/download?id=3", "Stream Remaster"), "Stream-Remaster.stmodel")
+        self.assertEqual(M._video_file_name("https://x.example/..%2F..%2Fevil.fimodel", "n"), "evil.fimodel")
 
 
 if __name__ == "__main__":

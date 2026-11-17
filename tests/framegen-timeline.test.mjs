@@ -67,3 +67,26 @@ test('the clock-only numbering jerks on a 59.94 stream; the timeline does not', 
   assert.ok(jerks(false) > 0, 'expected the old numbering to jerk');
   assert.equal(jerks(true), 0);
 });
+
+// Seen on Twitch (17-nov): the rate meter read 57.75 for a 60 fps stream (the page was busy while
+// it measured) and the fit, 3 % away from that, was thrown out for good: the capture then numbered
+// frames at 57.75 a second and dropped one every ~0.4 s.
+test('a fit on a common rate wins over a rate meter that read low', () => {
+  for (const every of [null, 0.04]) {
+    const timeline = new FrameTimeline();
+    const at = (n) => (n + 0.3) / 60;
+    if (every === null) {
+      for (let n = Math.ceil(START * 60); at(n) < START + 3; n++) timeline.add(at(n), 57.75);
+    } else {
+      for (let t = START; t < START + 3; t += every) timeline.add(at(Math.floor(t * 60 - 0.3)), 57.75);
+    }
+    assert.ok(Math.abs(timeline.hz - 60) < 1e-3, `hz ${timeline.hz} (${every === null ? 'every frame' : 'Gecko-like'})`);
+  }
+});
+
+test('a fit far from the measured rate and from any common rate is still refused', () => {
+  const timeline = new FrameTimeline();
+  const at = (n) => n / 27.3; // not a common rate
+  for (let n = Math.ceil(START * 27.3); at(n) < START + 3; n++) timeline.add(at(n), 30);
+  assert.equal(timeline.hz, 0);
+});

@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "Karta graficzna kilka razy z rzędu zatrzymała model transkrypcji."
+  },
+  "fg_hq_badge": {
+    "message": "Dla mocnych kart graficznych"
+  },
+  "where_fg_models": {
+    "message": "Gdzie są modele"
+  },
+  "fg_local_title": {
+    "message": "Modele płynnego wideo na tym komputerze"
+  },
+  "fg_server_title": {
+    "message": "Modele płynnego wideo na serwerze"
+  },
+  "fg_server_intro": {
+    "message": "Serwer tylko je przechowuje: wybrany model pobiera się z niego i działa na karcie graficznej tego komputera."
+  },
+  "fg_server_none": {
+    "message": "Serwer nie ma jeszcze modeli płynnego wideo."
+  },
+  "fg_server_old": {
+    "message": "Ten serwer nie przechowuje modeli płynnego wideo: zaktualizuj go do najnowszej wersji."
+  },
+  "fg_add_server_title": {
+    "message": "Dodaj do serwera"
+  },
+  "fg_server_loading": {
+    "message": "Pobieranie modelu z serwera…"
+  },
+  "section_transcription": {
+    "message": "Modele transkrypcji"
+  },
+  "transcription_intro": {
+    "message": "Wybierz, gdzie mowa zamienia się w tekst: na serwerze WhisperLive czy na karcie graficznej tego komputera."
+  },
+  "where_transcribe": {
+    "message": "Gdzie transkrybować"
+  },
+  "engine_server": {
+    "message": "Na serwerze"
+  },
+  "engine_local": {
+    "message": "Na tym komputerze"
+  },
+  "trans_server_title": {
+    "message": "Modele transkrypcji na serwerze"
+  },
+  "trans_local_title": {
+    "message": "Modele transkrypcji na tym komputerze"
+  },
+  "badge_in_use": {
+    "message": "W użyciu"
+  },
+  "fg_downloaded_title": {
+    "message": "Pobrane"
+  },
+  "fg_add_title": {
+    "message": "Dodaj model"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Adres pliku modelu (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "Nie udało się pobrać ({0}). Pobierz plik przeglądarką i wybierz go z tego komputera."
+  },
+  "fg_memory": {
+    "message": "Pamięć karty graficznej: około {0} przy filmie 1080p"
+  },
+  "fg_memory_4k": {
+    "message": "około {0} przy skalowaniu z 1080p do 4K"
+  },
+  "fg_memory_now": {
+    "message": "Używana pamięć karty graficznej: około {0}"
+  },
+  "fg_file_size": {
+    "message": "Plik: {0}"
+  },
+  "fg_options": {
+    "message": "Opcje"
+  },
   "fg_sharpen": {
     "message": "Ostrość"
   },
@@ -21,13 +102,13 @@
     "message": "Oryginalna (bez skalowania)"
   },
   "fg_model": {
-    "message": "Model AI"
+    "message": "Model płynnego wideo"
   },
   "fg_kind_sr": {
-    "message": "Skalowanie"
+    "message": "Tylko skalowanie"
   },
   "fg_kind_fi": {
-    "message": "Klatki pośrednie"
+    "message": "Tylko klatki pośrednie"
   },
   "fg_builtin": {
     "message": "Wbudowany"
@@ -39,13 +120,13 @@
     "message": "Modele płynnego wideo"
   },
   "fg_models_hint": {
-    "message": "Pobierz plik modelu (.stmodel, .srmodel, .fimodel) i dodaj go tutaj. Działa na Twojej karcie graficznej."
+    "message": "Płynne wideo zawsze działa na karcie graficznej tego komputera. StreamRemaster jest dołączony do rozszerzenia; inne modele mogą być na tym komputerze lub na twoim serwerze."
   },
   "fg_add_model": {
-    "message": "Dodaj plik modelu"
+    "message": "Wybierz plik z tego komputera"
   },
   "fg_no_models": {
-    "message": "Nie dodano jeszcze żadnych modeli."
+    "message": "Brak pobranych modeli."
   },
   "fg_model_bad": {
     "message": "Ten plik nie jest prawidłowym modelem."
@@ -138,7 +219,7 @@
     "message": "Brak odpowiedzi"
   },
   "model": {
-    "message": "Model"
+    "message": "Model transkrypcji"
   },
   "model_server_default": {
     "message": "Domyślny serwera"
@@ -192,7 +273,7 @@
     "message": "Połącz swój serwer"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster potrzebuje serwera WhisperLive na twoim komputerze lub w twojej sieci."
+    "message": "StreamRemaster transkrybuje za pomocą serwera WhisperLive na twoim komputerze lub w twojej sieci albo karty graficznej tego komputera."
   },
   "server_address": {
     "message": "Adres serwera"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Ustawienia"
-  },
-  "section_server": {
-    "message": "Serwer"
-  },
-  "section_models": {
-    "message": "Modele"
   },
   "section_subtitles": {
     "message": "Napisy"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "Modele zostają w woluminie Dockera i nie są pobierane ponownie. Jeśli plik docker-compose.yml był zmieniany, a git pull zgłasza błąd, uruchom przed nim git stash, a po nim git stash pop."
+  },
+  "setup_or": {
+    "message": "lub"
+  },
+  "use_local": {
+    "message": "Użyj tego komputera"
+  },
+  "use_local_hint": {
+    "message": "Whisper działa na karcie graficznej tego komputera, bez serwera. Model pobierasz raz, w Ustawieniach."
+  },
+  "local_footer": {
+    "message": "Ten komputer"
+  },
+  "local_none": {
+    "message": "Brak modelu: pobierz jakiś"
+  },
+  "local_intro": {
+    "message": "Whisper działa w przeglądarce, na Twojej karcie graficznej (WebGPU). Każdy model pobiera się raz z Hugging Face i zostaje w przeglądarce. Większe piszą lepiej i potrzebują więcej pamięci graficznej."
+  },
+  "local_sizes": {
+    "message": "Pobieranie {0} · zajmuje {1} · około {2} pamięci graficznej"
+  },
+  "local_progress": {
+    "message": "Pobieranie… {0} z {1}"
+  },
+  "local_cancel": {
+    "message": "Anuluj"
+  },
+  "local_gpu": {
+    "message": "Karta graficzna: {0}"
+  },
+  "badge_downloaded": {
+    "message": "Pobrany"
+  },
+  "error_no_webgpu": {
+    "message": "Ta przeglądarka nie może używać karty graficznej (WebGPU), więc nie może transkrybować na tym komputerze."
+  },
+  "error_local_missing": {
+    "message": "Najpierw pobierz model w Ustawienia → Modele na tym komputerze."
+  },
+  "error_local_failed": {
+    "message": "Transkrypcja na tym komputerze zatrzymała się z powodu błędu."
+  },
+  "error_local_vram": {
+    "message": "⚠ Za mało pamięci graficznej na tym komputerze dla tego modelu. Wybierz mniejszy."
+  },
+  "local_download_failed": {
+    "message": "Pobieranie nie powiodło się ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "Usunąć model {0} z tego komputera? Zwolni {1}."
+  },
+  "local_only_english": {
+    "message": "Na tym komputerze napisy można tłumaczyć tylko na angielski."
   }
 }

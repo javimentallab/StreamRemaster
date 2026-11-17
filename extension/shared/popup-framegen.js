@@ -23,6 +23,10 @@ async function initTabs() {
   $("fgResolution").addEventListener("change", onFgResolution);
   $("fgSharpen").addEventListener("change", () => fgReconfigure({ fgSharpen: $("fgSharpen").value }));
   $("fgModel").addEventListener("change", onFgModel);
+  $("fgSourceSeg").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) onFgSource(b.dataset.v);
+  });
   $("fgManageModels").addEventListener("click", (e) => { e.preventDefault(); openSettings("fgmodels"); });
   $("tabs").addEventListener("click", (e) => {
     const button = e.target.closest("[data-tab]");
@@ -86,14 +90,98 @@ function fillResolutions() {
   if (!select.value) select.value = "original";
 }
 
-// One choice: a model file can carry the upscaler, the in-between frames network or both.
+// One choice. On this computer: StreamRemaster, which comes with the extension, then the models the
+// user downloaded. On the server: the models it keeps (taken from it when chosen). Then none (the
+// plain cross-fade). Either way the model runs on this computer's graphics card. A model file can
+// carry the upscaler, the in-between frames network or both.
+let fgModelEntries = {};
+const fgParsed = new Map();   // id -> parsed model, for the graphics memory estimate
+
+function fgHint(text, kind) {
+  const hint = $("fgServerHint");
+  hint.textContent = text || "";
+  hint.className = "hint" + (kind ? " " + kind : "");
+  hint.hidden = !text;
+}
+
+function fgGroup(select, label, list) {
+  if (!list.length) return;
+  const element = document.createElement("optgroup");
+  element.label = label;
+  list.forEach(([text, value]) => element.append(new Option(text, value)));
+  select.append(element);
+}
+
 async function fillModels() {
   const { fgModels } = await ext.storage.local.get("fgModels");
+  fgModelEntries = fgModels || {};
+  const models = Object.values(fgModelEntries);
   const select = $("fgModel");
+  select.textContent = "";
+  fgHint("");
+  $("fgSourceSeg").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === fgSettings.fgSource));
+  if (fgSettings.fgSource === "server") {
+    await fillServerModels(select);
+  } else {
+    fgGroup(select, t("fg_builtin"), models.filter((model) => model.builtin)
+      .map((model) => [model.hq ? `${model.name} · ${t("fg_hq_badge")}` : model.name, model.id]));
+    fgGroup(select, t("fg_downloaded_title"), models.filter((model) => !model.builtin && !model.server).map((model) => [model.name, model.id]));
+  }
   select.append(new Option(t("fg_model_none"), ""));
-  Object.values(fgModels || {}).forEach((model) => select.append(new Option(model.name, model.id)));
   select.value = fgSettings.fgModel;
   if (select.value !== fgSettings.fgModel) select.value = "";
+  renderFgMemory();
+}
+
+async function fillServerModels(select) {
+  if (!fgSettings.serverUrl) return fgHint(t("error_no_server"), "warn");
+  fgHint(t("server_checking"));
+  const res = await ST.serverRequest(fgSettings.serverUrl, { st_action: "list_video_models" }, 20000);
+  if (!res.ok) {
+    const old = res.error === "unknown_action" || res.error === "unsupported";
+    return fgHint(t(old ? "fg_server_old" : res.error === "timeout" ? "server_timeout" : "server_unreachable"), "warn");
+  }
+  fgHint(res.models.length ? "" : t("fg_server_none"));
+  fgGroup(select, t("engine_server"), res.models.map((model) => [model.name, ST.SERVER_FG_PREFIX + model.id]));
+}
+
+// Where the models come from. The choice goes to that place's usual model: the built-in one here,
+// the first one the server has there.
+async function onFgSource(source) {
+  if (source === fgSettings.fgSource) return;
+  fgSettings = await ST.setSettings({ fgSource: source });
+  await fillModels();
+  const select = $("fgModel");
+  if (select.value === "" || select.value !== fgSettings.fgModel) {
+    const first = Array.from(select.options).find((o) => o.value && !o.disabled);
+    select.value = source === "local" ? ST.DEFAULTS.fgModel : first ? first.value : "";
+    await onFgModel();
+  }
+}
+
+function parsedFgModel(id) {
+  if (!id || !fgModelEntries[id]) return null;
+  if (!fgParsed.has(id)) {
+    let parsed = null;
+    try {
+      parsed = STFramegenModel.parse(ST.base64ToBuffer(fgModelEntries[id].data));
+    } catch (e) { /* unreadable: no estimate */ }
+    fgParsed.set(id, parsed);
+  }
+  return fgParsed.get(id);
+}
+
+// While it runs, what this video takes; otherwise what a 1080p video would take with these choices.
+function renderFgMemory() {
+  const el = $("fgMemory");
+  if (fgStatus.running && fgStatus.memory) {
+    el.textContent = t("fg_memory_now", ST.formatBytes(fgStatus.memory));
+    return;
+  }
+  const model = parsedFgModel($("fgModel").value);
+  const options = { resolution: $("fgResolution").value, model: model && model.sr, interpolator: model && model.fi };
+  const plan = STFramegen.planSizes(1920, 1080, options, Math.round(screen.height * devicePixelRatio));
+  el.textContent = t("fg_memory", ST.formatBytes(STFramegen.memoryBytes(plan)));
 }
 
 async function fgReconfigure(patch) {
@@ -105,11 +193,29 @@ async function fgReconfigure(patch) {
 }
 
 function onFgResolution() {
+  renderFgMemory();
   fgReconfigure({ fgResolution: $("fgResolution").value });
 }
 
-function onFgModel() {
-  fgReconfigure({ fgModel: $("fgModel").value });
+async function onFgModel() {
+  const select = $("fgModel");
+  const value = select.value;
+  if (value.startsWith(ST.SERVER_FG_PREFIX) && fgSettings.serverUrl) {
+    select.disabled = true;
+    fgHint(t("fg_server_loading"));
+    const res = await ST.takeServerFgModel(fgSettings.serverUrl, value.slice(ST.SERVER_FG_PREFIX.length));
+    select.disabled = false;
+    if (!res.ok) {
+      fgHint(t(res.error === "timeout" ? "server_timeout" : "server_unreachable"), "warn");
+      return;
+    }
+    fgHint("");
+    fgParsed.delete(value);
+    fgModelEntries = (await ext.storage.local.get("fgModels")).fgModels || {};
+  }
+  fgSettings = await ST.setSettings({ fgModel: value });
+  renderFgMemory();
+  fgReconfigure({ fgModel: value });
 }
 
 function fgTargetValue() {
@@ -243,4 +349,5 @@ function renderFg(status) {
   } else {
     setMsg(message, t("fg_state_off"), "");
   }
+  renderFgMemory();
 }

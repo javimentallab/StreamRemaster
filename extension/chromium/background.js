@@ -19,7 +19,7 @@ async function ensureOffscreen() {
   await chrome.offscreen.createDocument({
     url: OFFSCREEN_URL,
     reasons: ["USER_MEDIA"],
-    justification: "Capture the tab audio and stream it to the transcription server.",
+    justification: "Capture the tab audio and transcribe it, on the transcription server or on this computer.",
   });
 }
 
@@ -43,8 +43,8 @@ async function start(tabId, streamId) {
   await ST.i18n.init();
   await stop({ quiet: true });
 
-  if (!settings.serverUrl) {
-    await Engine.setRun({ state: "error", error: "no_server", tabId: null });
+  if (!ST.subsReady(settings)) {
+    await Engine.setRun({ state: "error", error: settings.engine === "local" ? "local_missing" : "no_server", tabId: null });
     return;
   }
   if (!streamId) {
@@ -70,6 +70,7 @@ async function start(tabId, streamId) {
       target: "offscreen", cmd: "start", streamId,
       options: Engine.wsOptions(settings), serverUrl: settings.serverUrl,
       translating: Engine.isTranslating(settings),
+      localModel: settings.engine === "local" ? settings.localModel : null,
     };
     // A just-created offscreen document may not be listening yet.
     for (let i = 0; ; i++) {
@@ -116,7 +117,7 @@ async function autoStart(tabId) {
   autoStarting = true;
   try {
     const settings = await ST.getSettings();
-    if (!settings.subsAutoStart || !settings.serverUrl) return "off";
+    if (!settings.subsAutoStart || !ST.subsReady(settings)) return "off";
     const { runState } = await chrome.storage.local.get("runState");
     if (runState && typeof runState.tabId === "number") {
       if (runState.state === "error") return "busy";

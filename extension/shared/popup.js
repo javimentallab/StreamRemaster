@@ -36,12 +36,16 @@ async function init() {
     }
   });
 
-  if (!settings.serverUrl) {
+  if (settings.engine === "local") {
+    applyLocal();
+  } else if (!settings.serverUrl) {
     showSetup(true);
   } else {
     checkServer();
   }
 }
+
+const isLocal = () => settings.engine === "local";
 
 // ---------------------------------------------------------------------------------- form
 
@@ -77,6 +81,7 @@ function applySettingsToForm() {
   $("translatorDevice").value = settings.translatorDevice;
   $("modelFree").value = settings.model;
   renderLines();
+  renderEngine();
   renderFooter();
   $("updText").textContent = "v" + ext.runtime.getManifest().version;
 }
@@ -92,7 +97,8 @@ function bindControls() {
 
   $("sourceLang").addEventListener("change", (e) => save({ sourceLang: e.target.value }));
   $("targetLang").addEventListener("change", (e) => save({ targetLang: e.target.value }));
-  $("model").addEventListener("change", (e) => save({ model: e.target.value }));
+  $("model").addEventListener("change", (e) => save(isLocal() ? { localModel: e.target.value } : { model: e.target.value })
+    .then(() => { if (isLocal()) renderFooter("local", settings.localModel); renderState(); }));
   $("modelFree").addEventListener("change", (e) => save({ model: e.target.value.trim() }));
   $("saveSrt").addEventListener("change", (e) => save({ saveSrt: e.target.checked }));
   // armAutoStart is in popup-framegen.js, which both tabs share.
@@ -119,7 +125,7 @@ function bindControls() {
 
   $("toggleBtn").addEventListener("click", onToggle);
   $("openSettings").addEventListener("click", () => openSettings());
-  $("manageModels").addEventListener("click", (e) => { e.preventDefault(); openSettings("models"); });
+  $("manageModels").addEventListener("click", (e) => { e.preventDefault(); openSettings(isLocal() ? "local" : "models"); });
   $("srvChange").addEventListener("click", (e) => { e.preventDefault(); showSetup(true); });
   $("serverHelp").addEventListener("click", (e) => { e.preventDefault(); openSettings("server"); });
 
@@ -130,7 +136,12 @@ function bindControls() {
     window.close();
   });
 
+  $("engineSeg").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b && !b.disabled) onEngine(b.dataset.v);
+  });
   $("setupConnect").addEventListener("click", onSetupConnect);
+  $("setupLocal").addEventListener("click", onSetupLocal);
   $("setupUrl").addEventListener("keydown", (e) => { if (e.key === "Enter") onSetupConnect(); });
 }
 
@@ -154,8 +165,78 @@ function showSetup(show) {
     $("setupUrl").value = settings.serverUrl ? ST.prettyServer(settings.serverUrl) : "";
     $("setupUrl").focus();
   }
-  $("mainUi").hidden = show && !settings.serverUrl;
-  $("foot").hidden = !settings.serverUrl;
+  const configured = !!settings.serverUrl || isLocal();
+  $("mainUi").hidden = show && !configured;
+  $("foot").hidden = !configured;
+}
+
+// Where the speech becomes text: on the server or on this computer's graphics card.
+function renderEngine() {
+  $("engineSeg").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === settings.engine));
+}
+
+async function onEngine(engine) {
+  if (engine === settings.engine) return;
+  if (engine === "local") return onSetupLocal();
+  settings = await ST.setSettings({ engine: "server" });
+  renderEngine();
+  applyTargetLimits();
+  if (!settings.serverUrl) {
+    showSetup(true);
+    renderFooter();
+    renderState();
+  } else {
+    checkServer();
+  }
+}
+
+async function onSetupLocal() {
+  settings = await ST.setSettings({ engine: "local" });
+  setMsg($("setupMsg"), "", "");
+  showSetup(false);
+  applyLocal();
+}
+
+// Whisper on this computer: the models downloaded into the browser (whisper-store.js).
+async function applyLocal() {
+  const sel = $("model");
+  sel.hidden = false;
+  $("modelFree").hidden = true;
+  sel.textContent = "";
+  let models = [];
+  try {
+    models = (await Whisper.store.list()).filter((m) => m.complete);
+  } catch (e) { /* no storage: same as none */ }
+  const order = Whisper.CATALOG.map((c) => c.id);
+  models.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  models.forEach((m) => sel.append(new Option(m.id + "  (" + ST.formatBytes(m.bytes) + ")", m.id)));
+  const ids = models.map((m) => m.id);
+  let pick = settings.localModel;
+  if (!ids.includes(pick)) {
+    pick = ids[ids.length - 1] || "";
+    if (pick !== settings.localModel) settings = await ST.setSettings({ localModel: pick });
+  }
+  if (!ids.length) sel.append(new Option(t("local_none"), ""));
+  sel.value = pick;
+  renderEngine();
+  applyTargetLimits();
+  renderFooter("local", pick);
+  renderState();
+}
+
+// On this computer only Whisper's own translation exists, and it only writes English.
+function applyTargetLimits() {
+  const local = isLocal();
+  const dst = $("targetLang");
+  Array.from(dst.options).forEach((o) => {
+    if (o.value && o.value !== "en") o.disabled = local;
+  });
+  if (local && settings.targetLang && settings.targetLang !== "en") {
+    dst.value = "";
+    ST.setSettings({ targetLang: "" }).then((s) => { settings = s; });
+  }
+  $("localTargetHint").hidden = !local;
+  $("advBox").hidden = local;
 }
 
 async function onSetupConnect() {
@@ -173,9 +254,10 @@ async function onSetupConnect() {
     setMsg(msg, t(res.error === "timeout" ? "server_timeout" : "server_unreachable"), "bad");
     return;
   }
-  settings = await ST.setSettings({ serverUrl: url });
+  settings = await ST.setSettings({ serverUrl: url, engine: "server" });
   setMsg(msg, "", "");
   showSetup(false);
+  applyTargetLimits();
   applyServerInfo(res);
 }
 
@@ -188,6 +270,7 @@ async function checkServer() {
 
 function applyServerInfo(res) {
   serverInfo = res;
+  renderEngine();
   const sel = $("model");
   const free = $("modelFree");
 
@@ -229,6 +312,12 @@ function renderFooter(kind, extra) {
   const text = $("srvText");
   const host = ST.prettyServer(settings.serverUrl);
   dot.className = "srv-dot";
+  text.title = "";
+  if (kind === "local") {
+    dot.classList.add(extra ? "ok" : "warn");
+    text.textContent = t("local_footer") + " · " + (extra || t("local_none"));
+    return;
+  }
   if (kind === "checking") {
     text.textContent = host + " · " + t("server_checking");
   } else if (kind === "ok") {
@@ -259,10 +348,11 @@ function renderState() {
   const btn = $("toggleBtn");
   btn.classList.toggle("running", active);
   $("toggleLabel").textContent = t(active ? "stop" : "start");
-  btn.disabled = !active && !settings.serverUrl;
+  btn.disabled = !active && !ST.subsReady(settings);
 
   $("fields").classList.toggle("locked", active);
   LOCKED_IDS.forEach((id) => { $(id).disabled = active; });
+  $("engineSeg").querySelectorAll("button").forEach((b) => { b.disabled = active; });
 
   const msg = $("mainMsg");
   if (st === "error" && runState.error) {
@@ -294,8 +384,18 @@ function errorText(rs) {
     case "disconnected": return t("error_disconnected");
     case "unreachable": return t("server_unreachable");
     case "no_server": return t("error_no_server");
+    case "no_webgpu": return t("error_no_webgpu");
+    case "local_missing": return t("error_local_missing");
+    case "local_vram": return withDetail(t("error_local_vram"), rs.detail);
+    case "local_lost": return withDetail(t("error_local_lost"), rs.detail);
+    case "local_failed": case "local_broken": return withDetail(t("error_local_failed"), rs.detail);
     default: return t("err_unknown", rs.error);
   }
+}
+
+// The graphics card's own words, for the local engine's errors.
+function withDetail(text, detail) {
+  return detail ? `${text} (${detail})` : text;
 }
 
 async function onToggle() {

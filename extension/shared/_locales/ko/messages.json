@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "그래픽 카드가 받아쓰기 모델을 여러 번 연속으로 멈췄습니다."
+  },
+  "fg_hq_badge": {
+    "message": "고성능 그래픽 카드용"
+  },
+  "where_fg_models": {
+    "message": "모델 위치"
+  },
+  "fg_local_title": {
+    "message": "이 컴퓨터의 부드러운 영상 모델"
+  },
+  "fg_server_title": {
+    "message": "서버의 부드러운 영상 모델"
+  },
+  "fg_server_intro": {
+    "message": "서버는 모델을 보관만 합니다. 선택한 모델은 서버에서 내려받아 이 컴퓨터의 그래픽 카드에서 실행됩니다."
+  },
+  "fg_server_none": {
+    "message": "서버에 아직 부드러운 영상 모델이 없습니다."
+  },
+  "fg_server_old": {
+    "message": "이 서버는 부드러운 영상 모델을 보관하지 않습니다. 최신 버전으로 업데이트하세요."
+  },
+  "fg_add_server_title": {
+    "message": "서버에 추가"
+  },
+  "fg_server_loading": {
+    "message": "서버에서 모델을 내려받는 중…"
+  },
+  "section_transcription": {
+    "message": "받아쓰기 모델"
+  },
+  "transcription_intro": {
+    "message": "음성을 어디에서 글자로 바꿀지 고르세요: WhisperLive 서버 또는 이 컴퓨터의 그래픽 카드."
+  },
+  "where_transcribe": {
+    "message": "받아쓰기 위치"
+  },
+  "engine_server": {
+    "message": "서버에서"
+  },
+  "engine_local": {
+    "message": "이 컴퓨터에서"
+  },
+  "trans_server_title": {
+    "message": "서버의 받아쓰기 모델"
+  },
+  "trans_local_title": {
+    "message": "이 컴퓨터의 받아쓰기 모델"
+  },
+  "badge_in_use": {
+    "message": "사용 중"
+  },
+  "fg_downloaded_title": {
+    "message": "다운로드한 모델"
+  },
+  "fg_add_title": {
+    "message": "모델 추가"
+  },
+  "fg_add_url_placeholder": {
+    "message": "모델 파일 주소(.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "다운로드하지 못했습니다({0}). 브라우저로 파일을 받은 뒤 이 컴퓨터에서 선택하세요."
+  },
+  "fg_memory": {
+    "message": "그래픽 메모리: 1080p 영상에서 약 {0}"
+  },
+  "fg_memory_4k": {
+    "message": "1080p를 4K로 업스케일하면 약 {0}"
+  },
+  "fg_memory_now": {
+    "message": "사용 중인 그래픽 메모리: 약 {0}"
+  },
+  "fg_file_size": {
+    "message": "파일: {0}"
+  },
+  "fg_options": {
+    "message": "옵션"
+  },
   "fg_sharpen": {
     "message": "선명도"
   },
@@ -21,13 +102,13 @@
     "message": "원본 (업스케일 없음)"
   },
   "fg_model": {
-    "message": "AI 모델"
+    "message": "부드러운 영상 모델"
   },
   "fg_kind_sr": {
-    "message": "업스케일"
+    "message": "업스케일만"
   },
   "fg_kind_fi": {
-    "message": "중간 프레임"
+    "message": "중간 프레임만"
   },
   "fg_builtin": {
     "message": "기본 제공"
@@ -39,13 +120,13 @@
     "message": "부드러운 영상 모델"
   },
   "fg_models_hint": {
-    "message": "모델 파일(.stmodel, .srmodel, .fimodel)을 다운로드하여 여기에 추가하세요. 사용자의 그래픽 카드에서 실행됩니다."
+    "message": "부드러운 영상은 항상 이 컴퓨터의 그래픽 카드에서 실행됩니다. StreamRemaster는 확장 프로그램에 포함되어 있으며, 다른 모델은 이 컴퓨터나 서버에 둘 수 있습니다."
   },
   "fg_add_model": {
-    "message": "모델 파일 추가"
+    "message": "이 컴퓨터에서 파일 선택"
   },
   "fg_no_models": {
-    "message": "추가된 모델이 없습니다."
+    "message": "아직 다운로드한 모델이 없습니다."
   },
   "fg_model_bad": {
     "message": "유효한 모델 파일이 아닙니다."
@@ -138,7 +219,7 @@
     "message": "응답 없음"
   },
   "model": {
-    "message": "모델"
+    "message": "받아쓰기 모델"
   },
   "model_server_default": {
     "message": "서버 기본값"
@@ -192,7 +273,7 @@
     "message": "서버 연결"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster을 쓰려면 컴퓨터나 네트워크에서 WhisperLive 서버가 실행 중이어야 합니다."
+    "message": "StreamRemaster는 컴퓨터나 네트워크의 WhisperLive 서버, 또는 이 컴퓨터의 그래픽 카드로 받아씁니다."
   },
   "server_address": {
     "message": "서버 주소"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · 설정"
-  },
-  "section_server": {
-    "message": "서버"
-  },
-  "section_models": {
-    "message": "모델"
   },
   "section_subtitles": {
     "message": "자막"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "모델은 Docker 볼륨에 남아 있어 다시 내려받지 않습니다. docker-compose.yml을 수정했고 git pull이 오류를 내면 먼저 git stash를, 끝난 뒤 git stash pop을 실행하세요."
+  },
+  "setup_or": {
+    "message": "또는"
+  },
+  "use_local": {
+    "message": "이 컴퓨터 사용"
+  },
+  "use_local_hint": {
+    "message": "Whisper가 서버 없이 이 컴퓨터의 그래픽 카드에서 실행됩니다. 모델은 설정에서 한 번만 내려받으면 됩니다."
+  },
+  "local_footer": {
+    "message": "이 컴퓨터"
+  },
+  "local_none": {
+    "message": "모델 없음: 하나 내려받으세요"
+  },
+  "local_intro": {
+    "message": "Whisper가 브라우저에서 그래픽 카드(WebGPU)로 실행됩니다. 각 모델은 Hugging Face에서 한 번만 내려받아 브라우저에 보관됩니다. 큰 모델일수록 더 정확하지만 그래픽 메모리가 더 필요합니다."
+  },
+  "local_sizes": {
+    "message": "다운로드 {0} · 용량 {1} · 그래픽 메모리 약 {2}"
+  },
+  "local_progress": {
+    "message": "다운로드 중… {0} / {1}"
+  },
+  "local_cancel": {
+    "message": "취소"
+  },
+  "local_gpu": {
+    "message": "그래픽 카드: {0}"
+  },
+  "badge_downloaded": {
+    "message": "다운로드됨"
+  },
+  "error_no_webgpu": {
+    "message": "이 브라우저는 그래픽 카드(WebGPU)를 사용할 수 없어 이 컴퓨터에서 받아쓸 수 없습니다."
+  },
+  "error_local_missing": {
+    "message": "먼저 설정 → 이 컴퓨터의 모델에서 모델을 내려받으세요."
+  },
+  "error_local_failed": {
+    "message": "이 컴퓨터에서의 받아쓰기가 오류로 멈췄습니다."
+  },
+  "error_local_vram": {
+    "message": "⚠ 이 컴퓨터의 그래픽 메모리가 이 모델에 부족합니다. 더 작은 모델을 고르세요."
+  },
+  "local_download_failed": {
+    "message": "다운로드에 실패했습니다 ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "이 컴퓨터에서 {0} 모델을 삭제할까요? {1}가 확보됩니다."
+  },
+  "local_only_english": {
+    "message": "이 컴퓨터에서는 자막을 영어로만 번역할 수 있습니다."
   }
 }

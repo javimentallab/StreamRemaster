@@ -145,6 +145,8 @@
 
   function create() {
     if (host) return;
+    // a layer left by an earlier copy of this script (see destroy) goes before this one comes
+    document.querySelectorAll("stream-transcription-overlay").forEach((el) => el.remove());
     host = document.createElement("stream-transcription-overlay");
     const root = host.attachShadow({ mode: "open" });
     const style = document.createElement("style");
@@ -171,8 +173,11 @@
     restorePosition();
   }
 
+  // Also the layers a previous copy of this script left: after the extension is updated or reloaded
+  // with the subtitles on, the old copy can no longer hear "stop", and its last line would stay.
   function destroy() {
     if (host) host.remove();
+    document.querySelectorAll("stream-transcription-overlay").forEach((el) => el.remove());
     host = box = clip = textEl = statusEl = null;
     hasText = false;
   }

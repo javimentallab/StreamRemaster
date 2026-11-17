@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "La tarjeta gráfica ha parado el modelo de transcripción varias veces seguidas."
+  },
+  "fg_hq_badge": {
+    "message": "Para gráficas potentes"
+  },
+  "where_fg_models": {
+    "message": "Dónde están los modelos"
+  },
+  "fg_local_title": {
+    "message": "Modelos de vídeo fluido en este ordenador"
+  },
+  "fg_server_title": {
+    "message": "Modelos de vídeo fluido en el servidor"
+  },
+  "fg_server_intro": {
+    "message": "El servidor solo los guarda: el modelo elegido se baja de él y funciona en la tarjeta gráfica de este ordenador."
+  },
+  "fg_server_none": {
+    "message": "El servidor todavía no tiene modelos de vídeo fluido."
+  },
+  "fg_server_old": {
+    "message": "Este servidor no guarda modelos de vídeo fluido: actualízalo a la última versión."
+  },
+  "fg_add_server_title": {
+    "message": "Añadir al servidor"
+  },
+  "fg_server_loading": {
+    "message": "Bajando el modelo del servidor…"
+  },
+  "section_transcription": {
+    "message": "Modelos de transcripción"
+  },
+  "transcription_intro": {
+    "message": "Elige dónde se pasa la voz a texto: en un servidor WhisperLive o en la tarjeta gráfica de este ordenador."
+  },
+  "where_transcribe": {
+    "message": "Dónde transcribir"
+  },
+  "engine_server": {
+    "message": "En el servidor"
+  },
+  "engine_local": {
+    "message": "En este ordenador"
+  },
+  "trans_server_title": {
+    "message": "Modelos de transcripción en el servidor"
+  },
+  "trans_local_title": {
+    "message": "Modelos de transcripción en este ordenador"
+  },
+  "badge_in_use": {
+    "message": "En uso"
+  },
+  "fg_downloaded_title": {
+    "message": "Descargados"
+  },
+  "fg_add_title": {
+    "message": "Añadir un modelo"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Dirección de un archivo de modelo (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "No se ha podido descargar ({0}). Descarga el archivo con el navegador y elígelo desde este ordenador."
+  },
+  "fg_memory": {
+    "message": "Memoria gráfica: unos {0} con un vídeo de 1080p"
+  },
+  "fg_memory_4k": {
+    "message": "unos {0} reescalando de 1080p a 4K"
+  },
+  "fg_memory_now": {
+    "message": "Memoria gráfica en uso: unos {0}"
+  },
+  "fg_file_size": {
+    "message": "Archivo: {0}"
+  },
+  "fg_options": {
+    "message": "Opciones"
+  },
   "fg_resolution": {
     "message": "Resolución objetivo del reescalado"
   },
@@ -6,13 +87,13 @@
     "message": "Original (sin reescalar)"
   },
   "fg_model": {
-    "message": "Modelo de IA"
+    "message": "Modelo de vídeo fluido"
   },
   "fg_kind_sr": {
-    "message": "Reescalado"
+    "message": "Solo reescalado"
   },
   "fg_kind_fi": {
-    "message": "Fotogramas intermedios"
+    "message": "Solo fotogramas intermedios"
   },
   "fg_builtin": {
     "message": "Incluido"
@@ -39,13 +120,13 @@
     "message": "Modelos de vídeo fluido"
   },
   "fg_models_hint": {
-    "message": "Descarga un archivo de modelo (.stmodel, .srmodel, .fimodel) y añádelo aquí. Funciona en tu propia tarjeta gráfica."
+    "message": "El vídeo fluido funciona siempre en la tarjeta gráfica de este ordenador. StreamRemaster viene con la extensión; otros modelos pueden estar en este ordenador o en tu servidor."
   },
   "fg_add_model": {
-    "message": "Añadir archivo de modelo"
+    "message": "Elegir un archivo de este ordenador"
   },
   "fg_no_models": {
-    "message": "Todavía no has añadido ningún modelo."
+    "message": "Todavía no has descargado ningún modelo."
   },
   "fg_model_bad": {
     "message": "Ese archivo no es un modelo válido."
@@ -138,7 +219,7 @@
     "message": "Sin respuesta"
   },
   "model": {
-    "message": "Modelo"
+    "message": "Modelo de transcripción"
   },
   "model_server_default": {
     "message": "El del servidor"
@@ -192,7 +273,7 @@
     "message": "Conecta tu servidor"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster necesita un servidor WhisperLive en tu ordenador o en tu red."
+    "message": "StreamRemaster transcribe con un servidor WhisperLive en tu ordenador o en tu red, o con la tarjeta gráfica de este ordenador."
   },
   "server_address": {
     "message": "Dirección del servidor"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Ajustes"
-  },
-  "section_server": {
-    "message": "Servidor"
-  },
-  "section_models": {
-    "message": "Modelos"
   },
   "section_subtitles": {
     "message": "Subtítulos"
@@ -490,6 +565,60 @@
   },
   "err_download_failed": {
     "message": "La descarga ha fallado."
+  },
+  "setup_or": {
+    "message": "o"
+  },
+  "use_local": {
+    "message": "Usar este ordenador"
+  },
+  "use_local_hint": {
+    "message": "Whisper funciona con la tarjeta gráfica de este ordenador, sin servidor. El modelo se descarga una vez, en Ajustes."
+  },
+  "local_footer": {
+    "message": "Este ordenador"
+  },
+  "local_none": {
+    "message": "Ningún modelo: descarga uno"
+  },
+  "local_intro": {
+    "message": "Whisper funciona en el navegador, con tu tarjeta gráfica (WebGPU). Cada modelo se descarga una vez de Hugging Face y se queda en el navegador. Los más grandes escriben mejor y necesitan más memoria gráfica."
+  },
+  "local_sizes": {
+    "message": "Descarga {0} · ocupa {1} · unos {2} de memoria gráfica"
+  },
+  "local_progress": {
+    "message": "Descargando… {0} de {1}"
+  },
+  "local_cancel": {
+    "message": "Cancelar"
+  },
+  "local_gpu": {
+    "message": "Tarjeta gráfica: {0}"
+  },
+  "badge_downloaded": {
+    "message": "Descargado"
+  },
+  "error_no_webgpu": {
+    "message": "Este navegador no puede usar la tarjeta gráfica (WebGPU), así que no puede transcribir en este ordenador."
+  },
+  "error_local_missing": {
+    "message": "Primero descarga un modelo, en Ajustes → Modelos en este ordenador."
+  },
+  "error_local_failed": {
+    "message": "La transcripción en este ordenador se ha parado por un error."
+  },
+  "error_local_vram": {
+    "message": "⚠ No hay memoria gráfica suficiente en este ordenador para este modelo. Elige uno más pequeño."
+  },
+  "local_download_failed": {
+    "message": "La descarga ha fallado ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "¿Borrar el modelo {0} de este ordenador? Libera {1}."
+  },
+  "local_only_english": {
+    "message": "En este ordenador los subtítulos solo se pueden traducir al inglés."
   },
   "err_convert_failed": {
     "message": "No se ha podido convertir el modelo."

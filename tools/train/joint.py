@@ -7,8 +7,10 @@ real ones at full resolution, plus a temporal term against flicker.
 
 Two phases. First pixels only (Charbonnier). Then a patch discriminator trained from scratch joins,
 so the upscaler is pushed to draw plausible detail instead of the blurry average that a pixel loss
-settles on. No weights from anyone else are used anywhere: the motion network can start from one
-of our own runs (--init-fi).
+settles on. No weights from anyone else end up in the model: the motion network can start from one
+of our own runs (--init-fi). With --teacher, RIFE (MIT, teacher.py) looks at the clean pair and our
+motion network is also pulled towards its warp fields and in-between frames (--teacher-flow,
+--teacher-frame); RIFE itself is not part of what is trained or shipped.
 
 The small frames are made on the fly from the 120 fps footage: halved (bicubic, antialiased) and,
 most of the time, JPEG-compressed with 4:2:0 chroma at a random quality, standing in for the codec
@@ -26,6 +28,13 @@ it is part of the picture; --grain adds sensor grain to that share of the captur
 the upscaler learns not to sharpen it. --effects draws a game effect or moving vegetation
 (effects.py: sparks, smoke or fire, a flash, swaying grass or rippling leaves) over that share.
 --init starts the whole model from a joint.py checkpoint.
+
+--codec compresses that share of the windows with a real video codec (streamcodec.py: H.264, AV1
+or VP9, at the rate the frames were captured at) instead of JPEG, so the artifacts move with the
+picture as on a stream. --detail adds a loss on the Laplacian (the fine detail) of what is shown,
+so the blurry average a pixel loss settles on costs more. --games-dirs picks the packed game sets
+to train on (e.g. games-ss, recorded at twice the size and reduced) and --val-games the ones to
+validate on.
 
 Usage: python joint.py --data <data dir> --run <run dir> [--init-fi runs/fi32x64-sync/best.pt]
        python joint.py --smoke     (a few iterations on the CPU with random data)
@@ -48,6 +57,8 @@ from torch.utils.data import DataLoader
 import interp
 import effects
 import overlays
+import realistic
+import streamcodec
 import weather
 from train import HIDDEN, Block, Upscaler
 
@@ -65,14 +76,17 @@ def set_keys(keys):
 set_keys(3)
 
 
-def degrade(frames, quality, grain_rng=None):
-    """[N, 3, H, W] in 0..1 -> [N, 3, H/2, W/2]: halved, sensor grain if grain_rng is given, then JPEG
-    at the given quality (None = none)."""
+def degrade(frames, quality, grain_rng=None, fps=60):
+    """[N, 3, H, W] in 0..1 -> [N, 3, H/2, W/2]: halved, sensor grain if grain_rng is given, then
+    compressed: quality None = not at all, a number = JPEG at that quality, a tuple = a video codec
+    (streamcodec.py spec) over the frames as a clip at fps."""
     small = F.interpolate(frames, scale_factor=0.5, mode="bicubic", antialias=True, align_corners=False).clamp(0, 1)
     if grain_rng is not None:
         small = weather.grain(small, grain_rng)
     if quality is None:
         return small
+    if isinstance(quality, tuple):
+        return streamcodec.compress(small, quality, fps)
     out = []
     for frame in small:
         image = Image.fromarray((frame.permute(1, 2, 0).numpy() * 255 + 0.5).astype(np.uint8))
@@ -82,7 +96,9 @@ def degrade(frames, quality, grain_rng=None):
     return torch.stack(out)
 
 
-def random_quality():
+def random_quality(codec_share=0.0):
+    if random.random() < codec_share:
+        return streamcodec.random_spec()
     return None if random.random() < 0.2 else random.randint(25, 90)
 
 
@@ -94,6 +110,8 @@ class Windows(interp.Pairs):
     weather = 0.0
     grain = 0.0
     effects = 0.0
+    codec = 0.0
+    real = 0.0      # share degraded like a real stream (realistic.py) instead of halved + compressed
 
     def clip(self, path):
         if path not in self.open:
@@ -117,7 +135,10 @@ class Windows(interp.Pairs):
         if random.random() < self.effects:
             effects.apply(frames, random)
         keys = frames[[k * gap for k in range(KEYS)]]
-        small = degrade(keys, random_quality(), random if random.random() < self.grain else None)
+        if random.random() < self.real:
+            small = realistic.degrade(keys, random, 120 / gap, self.codec)
+        else:
+            small = degrade(keys, random_quality(self.codec), random if random.random() < self.grain else None, 120 / gap)
         picks = [random.randrange(1, gap) for _ in range(interp.TARGETS)]
         targets = torch.stack([frames[(KEYS - 2) * gap + k] for k in picks])
         times = torch.tensor([k / gap for k in picks])
@@ -220,15 +241,58 @@ class Critic(nn.Module):
         return self.net(x * 2 - 1)
 
 
-def generator_loss(model, batch, device, temporal_weight, smooth_weight):
+LAPLACE = torch.tensor([[0.0, 1.0, 0.0], [1.0, -4.0, 1.0], [0.0, 1.0, 0.0]])
+
+
+def laplacian(x):
+    """[..., 3, H, W] -> the Laplacian of each channel, same shape (edges repeated)."""
+    shape = x.shape
+    flat = F.pad(x.reshape(-1, 1, shape[-2], shape[-1]), (1, 1, 1, 1), mode="replicate")
+    return F.conv2d(flat, LAPLACE.to(x)[None, None]).reshape(shape)
+
+
+def student_flows(motion, t, h, w):
+    """The two warp fields synthesize() uses at instant t (tensor [N]), in uv units, at h x w:
+    ft0 moves the first frame to t, ft1 the second."""
+    f = F.interpolate(motion[:, :4], size=(h, w), mode="bilinear", align_corners=False)
+    grid = torch.tensor([motion.shape[-1], motion.shape[-2]], device=motion.device, dtype=motion.dtype).view(1, 2, 1, 1)
+    f01, f10 = f[:, 0:2] / grid, f[:, 2:4] / grid
+    t = t.view(-1, 1, 1, 1)
+    return -(1 - t) * t * f01 + t * t * f10, (1 - t) * (1 - t) * f01 - t * (1 - t) * f10
+
+
+def teacher_loss(teacher, keys, mids, motion, times):
+    """Distance in pixels between our warp fields and RIFE's at each instant, and between our
+    in-between frames and RIFE's, both on the clean full-resolution pair."""
+    a, b = keys[:, -2], keys[:, -1]
+    h, w = a.shape[-2:]
+    frames, flows = teacher(a, b, times)
+    px = torch.tensor([w, h, w, h], device=a.device, dtype=a.dtype).view(1, 4, 1, 1)
+    flow = 0.0
+    for k in range(times.shape[1]):
+        ft0, ft1 = student_flows(motion, times[:, k], h, w)
+        flow = flow + interp.charbonnier(torch.cat([ft0, ft1], 1) * px, flows[:, k] * px)
+    return flow / times.shape[1], interp.charbonnier(mids, frames)
+
+
+def generator_loss(model, batch, device, temporal_weight, smooth_weight, detail_weight=0.0, teacher=None,
+                   teacher_flow=0.0, teacher_frame=0.0):
     small, keys, targets, times = (x.to(device, non_blocking=True) for x in batch)
     bigs, mids, motion = model(small, times)
     pixels = (interp.charbonnier(bigs, keys) + interp.charbonnier(mids, targets)) / 2
     temporal = interp.charbonnier(bigs[:, 1] - bigs[:, 0], keys[:, 1] - keys[:, 0])
     loss = pixels + temporal_weight * temporal + smooth_weight * interp.smoothness(motion)
+    if teacher is not None:
+        flow, frame = teacher_loss(teacher, keys, mids, motion, times)
+        loss = loss + teacher_flow * flow + teacher_frame * frame
+    detail = 0.0
+    if detail_weight:
+        detail = (interp.charbonnier(laplacian(bigs), laplacian(keys)) + interp.charbonnier(laplacian(mids), laplacian(targets))) / 2
+        loss = loss + detail_weight * detail
+        detail = detail.item()
     fakes = torch.cat([bigs.flatten(0, 1), mids.flatten(0, 1)])
     reals = torch.cat([keys.flatten(0, 1), targets.flatten(0, 1)])
-    return loss, pixels.item(), fakes, reals
+    return loss, pixels.item(), fakes, reals, detail
 
 
 # ----- validation -----
@@ -240,12 +304,23 @@ def _center(frames, size):
     return frames[:, :, y:y + s, x:x + s]
 
 
+VAL_H264 = ("h264", 26, "veryfast", 0)
+
+
+def val_kind(folder):
+    """games-val -> games, games-ss-val -> games_ss."""
+    name = folder[:-4] if folder.endswith("-val") else folder
+    return "games" if name == "games" else name.replace("-", "_")
+
+
 @torch.no_grad()
-def validate(model, data, device, samples_dir=None, iteration=0, windows=4):
-    """Fixed windows of REDS validation clips and of the games kept for validation, centre 512 crop,
-    JPEG quality 60. Scores: upscaled key frame (key) against bicubic (key_bicubic), in-between frame
-    (mid) against the cross-fade of the bicubic frames (mid_fade), for 60 and 30 fps sources. At 60
-    fps the same windows are also scored with rain or snow drawn over them (kinds rain and snow)."""
+def validate(model, data, device, samples_dir=None, iteration=0, windows=4, val_games=("games-val",)):
+    """Fixed windows of REDS validation clips and of the games kept for validation (each folder of
+    val_games is its own kind), centre 512 crop, JPEG quality 60. Scores: upscaled key frame (key)
+    against bicubic (key_bicubic), in-between frame (mid) against the cross-fade of the bicubic
+    frames (mid_fade), for 60 and 30 fps sources. At 60 fps the same windows are also scored with
+    rain or snow drawn over them (kinds rain and snow), with an effect, and compressed with H.264
+    instead of JPEG (kinds <source>_h264)."""
     model.eval()
     sources = []
     roots = sorted(p for p in (data / "orig" / "val").iterdir() if p.is_dir())[:3]
@@ -253,10 +328,11 @@ def validate(model, data, device, samples_dir=None, iteration=0, windows=4):
         names = sorted(root.glob("*.png"))
         sources.append(("reds", lambda s, n, names=names: torch.stack([interp.load(names[s + k]) for k in range(n)]),
                         len(names), set()))
-    for path in interp.packed(data / "packed120" / "games-val"):
-        clip, cuts = np.load(path, mmap_mode="r"), interp.cuts_of(path)
-        sources.append(("games", lambda s, n, clip=clip: torch.from_numpy(np.array(clip[s:s + n])).permute(0, 3, 1, 2).float() / 255,
-                        len(clip), cuts))
+    for folder in val_games:
+        for path in interp.packed(data / "packed120" / folder):
+            clip, cuts = np.load(path, mmap_mode="r"), interp.cuts_of(path)
+            sources.append((val_kind(folder), lambda s, n, clip=clip: torch.from_numpy(np.array(clip[s:s + n])).permute(0, 3, 1, 2).float() / 255,
+                            len(clip), cuts))
     scores, sheet = {}, []
     for gap in (2, 4):
         span = SPANS[gap]
@@ -265,18 +341,23 @@ def validate(model, data, device, samples_dir=None, iteration=0, windows=4):
             starts = interp.valid_starts(count, cuts, span)
             for number, start in enumerate([starts[int(i)] for i in np.linspace(0, len(starts) - 1, windows)] if starts else []):
                 clean = _center(read(start, span + 1), 512)
-                variants = [(source_kind, clean)]
+                variants = [(source_kind, clean, 60)]
                 if gap == 2:
+                    variants.append((f"{source_kind}_h264", clean, VAL_H264))
+                    variants.append((f"{source_kind}_real", clean, ("real", 7000 + 1000 * index + number)))
                     # at 60 fps every window is also scored with rain (even windows) or snow (odd
                     # ones), always the same drops for the same window
                     sky = "rain" if number % 2 == 0 else "snow"
-                    variants.append((sky, weather.apply(clean.clone(), random.Random(1000 * index + number), sky)))
+                    variants.append((sky, weather.apply(clean.clone(), random.Random(1000 * index + number), sky), 60))
                     # and with one effect, a different one for each window (sparks, smoke, flash, foliage)
                     effect = effects.KINDS[number % len(effects.KINDS)]
-                    variants.append((effect, effects.apply(clean.clone(), random.Random(5000 + 1000 * index + number), effect)))
-                for kind, frames in variants:
+                    variants.append((effect, effects.apply(clean.clone(), random.Random(5000 + 1000 * index + number), effect), 60))
+                for kind, frames, compression in variants:
                     keys = frames[[k * gap for k in range(KEYS)]]
-                    small = degrade(keys, 60)[None].to(device)
+                    if isinstance(compression, tuple) and compression[0] == "real":
+                        small = realistic.degrade(keys, random.Random(compression[1]), 120 / gap)[None].to(device)
+                    else:
+                        small = degrade(keys, compression, None, 120 / gap)[None].to(device)
                     times = torch.tensor([[0.5]], device=device)
                     target_mid = frames[(KEYS - 2) * gap + gap // 2][None].to(device)
                     bigs, mids, _ = model(small, times)
@@ -290,7 +371,8 @@ def validate(model, data, device, samples_dir=None, iteration=0, windows=4):
                     # its second window, and rain and snow on the first REDS clip and the first game
                     weathered = kind in ("rain", "snow")
                     effected = kind in effects.KINDS
-                    wanted = ((number == 1 and not weathered and not effected)
+                    coded = kind.endswith("_h264") or kind.endswith("_real")
+                    wanted = ((number == 1 and not weathered and not effected and not coded)
                               or (weathered and number in (1, 2) and index in (0, len(roots)))
                               or (effected and index == 0))
                     if samples_dir is not None and gap == 2 and wanted and len(sheet) < 16:
@@ -318,9 +400,10 @@ def smoke():
     optimizer = torch.optim.Adam(model.parameters(), 2e-4)
     for _ in range(3):
         hr = torch.rand(2, KEYS, 3, 64, 64)
-        small = torch.stack([degrade(effects.apply(weather.apply(x.clone(), random), random), 50, random) for x in hr])
+        small = torch.stack([degrade(effects.apply(weather.apply(hr[0].clone(), random), random), 50, random),
+                             realistic.degrade(hr[1], random, 60)])
         batch = (small, hr[:, 1:], torch.rand(2, interp.TARGETS, 3, 64, 64), torch.rand(2, interp.TARGETS))
-        loss, _, fakes, reals = generator_loss(model, batch, "cpu", 0.5, 0.01)
+        loss, _, fakes, reals, _ = generator_loss(model, batch, "cpu", 0.5, 0.01, 0.5)
         loss = loss - 0.005 * critic(fakes).mean()
         optimizer.zero_grad()
         loss.backward()
@@ -343,6 +426,15 @@ def main():
     parser.add_argument("--weather", type=float, default=0.0, help="share of windows with rain or snow")
     parser.add_argument("--grain", type=float, default=0.0, help="share of windows with sensor grain on the captured frames")
     parser.add_argument("--effects", type=float, default=0.0, help="share of windows with a game effect or moving vegetation")
+    parser.add_argument("--codec", type=float, default=0.0, help="share of windows compressed with a real video codec instead of JPEG")
+    parser.add_argument("--real", type=float, default=0.0, help="share of windows degraded like a real stream (realistic.py)")
+    parser.add_argument("--detail", type=float, default=0.0, help="weight of the loss on the Laplacian of what is shown")
+    parser.add_argument("--teacher", type=pathlib.Path,
+                        help="folder with RIFE (rifemods/ and flownet_v4.25.pkl) to teach the motion network, see teacher.py")
+    parser.add_argument("--teacher-flow", type=float, default=0.01, help="weight of the distance to RIFE's warp fields, in pixels")
+    parser.add_argument("--teacher-frame", type=float, default=0.5, help="weight of the distance to RIFE's in-between frames")
+    parser.add_argument("--games-dirs", default="games", help="packed game sets to train on, comma separated")
+    parser.add_argument("--val-games", default="games-val", help="packed game sets to validate on, comma separated")
     parser.add_argument("--aligned", action="store_true", help="upscaler fed with the previous upscaled frame, aligned")
     parser.add_argument("--keys", type=int, default=3, help="captured frames per training window")
     parser.add_argument("--iterations", type=int, default=100000)
@@ -393,15 +485,25 @@ def main():
         if any(k.startswith("fi.") for k in state):
             state = {k[3:]: v for k, v in state.items() if k.startswith("fi.")}
         model.fi.load_state_dict(state)
+    teach = None
+    if args.teacher:
+        import teacher as teacher_module
+        teach = teacher_module.Teacher(args.teacher, device)
     windows = Windows(args.data, args.patch, 10 ** 9, args.games_share, args.overlay)
-    windows.weather, windows.grain, windows.effects = args.weather, args.grain, args.effects
+    games = [p for folder in args.games_dirs.split(",") for p in interp.packed(args.data / "packed120" / folder)]
+    if not games:
+        raise SystemExit(f"no packed game clips in {args.games_dirs}")
+    windows.sets[1] = games
+    windows.weather, windows.grain, windows.effects, windows.codec = args.weather, args.grain, args.effects, args.codec
+    windows.real = args.real
+    val_games = tuple(args.val_games.split(","))
     loader = DataLoader(windows, batch_size=args.batch, num_workers=args.workers, pin_memory=True, persistent_workers=True)
     log = (args.run / "log.jsonl").open("a", encoding="utf-8")
     counts = {"iteration": iteration, "windows": windows.window_counts(), "shape": model.shape}
     print(json.dumps(counts), flush=True)
     log.write(json.dumps(counts) + "\n")
     if iteration == 0:
-        line = {"iteration": 0, **validate(model, args.data, device, args.run / "samples", 0)}
+        line = {"iteration": 0, **validate(model, args.data, device, args.run / "samples", 0, val_games=val_games)}
         print(json.dumps(line), flush=True)
         log.write(json.dumps(line) + "\n")
     window = time.time()
@@ -412,7 +514,8 @@ def main():
         if iteration >= args.iterations:
             break
         adversarial = iteration >= args.adversarial_from
-        loss, pixels, fakes, reals = generator_loss(model, batch, device, args.temporal, args.smooth)
+        loss, pixels, fakes, reals, detail = generator_loss(model, batch, device, args.temporal, args.smooth, args.detail,
+                                                              teach, args.teacher_flow, args.teacher_frame)
         critic_loss = 0.0
         if adversarial:
             # the critic sees a few of the shown frames, as random crops: all of them at full size
@@ -439,13 +542,13 @@ def main():
         if iteration % 100 == 0:
             rate = 100 / (time.time() - window)
             window = time.time()
-            line = {"iteration": iteration, "loss": round(loss.item(), 5), "pixels": round(pixels, 5), "critic": round(critic_loss, 4),
+            line = {"iteration": iteration, "loss": round(loss.item(), 5), "pixels": round(pixels, 5), "detail": round(detail, 5), "critic": round(critic_loss, 4),
                     "per_second": round(rate, 2), "vram_mb": round(torch.cuda.max_memory_allocated() / 1e6)}
             print(json.dumps(line), flush=True)
             log.write(json.dumps(line) + "\n")
             log.flush()
         if iteration % 2000 == 0:
-            scores = validate(model, args.data, device, args.run / "samples", iteration)
+            scores = validate(model, args.data, device, args.run / "samples", iteration, val_games=val_games)
             line = {"iteration": iteration, **scores}
             print(json.dumps(line), flush=True)
             log.write(json.dumps(line) + "\n")

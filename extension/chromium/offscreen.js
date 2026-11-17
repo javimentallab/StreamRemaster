@@ -1,6 +1,7 @@
 // Chromium capture engine, running in an offscreen document: gets the tab audio from
 // tabCapture, plays it back (capturing mutes the tab), downsamples it to 16 kHz in an
-// AudioWorklet and streams it to the server.
+// AudioWorklet and streams it to the server, or to Whisper on this computer
+// (whisper-local.js, with the graphics card of this document).
 "use strict";
 
 const WORKLET_URL = chrome.runtime.getURL("audiopreprocessor.js");
@@ -115,9 +116,9 @@ async function start(msg) {
     t.onended = () => { if (session && !session.closed) session.setState("error", { error: "capture" }); };
   });
 
-  session = new Engine.Session({
-    serverUrl: msg.serverUrl, options: msg.options, translating: msg.translating, emit,
-  });
+  session = msg.localModel
+    ? new Engine.LocalSession({ modelId: msg.localModel, options: msg.options, emit })
+    : new Engine.Session({ serverUrl: msg.serverUrl, options: msg.options, translating: msg.translating, emit });
   try {
     await buildGraph();
   } catch (e) {

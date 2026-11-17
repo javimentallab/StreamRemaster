@@ -87,6 +87,11 @@ Engine.overlayStatus = function (msg) {
         case "unreachable": return ST.t("server_unreachable");
         case "no_media": return ST.t("error_no_media");
         case "model_load": return ST.t("error_model_load");
+        case "no_webgpu": return ST.t("error_no_webgpu");
+        case "local_missing": return ST.t("error_local_missing");
+        case "local_vram": return ST.t("error_local_vram");
+        case "local_lost": return ST.t("error_local_lost");
+        case "local_failed": case "local_broken": return ST.t("error_local_failed");
         default: return ST.t("status_error");
       }
   }
@@ -237,5 +242,61 @@ Engine.Session = class {
     this.closed = true;
     clearInterval(this.watchdog);
     try { this.ws && this.ws.close(); } catch (e) { /* ignore */ }
+  }
+};
+
+// ------------------------------------------------------------------------ port session
+// Firefox: the page's content script captures the audio, but Whisper on this computer runs
+// in the background page (whisper-local.js), which owns the downloaded models. This side
+// sends the audio there through a port and relays what comes back; the background's
+// Engine.LocalSession keeps the watchdog.
+Engine.PortSession = class extends Engine.Session {
+  constructor({ modelId, options, emit }) {
+    super({ serverUrl: "", options, translating: false, emit });
+    this.modelId = modelId;
+  }
+
+  check() { /* the background session watches itself */ }
+
+  connect() {
+    this.setState("loading");
+    try {
+      this.port = ext.runtime.connect({ name: "st-local" });
+    } catch (e) {
+      this.setState("error", { error: "local_failed" });
+      return;
+    }
+    this.port.onMessage.addListener((m) => this.fromEngine(m));
+    this.port.onDisconnect.addListener(() => {
+      if (this.closed) return;
+      this.closed = true;
+      this.setState("error", { error: "local_failed" });
+    });
+    this.port.postMessage({ cmd: "start", modelId: this.modelId, options: this.options });
+  }
+
+  fromEngine(m) {
+    if (!m || this.closed) return;
+    if (m.evt === "state") {
+      if (m.state === "listening") { this.ready = true; this.readyAt = Date.now(); }
+      if (m.state === "error") this.closed = true;
+      this.setState(m.state, m.error ? { error: m.error, detail: m.detail } : undefined);
+    } else if (m.evt === "segments") {
+      this.lastPaintAt = Date.now();
+      if (Array.isArray(m.segments) && m.segments.some((s) => s && s.text && s.text.trim())) this.hasText = true;
+      this.emit({ evt: "segments", segments: m.segments });
+    } else if (m.evt === "language") {
+      this.emit({ evt: "language", lang: m.lang });
+    }
+  }
+
+  sendAudio(f32) {
+    if (!this.ready || this.closed || !this.port) return;
+    try { this.port.postMessage({ audio: f32 }); } catch (e) { /* port gone: onDisconnect says so */ }
+  }
+
+  close() {
+    this.closed = true;
+    try { this.port && this.port.disconnect(); } catch (e) { /* gone */ }
   }
 };

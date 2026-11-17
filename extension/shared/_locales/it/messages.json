@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "La scheda video ha fermato il modello di trascrizione più volte di seguito."
+  },
+  "fg_hq_badge": {
+    "message": "Per schede video potenti"
+  },
+  "where_fg_models": {
+    "message": "Dove sono i modelli"
+  },
+  "fg_local_title": {
+    "message": "Modelli per video fluido su questo computer"
+  },
+  "fg_server_title": {
+    "message": "Modelli per video fluido sul server"
+  },
+  "fg_server_intro": {
+    "message": "Il server si limita a conservarli: il modello scelto viene scaricato da lì e funziona sulla scheda video di questo computer."
+  },
+  "fg_server_none": {
+    "message": "Il server non ha ancora modelli per video fluido."
+  },
+  "fg_server_old": {
+    "message": "Questo server non conserva modelli per video fluido: aggiornalo all’ultima versione."
+  },
+  "fg_add_server_title": {
+    "message": "Aggiungi al server"
+  },
+  "fg_server_loading": {
+    "message": "Download del modello dal server…"
+  },
+  "section_transcription": {
+    "message": "Modelli di trascrizione"
+  },
+  "transcription_intro": {
+    "message": "Scegli dove la voce diventa testo: su un server WhisperLive o sulla scheda video di questo computer."
+  },
+  "where_transcribe": {
+    "message": "Dove trascrivere"
+  },
+  "engine_server": {
+    "message": "Sul server"
+  },
+  "engine_local": {
+    "message": "Su questo computer"
+  },
+  "trans_server_title": {
+    "message": "Modelli di trascrizione sul server"
+  },
+  "trans_local_title": {
+    "message": "Modelli di trascrizione su questo computer"
+  },
+  "badge_in_use": {
+    "message": "In uso"
+  },
+  "fg_downloaded_title": {
+    "message": "Scaricati"
+  },
+  "fg_add_title": {
+    "message": "Aggiungi un modello"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Indirizzo di un file di modello (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "Impossibile scaricarlo ({0}). Scarica il file con il browser e sceglilo da questo computer."
+  },
+  "fg_memory": {
+    "message": "Memoria video: circa {0} con un video 1080p"
+  },
+  "fg_memory_4k": {
+    "message": "circa {0} ingrandendo da 1080p a 4K"
+  },
+  "fg_memory_now": {
+    "message": "Memoria video in uso: circa {0}"
+  },
+  "fg_file_size": {
+    "message": "File: {0}"
+  },
+  "fg_options": {
+    "message": "Opzioni"
+  },
   "fg_sharpen": {
     "message": "Nitidezza"
   },
@@ -21,13 +102,13 @@
     "message": "Originale (senza ingrandimento)"
   },
   "fg_model": {
-    "message": "Modello di IA"
+    "message": "Modello per video fluido"
   },
   "fg_kind_sr": {
-    "message": "Ingrandimento"
+    "message": "Solo ingrandimento"
   },
   "fg_kind_fi": {
-    "message": "Fotogrammi intermedi"
+    "message": "Solo fotogrammi intermedi"
   },
   "fg_builtin": {
     "message": "Integrato"
@@ -39,13 +120,13 @@
     "message": "Modelli per video fluido"
   },
   "fg_models_hint": {
-    "message": "Scarica un file di modello (.stmodel, .srmodel, .fimodel) e aggiungilo qui. Funziona sulla tua scheda grafica."
+    "message": "Il video fluido funziona sempre sulla scheda video di questo computer. StreamRemaster è incluso nell’estensione; altri modelli possono stare su questo computer o sul tuo server."
   },
   "fg_add_model": {
-    "message": "Aggiungi file di modello"
+    "message": "Scegli un file su questo computer"
   },
   "fg_no_models": {
-    "message": "Nessun modello aggiunto."
+    "message": "Nessun modello scaricato per ora."
   },
   "fg_model_bad": {
     "message": "Questo file non è un modello valido."
@@ -138,7 +219,7 @@
     "message": "Nessuna risposta"
   },
   "model": {
-    "message": "Modello"
+    "message": "Modello di trascrizione"
   },
   "model_server_default": {
     "message": "Quello del server"
@@ -192,7 +273,7 @@
     "message": "Collega il tuo server"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster ha bisogno di un server WhisperLive sul tuo computer o nella tua rete."
+    "message": "StreamRemaster trascrive con un server WhisperLive sul tuo computer o nella tua rete, oppure con la scheda video di questo computer."
   },
   "server_address": {
     "message": "Indirizzo del server"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Impostazioni"
-  },
-  "section_server": {
-    "message": "Server"
-  },
-  "section_models": {
-    "message": "Modelli"
   },
   "section_subtitles": {
     "message": "Sottotitoli"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "I modelli restano nel volume Docker e non vengono riscaricati. Se hai modificato docker-compose.yml e git pull si lamenta, esegui git stash prima e git stash pop dopo."
+  },
+  "setup_or": {
+    "message": "oppure"
+  },
+  "use_local": {
+    "message": "Usa questo computer"
+  },
+  "use_local_hint": {
+    "message": "Whisper gira sulla scheda video di questo computer, senza server. Il modello si scarica una volta, nelle Impostazioni."
+  },
+  "local_footer": {
+    "message": "Questo computer"
+  },
+  "local_none": {
+    "message": "Nessun modello: scaricane uno"
+  },
+  "local_intro": {
+    "message": "Whisper gira nel browser, sulla tua scheda video (WebGPU). Ogni modello si scarica una volta da Hugging Face e resta nel browser. I più grandi scrivono meglio e richiedono più memoria video."
+  },
+  "local_sizes": {
+    "message": "Download {0} · occupa {1} · circa {2} di memoria video"
+  },
+  "local_progress": {
+    "message": "Download in corso… {0} di {1}"
+  },
+  "local_cancel": {
+    "message": "Annulla"
+  },
+  "local_gpu": {
+    "message": "Scheda video: {0}"
+  },
+  "badge_downloaded": {
+    "message": "Scaricato"
+  },
+  "error_no_webgpu": {
+    "message": "Questo browser non può usare la scheda video (WebGPU), quindi non può trascrivere su questo computer."
+  },
+  "error_local_missing": {
+    "message": "Prima scarica un modello, in Impostazioni → Modelli su questo computer."
+  },
+  "error_local_failed": {
+    "message": "La trascrizione su questo computer si è fermata per un errore."
+  },
+  "error_local_vram": {
+    "message": "⚠ Memoria video insufficiente su questo computer per questo modello. Scegline uno più piccolo."
+  },
+  "local_download_failed": {
+    "message": "Il download non è riuscito ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "Eliminare il modello {0} da questo computer? Libera {1}."
+  },
+  "local_only_english": {
+    "message": "Su questo computer i sottotitoli si possono tradurre solo in inglese."
   }
 }

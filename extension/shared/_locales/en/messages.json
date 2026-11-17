@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "The graphics card stopped the transcription model several times in a row."
+  },
+  "fg_hq_badge": {
+    "message": "For powerful graphics cards"
+  },
+  "where_fg_models": {
+    "message": "Where the models are"
+  },
+  "fg_local_title": {
+    "message": "Smooth video models on this computer"
+  },
+  "fg_server_title": {
+    "message": "Smooth video models on the server"
+  },
+  "fg_server_intro": {
+    "message": "The server only keeps them: the chosen model is downloaded from it and runs on this computer's graphics card."
+  },
+  "fg_server_none": {
+    "message": "The server has no smooth video models yet."
+  },
+  "fg_server_old": {
+    "message": "This server doesn't keep smooth video models: update it to the latest version."
+  },
+  "fg_add_server_title": {
+    "message": "Add to the server"
+  },
+  "fg_server_loading": {
+    "message": "Downloading the model from the server…"
+  },
+  "section_transcription": {
+    "message": "Transcription models"
+  },
+  "transcription_intro": {
+    "message": "Choose where speech is turned into text: on a WhisperLive server or on this computer's graphics card."
+  },
+  "where_transcribe": {
+    "message": "Where to transcribe"
+  },
+  "engine_server": {
+    "message": "On the server"
+  },
+  "engine_local": {
+    "message": "On this computer"
+  },
+  "trans_server_title": {
+    "message": "Transcription models on the server"
+  },
+  "trans_local_title": {
+    "message": "Transcription models on this computer"
+  },
+  "badge_in_use": {
+    "message": "In use"
+  },
+  "fg_downloaded_title": {
+    "message": "Downloaded"
+  },
+  "fg_add_title": {
+    "message": "Add a model"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Address of a model file (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "It could not be downloaded ({0}). Download the file with the browser and choose it from this computer."
+  },
+  "fg_memory": {
+    "message": "Graphics memory: about {0} with a 1080p video"
+  },
+  "fg_memory_4k": {
+    "message": "about {0} upscaling 1080p to 4K"
+  },
+  "fg_memory_now": {
+    "message": "Graphics memory in use: about {0}"
+  },
+  "fg_file_size": {
+    "message": "File: {0}"
+  },
+  "fg_options": {
+    "message": "Options"
+  },
   "fg_resolution": {
     "message": "Upscaling target resolution"
   },
@@ -6,13 +87,13 @@
     "message": "Original (no upscaling)"
   },
   "fg_model": {
-    "message": "AI model"
+    "message": "Smooth video model"
   },
   "fg_kind_sr": {
-    "message": "Upscaling"
+    "message": "Upscaling only"
   },
   "fg_kind_fi": {
-    "message": "In-between frames"
+    "message": "In-between frames only"
   },
   "fg_builtin": {
     "message": "Built-in"
@@ -39,13 +120,13 @@
     "message": "Smooth video models"
   },
   "fg_models_hint": {
-    "message": "Download a model file (.stmodel, .srmodel, .fimodel) and add it here. It runs on your own graphics card."
+    "message": "Smooth video always runs on this computer's graphics card. StreamRemaster comes with the extension; other models can be on this computer or on your server."
   },
   "fg_add_model": {
-    "message": "Add model file"
+    "message": "Choose a file on this computer"
   },
   "fg_no_models": {
-    "message": "No models added yet."
+    "message": "No downloaded models yet."
   },
   "fg_model_bad": {
     "message": "That file is not a valid model."
@@ -138,7 +219,7 @@
     "message": "No response"
   },
   "model": {
-    "message": "Model"
+    "message": "Transcription model"
   },
   "model_server_default": {
     "message": "Server default"
@@ -192,7 +273,7 @@
     "message": "Connect your server"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster needs a WhisperLive server running on your computer or on your network."
+    "message": "StreamRemaster transcribes with a WhisperLive server on your computer or your network, or with this computer's graphics card."
   },
   "server_address": {
     "message": "Server address"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Settings"
-  },
-  "section_server": {
-    "message": "Server"
-  },
-  "section_models": {
-    "message": "Models"
   },
   "section_subtitles": {
     "message": "Subtitles"
@@ -490,6 +565,60 @@
   },
   "err_download_failed": {
     "message": "The download failed."
+  },
+  "setup_or": {
+    "message": "or"
+  },
+  "use_local": {
+    "message": "Use this computer"
+  },
+  "use_local_hint": {
+    "message": "Whisper runs on this computer's graphics card, with no server. You download the model once, in Settings."
+  },
+  "local_footer": {
+    "message": "This computer"
+  },
+  "local_none": {
+    "message": "No model yet: download one"
+  },
+  "local_intro": {
+    "message": "Whisper runs in the browser, on your graphics card (WebGPU). Each model is downloaded once from Hugging Face and stays in the browser. The bigger ones write better and need more graphics memory."
+  },
+  "local_sizes": {
+    "message": "Download {0} · takes {1} · about {2} of graphics memory"
+  },
+  "local_progress": {
+    "message": "Downloading… {0} of {1}"
+  },
+  "local_cancel": {
+    "message": "Cancel"
+  },
+  "local_gpu": {
+    "message": "Graphics card: {0}"
+  },
+  "badge_downloaded": {
+    "message": "Downloaded"
+  },
+  "error_no_webgpu": {
+    "message": "This browser can't use the graphics card (WebGPU), so it can't transcribe on this computer."
+  },
+  "error_local_missing": {
+    "message": "Download a model first, in Settings → Models on this computer."
+  },
+  "error_local_failed": {
+    "message": "Transcription on this computer stopped because of an error."
+  },
+  "error_local_vram": {
+    "message": "⚠ Not enough graphics memory on this computer for this model. Pick a smaller one."
+  },
+  "local_download_failed": {
+    "message": "The download failed ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "Delete the {0} model from this computer? It frees {1}."
+  },
+  "local_only_english": {
+    "message": "On this computer the subtitles can only be translated into English."
   },
   "err_convert_failed": {
     "message": "The model couldn't be converted."

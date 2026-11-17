@@ -33,8 +33,8 @@ async function start(tabId) {
   await ST.i18n.init();
   await stop({ quiet: true });
 
-  if (!settings.serverUrl) {
-    await Engine.setRun({ state: "error", error: "no_server", tabId: null });
+  if (!ST.subsReady(settings)) {
+    await Engine.setRun({ state: "error", error: settings.engine === "local" ? "local_missing" : "no_server", tabId: null });
     return;
   }
   if (!(await ensureContent(tabId))) {
@@ -49,6 +49,7 @@ async function start(tabId) {
   await toTab(tabId, {
     st: "engine", cmd: "start", serverUrl: settings.serverUrl,
     options: Engine.wsOptions(settings), translating: Engine.isTranslating(settings),
+    localModel: settings.engine === "local" ? settings.localModel : null,
   });
 }
 
@@ -78,7 +79,7 @@ async function autoStart(tabId) {
   autoStarting = true;
   try {
     const settings = await ST.getSettings();
-    if (!settings.subsAutoStart || !settings.serverUrl) return "off";
+    if (!settings.subsAutoStart || !ST.subsReady(settings)) return "off";
     const { runState } = await browser.storage.local.get("runState");
     if (runState && typeof runState.tabId === "number") {
       if (runState.state === "error") return "busy";
@@ -158,6 +159,24 @@ browser.runtime.onMessage.addListener((msg, sender) => {
       });
       break;
   }
+});
+
+// Whisper on this computer, for the content script's Engine.PortSession: the models live
+// in this page's storage and it has the graphics card.
+browser.runtime.onConnect.addListener((port) => {
+  if (port.name !== "st-local") return;
+  let session = null;
+  const send = (msg) => { try { port.postMessage(msg); } catch (e) { /* tab gone */ } };
+  port.onMessage.addListener((m) => {
+    if (!m) return;
+    if (m.cmd === "start" && !session) {
+      session = new Engine.LocalSession({ modelId: m.modelId, options: m.options, emit: send });
+      session.connect();
+    } else if (m.audio && session) {
+      session.sendAudio(m.audio instanceof Float32Array ? m.audio : new Float32Array(m.audio));
+    }
+  });
+  port.onDisconnect.addListener(() => { if (session) session.close(); session = null; });
 });
 
 browser.tabs.onRemoved.addListener(async (tabId) => {

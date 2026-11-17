@@ -14,13 +14,24 @@ options. The server answers with a single JSON object and closes the connection:
     {"st_action": "download_model", "source": "<repo id | HF url | archive url>"}
     {"st_action": "delete_model", "id": "<model id>"}
 
+The smooth video models (.stmodel, .srmodel, .fimodel files of StreamRemaster) always run in
+the browser, on the user's graphics card; the server only keeps them, for the extension to
+take one from here:
+
+    {"st_action": "list_video_models"}
+    {"st_action": "get_video_model", "id": "<file name>"}       -> the file, in base64
+    {"st_action": "download_video_model", "source": "<http(s) address of a model file>"}
+    {"st_action": "delete_video_model", "id": "<file name>"}
+
 Environment variables:
     ST_MODELS_DIR       where converted / archive models live
                         (default: ~/.cache/stream-transcription)
+    ST_VIDEO_MODELS_DIR where the smooth video models live (default: <ST_MODELS_DIR>/video)
     ST_ALLOW_MANAGEMENT "0" disables download/delete (listing still works). Default "1".
     HF_TOKEN            optional, for gated or private Hugging Face repos.
 """
 
+import base64
 import fnmatch
 import json
 import logging
@@ -45,6 +56,7 @@ ST_ROOT = os.path.expanduser(
     os.environ.get("ST_MODELS_DIR", "~/.cache/stream-transcription"))
 CONVERTED_DIR = os.path.join(ST_ROOT, "converted")
 ARCHIVE_DIR = os.path.join(ST_ROOT, "models")
+VIDEO_DIR = os.path.expanduser(os.environ.get("ST_VIDEO_MODELS_DIR", os.path.join(ST_ROOT, "video")))
 ALLOW_MANAGEMENT = os.environ.get("ST_ALLOW_MANAGEMENT", "1") not in ("0", "false", "no")
 
 _REPO_RE = re.compile(r"^[A-Za-z0-9][\w.-]{0,95}/[\w.-]{1,96}$")
@@ -576,6 +588,129 @@ def delete_model(mid, default_path):
 
 
 # --------------------------------------------------------------------------------------
+# Smooth video models: files the browser runs itself
+# --------------------------------------------------------------------------------------
+
+# "SFM1" a combined file, "SRM1" the upscaler alone, "FIM1" the in-between frames alone; each
+# is followed by the length of a JSON header and the header, which has the model's name.
+_VIDEO_MAGIC = {b"SFM1": "st", b"SRM1": "sr", b"FIM1": "fi"}
+_VIDEO_EXT = (".stmodel", ".srmodel", ".fimodel")
+_VIDEO_NAME_RE = re.compile(r"^[A-Za-z0-9][\w.-]{0,120}$")
+VIDEO_MAX_BYTES = 16 * 1024 * 1024
+
+
+def _video_header(data):
+    """(kind, name) of a model file's bytes; ValueError if it is not one."""
+    kind = _VIDEO_MAGIC.get(bytes(data[:4]))
+    if not kind or len(data) < 8:
+        raise ValueError("not_video_model")
+    size = int.from_bytes(data[4:8], "little")
+    if size > len(data) - 8 or size > 65536:
+        raise ValueError("not_video_model")
+    try:
+        header = json.loads(bytes(data[8:8 + size]).decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise ValueError("not_video_model")
+    if not isinstance(header, dict):
+        raise ValueError("not_video_model")
+    return kind, str(header.get("name") or "model")[:80]
+
+
+def _video_path(mid):
+    """The file of a model id (its file name), never outside VIDEO_DIR."""
+    if not isinstance(mid, str) or not _VIDEO_NAME_RE.match(mid) or not mid.lower().endswith(_VIDEO_EXT):
+        raise ValueError("not_found")
+    path = os.path.join(VIDEO_DIR, mid)
+    if os.path.dirname(os.path.abspath(path)) != os.path.abspath(VIDEO_DIR) or not os.path.isfile(path):
+        raise ValueError("not_found")
+    return path
+
+
+def list_video_models():
+    out = []
+    if os.path.isdir(VIDEO_DIR):
+        for entry in sorted(os.listdir(VIDEO_DIR)):
+            if not entry.lower().endswith(_VIDEO_EXT) or not _VIDEO_NAME_RE.match(entry):
+                continue
+            path = os.path.join(VIDEO_DIR, entry)
+            try:
+                size = os.path.getsize(path)
+                if size > VIDEO_MAX_BYTES:
+                    continue
+                with open(path, "rb") as fh:
+                    kind, name = _video_header(fh.read(65536 + 8))
+            except (OSError, ValueError):
+                continue
+            out.append({"id": entry, "name": name, "kind": kind, "size": size})
+    return {"ok": True, "models": out}
+
+
+def get_video_model(mid):
+    try:
+        path = _video_path(mid)
+        with open(path, "rb") as fh:
+            data = fh.read(VIDEO_MAX_BYTES + 1)
+        if len(data) > VIDEO_MAX_BYTES:
+            raise ValueError("too_big")
+        kind, name = _video_header(data)
+    except ValueError as e:
+        return {"ok": False, "error": str(e)}
+    return {"ok": True, "id": mid, "name": name, "kind": kind, "size": len(data),
+            "data": base64.b64encode(data).decode("ascii")}
+
+
+def _video_file_name(url, name):
+    """A safe file name for a downloaded model: the one in the address, or the model's name."""
+    base = os.path.basename(urllib.parse.unquote(urllib.parse.urlsplit(url).path))
+    stem, ext = os.path.splitext(base)
+    if ext.lower() not in _VIDEO_EXT:
+        stem, ext = name, ".stmodel"
+    stem = re.sub(r"[^\w.-]+", "-", stem).strip(".-")[:100] or "model"
+    return stem + ext.lower()
+
+
+def download_video_model(source):
+    """Small files (16 MB at most): fetched while the extension waits."""
+    if not ALLOW_MANAGEMENT:
+        return {"ok": False, "error": "management_disabled"}
+    url = source.strip() if isinstance(source, str) else ""
+    if not re.match(r"^https?://[^\s/]+/\S*$", url):
+        return {"ok": False, "error": "invalid_source"}
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "stream-transcription"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = resp.read(VIDEO_MAX_BYTES + 1)
+        if len(data) > VIDEO_MAX_BYTES:
+            raise ValueError("too_big")
+        _kind, name = _video_header(data)
+    except ValueError as e:
+        return {"ok": False, "error": str(e)}
+    except Exception as e:
+        logging.error("[stream-transcription] video model download failed: %s", e)
+        return {"ok": False, "error": "network_error", "detail": str(e)[:300]}
+    os.makedirs(VIDEO_DIR, exist_ok=True)
+    mid = _video_file_name(url, name)
+    path = os.path.join(VIDEO_DIR, mid)
+    with open(path + ".part", "wb") as fh:
+        fh.write(data)
+    os.replace(path + ".part", path)
+    logging.info("[stream-transcription] video model %s installed", mid)
+    return {"ok": True, "id": mid, "name": name, "size": len(data)}
+
+
+def delete_video_model(mid):
+    if not ALLOW_MANAGEMENT:
+        return {"ok": False, "error": "management_disabled"}
+    try:
+        path = _video_path(mid)
+    except ValueError as e:
+        return {"ok": False, "error": str(e)}
+    os.remove(path)
+    logging.info("[stream-transcription] video model %s deleted", mid)
+    return {"ok": True}
+
+
+# --------------------------------------------------------------------------------------
 # Per-request options (precision, translator device)
 # --------------------------------------------------------------------------------------
 # The transcription and translation clients are built in the same thread that read the
@@ -637,6 +772,14 @@ def handle_control(websocket, options, default_path):
             reply = download_model(options.get("source"), default_path)
         elif action == "delete_model":
             reply = delete_model(options.get("id"), default_path)
+        elif action == "list_video_models":
+            reply = list_video_models()
+        elif action == "get_video_model":
+            reply = get_video_model(options.get("id"))
+        elif action == "download_video_model":
+            reply = download_video_model(options.get("source"))
+        elif action == "delete_video_model":
+            reply = delete_video_model(options.get("id"))
         else:
             reply = {"ok": False, "error": "unknown_action"}
     except Exception as e:

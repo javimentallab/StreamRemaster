@@ -35,6 +35,9 @@
     </label>
     <p class="msg" id="setupMsg" role="status"></p>
     <a class="link" id="serverHelp" href="#" data-i18n="server_help"></a>
+    <div class="setup-or"><span data-i18n="setup_or"></span></div>
+    <button class="btn ghost wide" id="setupLocal" data-i18n="use_local"></button>
+    <p class="hint" data-i18n="use_local_hint"></p>
   </section>
 
   <main id="mainUi">
@@ -45,6 +48,12 @@
     <p class="msg center" id="mainMsg" role="status"></p>
 
     <div class="fields" id="fields">
+      <div class="field">
+        <span data-i18n="where_transcribe"></span>
+        <div class="seg" id="engineSeg" role="radiogroup">
+          <button data-v="server" data-i18n="engine_server"></button><button data-v="local" data-i18n="engine_local"></button>
+        </div>
+      </div>
       <label class="field">
         <span class="field-head"><span data-i18n="model"></span><a class="link small" id="manageModels" href="#" data-i18n="manage_models"></a></span>
         <select id="model"></select>
@@ -83,7 +92,8 @@
         <p class="hint auto-hint" data-i18n="auto_start_hint" hidden></p>
       </div>
 
-      <details class="adv">
+      <p class="hint" id="localTargetHint" data-i18n="local_only_english" hidden></p>
+      <details class="adv" id="advBox">
         <summary data-i18n="advanced"></summary>
         <label class="check"><input type="checkbox" id="useVad"><span data-i18n="use_vad"></span></label>
         <div class="two adv-row">
@@ -125,9 +135,17 @@
         <span data-i18n="fg_target"></span>
         <select id="fgTarget"></select>
       </label>
+      <div class="field">
+        <span data-i18n="where_fg_models"></span>
+        <div class="seg" id="fgSourceSeg" role="radiogroup">
+          <button data-v="local" data-i18n="engine_local"></button><button data-v="server" data-i18n="engine_server"></button>
+        </div>
+      </div>
       <label class="field">
         <span class="field-head"><span data-i18n="fg_model"></span><a class="link small" id="fgManageModels" href="#" data-i18n="manage_models"></a></span>
         <select id="fgModel"></select>
+        <span class="hint" id="fgServerHint" hidden></span>
+        <span class="hint" id="fgMemory"></span>
       </label>
       <label class="field">
         <span data-i18n="fg_resolution"></span>
@@ -153,6 +171,11 @@
 
   <script src="common.js"></script>
   <script src="i18n.js"></script>
+  <script src="whisper-store.js"></script>
+  <script src="framegen.js"></script>
+  <script src="framegen-sr.js"></script>
+  <script src="framegen-fi.js"></script>
+  <script src="framegen-model.js"></script>
   <script src="popup.js"></script>
   <script src="popup-framegen.js"></script>
 </body>

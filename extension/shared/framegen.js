@@ -7,7 +7,7 @@
 // also refuses a <video> as a copy source there, so frames enter through an external texture.
 "use strict";
 
-(function (root) {
+(globalThis.STFramegenInstall = function (root) {
   const COMMON_RATES = [23.976, 24, 25, 29.97, 30, 48, 50, 59.94, 60, 120];
   const RING_SIZE = 8;
   // How far behind the newest frame the output runs, in source frames: a pair must exist before
@@ -30,6 +30,8 @@
   // Past this many unfinished upscales the GPU is behind: a frame goes without the network rather
   // than making the queue, and with it the delay, grow.
   const MAX_UPSCALES_IN_FLIGHT = 2;
+  // The motion is worked out across at most this many source frames (frames never captured between).
+  const MAX_MOTION_GAP = 4;
   const FIREFOX = /firefox/i.test(navigator.userAgent);
 
   // A continuous estimate of the media time, pulled gently towards each new currentTime reading.
@@ -161,8 +163,13 @@
       for (const [n, t] of samples) { cov += (n - n0 - mn) * (t - mt); vn += (n - n0 - mn) ** 2; }
       if (!(vn > 0) || !(cov > 0)) return;
       const hz = vn / cov;
-      // far from the measured rate: variable frame rate or broken timestamps, keep the clock alone
-      if (Math.abs(hz - guessHz) > guessHz * 0.03) return;
+      // Far from the measured rate: variable frame rate or broken timestamps, keep the clock alone.
+      // Unless the fit lands right on a common rate: then it is the measured rate that is off (it
+      // is taken once, over 1.5 s, and a page busy at that moment makes it read low, e.g. 57.75
+      // for a 60 fps stream), and keeping it would drop a frame every few hundred milliseconds.
+      const nearest = COMMON_RATES.reduce((a, b) => (Math.abs(b - hz) < Math.abs(a - hz) ? b : a));
+      const onCommonRate = Math.abs(hz - nearest) < nearest * 0.002;
+      if (Math.abs(hz - guessHz) > guessHz * 0.03 && !onCommonRate) return;
       this.hz = hz;
       this.a = mt - (mn + n0) / hz;
     }
@@ -173,6 +180,135 @@
     }
   }
 
+  // The clock of the worker path, where every frame arrives on its own with its timestamp instead of
+  // being read off the <video> on a display tick. In Chromium the frames are still captured on the
+  // page's main thread (video.captureStream() copies the current frame there), stamped with the
+  // moment of capture, and passed on to the worker; when the page stalls the frames of those
+  // milliseconds are never captured, and the next ones arrive late. The worker cannot bring the
+  // lost ones back, but it keeps painting through the stall and FrameGenerator bridges the gap with
+  // the motion between the frames on either side (MAX_MOTION_GAP).
+  //   - Frames are numbered by FrameTimeline from their timestamps (steps of the frame period).
+  //   - When a frame on the fitted grid is on screen in the native video is learnt from the frames
+  //     that arrive soonest: the lower envelope of arrival - grid time over the last seconds
+  //     (lateness only ever adds).
+  //   - The output runs behind the video by BASE_DELAY_FRAMES plus a delay that covers how late
+  //     frames have been arriving lately: it grows at once (a pair must exist before it is shown)
+  //     and shrinks slowly, so on a quiet page it stays near zero.
+  const STREAM_OFFSET_WINDOW_S = 4;
+  const STREAM_LATE_WINDOW_S = 15;
+  const STREAM_DELAY_MARGIN_S = 0.008;
+  const STREAM_DELAY_SHRINK = 0.02; // seconds of delay given back per second
+  const STREAM_MAX_DELAY_S = 0.2;
+  const STREAM_MIN_FRAMES = 5;
+  const BASE_DELAY_FRAMES = 1.1;
+  // A capture up to this much of a frame before its turn still counts as that frame (timing jitter).
+  const STREAM_CAPTURE_SLACK = 0.35;
+
+  class StreamTimer {
+    constructor() {
+      this.reset();
+    }
+
+    reset() {
+      this.timeline = new FrameTimeline();
+      this.deltas = [];
+      this.guess = 0;
+      this.lastTs = NaN;
+      this.lastArrival = NaN;
+      this.offsets = [];
+      this.offset = NaN;
+      this.lates = [];
+      this.delay = 0;
+      this.lastIndex = -Infinity;
+      this.lastPosition = -Infinity;
+    }
+
+    get hz() {
+      return this.timeline.hz || this.guess;
+    }
+
+    // A frame with timestamp ts (seconds) arrived at `arrival` (seconds, same clock as now() later).
+    // Returns { index, reset }: index is null for a frame not to capture (the same one again, or
+    // before the rate is known); reset says the numbering started over (a seek, a loop, a new source).
+    frame(ts, arrival) {
+      let reset = false;
+      if (Number.isFinite(this.lastTs) && (ts < this.lastTs - 0.001 || ts - this.lastTs > 1)) {
+        const delay = this.delay;
+        this.reset();
+        this.delay = delay; // the page stalls just as much as before
+        reset = true;
+      }
+      if (ts === this.lastTs) return { index: null, reset };
+      if (Number.isFinite(this.lastTs)) {
+        this.deltas.push(ts - this.lastTs);
+        if (this.deltas.length > 30) this.deltas.shift();
+      }
+      this.lastTs = ts;
+      if (this.deltas.length < STREAM_MIN_FRAMES - 1) return { index: null, reset };
+      const sorted = this.deltas.slice().sort((a, b) => a - b);
+      const measured = 1 / sorted[sorted.length >> 1];
+      const nearest = COMMON_RATES.reduce((a, b) => (Math.abs(b - measured) < Math.abs(a - measured) ? b : a));
+      this.guess = Math.abs(nearest - measured) < measured * 0.03 ? nearest : measured;
+      const tl = this.timeline;
+      const before = tl.lastN;
+      const hadFrames = Number.isFinite(tl.lastMedia);
+      // A frame after a silence was captured late (the page stalled): its stamp is not its frame's
+      // turn, so it stays out of the fit, which it would bend.
+      const late = Number.isFinite(this.lastArrival) && arrival - this.lastArrival > 1.5 / this.guess;
+      if (!late) tl.add(ts, this.guess);
+      let index;
+      if (tl.hz) {
+        // The frame on screen when it was captured, on the fitted grid. A capture normally lands
+        // within a few milliseconds of its frame's turn; one taken late shows the frame of that later
+        // moment, and is numbered so.
+        index = Math.floor((ts - tl.a) * tl.hz + STREAM_CAPTURE_SLACK);
+      } else if (late && hadFrames) {
+        index = tl.lastN + Math.floor((ts - tl.lastMedia) * this.guess + STREAM_CAPTURE_SLACK);
+      } else {
+        if (hadFrames && tl.lastN === before) return { index: null, reset };
+        index = tl.lastN;
+      }
+      if (index <= this.lastIndex) return { index: null, reset };
+      this.lastIndex = index;
+      // Lateness against where the frame sits on the fitted grid, not against its own timestamp:
+      // Chromium stamps captured frames with the moment of capture, which is late too when the page
+      // stalls (and jitters by a few milliseconds besides).
+      this.observeArrival(tl.hz ? tl.a + index / tl.hz : ts, arrival);
+      return { index, reset };
+    }
+
+    observeArrival(ts, arrival) {
+      const gap = arrival - ts;
+      this.offsets.push([arrival, gap]);
+      while (this.offsets.length && this.offsets[0][0] < arrival - STREAM_OFFSET_WINDOW_S) this.offsets.shift();
+      let offset = Infinity;
+      for (const [, g] of this.offsets) offset = Math.min(offset, g);
+      this.offset = offset;
+      // How long the output must lag to always have a frame after the instant it paints: how late
+      // this frame is on the grid, or how long nothing arrived beyond one frame period (a stall,
+      // whose frames were never captured), whichever is more.
+      const silence = Number.isFinite(this.lastArrival) && this.guess ? arrival - this.lastArrival - 1 / this.guess : 0;
+      this.lates.push([arrival, Math.max(gap - offset, silence)]);
+      while (this.lates.length && this.lates[0][0] < arrival - STREAM_LATE_WINDOW_S) this.lates.shift();
+      let late = 0;
+      for (const [, l] of this.lates) late = Math.max(late, l);
+      const wanted = Math.min(STREAM_MAX_DELAY_S, late > 0.003 ? late + STREAM_DELAY_MARGIN_S : 0);
+      const elapsed = Number.isFinite(this.lastArrival) ? Math.max(0, arrival - this.lastArrival) : 0;
+      this.delay = wanted >= this.delay ? wanted : Math.max(wanted, this.delay - STREAM_DELAY_SHRINK * elapsed);
+      this.lastArrival = arrival;
+    }
+
+    // The fractional source frame to show at `now` (seconds); NaN until frames have come in. It never
+    // goes back: when the delay grows the picture waits for time to catch up instead of replaying.
+    position(now) {
+      if (!this.guess || !Number.isFinite(this.offset)) return NaN;
+      const p = this.timeline.position(now - this.offset - this.delay, this.guess) - BASE_DELAY_FRAMES;
+      if (p < this.lastPosition && this.lastPosition - p < this.hz) return this.lastPosition;
+      this.lastPosition = p;
+      return p;
+    }
+  }
+
   const FULLSCREEN = `
     struct Out { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     @vertex fn vs(@builtin(vertex_index) i: u32) -> Out {
@@ -180,11 +316,20 @@
       return Out(vec4f(p * 2.0 - 1.0, 0.0, 1.0), vec2f(p.x, 1.0 - p.y));
     }`;
 
+  // The slot can be larger than the frame (the networks' multiple of 16): scale.xy = slot / frame,
+  // so the frame lands pixel for pixel in the top-left corner and the band past it repeats its last
+  // column and row. Nothing is stretched.
+  // scale.zw: the last place sampled, one pixel inside the frame. Video arrives as 4:2:0 YUV whose
+  // colour planes are padded past the picture (1080 rows are decoded as 1088); the clamp of
+  // textureSampleBaseClampToEdge is not always applied to the colour plane, so sampling the last
+  // row or the band past it blended in empty colour, which is green, and the band then repeated it
+  // as green lines along the bottom or right edge.
   const CAPTURE_SHADER = FULLSCREEN + `
     @group(0) @binding(0) var frame: texture_external;
     @group(0) @binding(1) var smp: sampler;
+    @group(0) @binding(2) var<uniform> scale: vec4f;
     @fragment fn fs(in: Out) -> @location(0) vec4f {
-      return vec4f(textureSampleBaseClampToEdge(frame, smp, in.uv).rgb, 1.0);
+      return vec4f(textureSampleBaseClampToEdge(frame, smp, min(in.uv * scale.xy, scale.zw)).rgb, 1.0);
     }`;
 
   // The frame at instant t between a and b. With the interpolator's motion (in quarter-grid pixels,
@@ -196,7 +341,8 @@
     @group(0) @binding(1) var b: texture_2d<f32>;
     @group(0) @binding(2) var smp: sampler;
     struct Params { p: vec4f, q: vec4f };
-    // p: t, motion grid width and height, sharpening; q.x: 1 when the motion is the network's
+    // p: t, motion grid width and height, sharpening; q.x: 1 when the motion is the network's;
+    // q.yz: the share of the slots that is picture (the rest is the edge band)
     @group(0) @binding(3) var<uniform> u: Params;
     @group(0) @binding(4) var flow: texture_2d<f32>;
     @group(0) @binding(5) var extra: texture_2d<f32>;
@@ -251,17 +397,18 @@
     // network's motion it also eases off where the two frames disagree after being moved (small
     // things moving on their own, like rain or snow), so it does not raise what is already wrong.
     @fragment fn fs(in: Out) -> @location(0) vec4f {
-      let c = synth(in.uv);
+      let uv = in.uv * u.q.yz;
+      let c = synth(uv);
       var strength = u.p.w;
       if (strength > 0.0 && u.q.x > 0.5) {
-        strength *= 1.0 - smoothstep(0.5, 1.2, mismatch(in.uv));
+        strength *= 1.0 - smoothstep(0.5, 1.2, mismatch(uv));
       }
       if (strength <= 0.0) { return vec4f(c, 1.0); }
       let d = 1.0 / vec2f(textureDimensions(a));
-      let n = synth(in.uv - vec2f(0.0, d.y));
-      let s = synth(in.uv + vec2f(0.0, d.y));
-      let e = synth(in.uv + vec2f(d.x, 0.0));
-      let w = synth(in.uv - vec2f(d.x, 0.0));
+      let n = synth(uv - vec2f(0.0, d.y));
+      let s = synth(uv + vec2f(0.0, d.y));
+      let e = synth(uv + vec2f(d.x, 0.0));
+      let w = synth(uv - vec2f(d.x, 0.0));
       let lo = min(c, min(min(n, s), min(e, w)));
       let hi = max(c, max(max(n, s), max(e, w)));
       let range = luma(hi) - luma(lo);
@@ -276,11 +423,16 @@
     // width and height are the captured frames; the canvas is outputWidth x outputHeight. A model
     // adds an upscaled copy of every captured frame at twice their size.
     // An interpolator model replaces the cross-fade; it needs frame sizes that are multiples of 16.
-    constructor({ device, video, canvas, width, height, outputWidth = width, outputHeight = height, model = null, interpolator = null, sharpen = 0, onCapture = null }) {
+    // contentWidth x contentHeight is the picture inside the captured frames when they carry an edge
+    // band (see CAPTURE_SHADER); by default all of it.
+    // video can be null: frames are then handed to capture() one by one (the worker, with VideoFrames)
+    // and tick() is not used.
+    constructor({ device, video = null, canvas, width, height, contentWidth = width, contentHeight = height, outputWidth = width, outputHeight = height, model = null, interpolator = null, sharpen = 0, onCapture = null, maxInFlight = MAX_UPSCALES_IN_FLIGHT }) {
       this.device = device;
       this.video = video;
       this.onCapture = onCapture;
       this.sharpen = sharpen; // 0 = off; about 0.3 soft to 0.9 strong
+      this.maxInFlight = maxInFlight;
       this.inFlight = 0;
       this.nudging = false;
       this.destroyed = false;
@@ -289,7 +441,7 @@
       this.rate = new RateMeter(video);
       this.timeline = new FrameTimeline();
       this.frameCallback = 0;
-      if (typeof video.requestVideoFrameCallback === "function") {
+      if (video && typeof video.requestVideoFrameCallback === "function") {
         const onFrame = (_, metadata) => {
           if (this.destroyed) return;
           if (metadata && typeof metadata.mediaTime === "number") this.timeline.add(metadata.mediaTime, this.rate.hz);
@@ -319,6 +471,12 @@
         this.interpolator = new root.STFramegenFI.Interpolator(device, interpolator, width, height, RING_SIZE);
       }
       this.params = device.createBuffer({ size: 32, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+      this.contentWidth = contentWidth;
+      this.contentHeight = contentHeight;
+      this.shown = [contentWidth / width, contentHeight / height];
+      this.captureScale = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+      device.queue.writeBuffer(this.captureScale, 0, new Float32Array([width / contentWidth, height / contentHeight,
+        1 - 1 / contentWidth, 1 - 1 / contentHeight]));
       this.capturePipeline = this.pipeline(CAPTURE_SHADER, "rgba8unorm");
       this.presentPipeline = this.pipeline(PRESENT_SHADER, format);
 
@@ -412,12 +570,12 @@
     }
 
     // Firefox on Linux has WebGPU without external textures: there the frame goes through a 2D canvas.
-    readFrame(slot, encoder) {
+    readFrame(slot, encoder, source = this.video) {
       const device = this.device;
       let external = null;
       if (!this.frameCanvas && typeof device.importExternalTexture === "function") {
         try {
-          external = device.importExternalTexture({ source: this.video });
+          external = device.importExternalTexture({ source });
         } catch (error) {
           if (error.name !== "NotSupportedError") throw error;
         }
@@ -425,7 +583,8 @@
       if (external) {
         const group = device.createBindGroup({
           layout: this.capturePipeline.getBindGroupLayout(0),
-          entries: [{ binding: 0, resource: external }, { binding: 1, resource: this.sampler }],
+          entries: [{ binding: 0, resource: external }, { binding: 1, resource: this.sampler },
+            { binding: 2, resource: { buffer: this.captureScale } }],
         });
         const pass = encoder.beginRenderPass({
           colorAttachments: [{ view: this.slots[slot].view, loadOp: "clear", storeOp: "store", clearValue: [0, 0, 0, 1] }],
@@ -441,22 +600,32 @@
         this.frameCanvas = new OffscreenCanvas(texture.width, texture.height);
         this.frameContext = this.frameCanvas.getContext("2d", { alpha: false });
       }
-      this.frameContext.drawImage(this.video, 0, 0, texture.width, texture.height);
+      // the picture pixel for pixel, then the edge band: its last column and row stretched out
+      const cw = this.contentWidth;
+      const ch = this.contentHeight;
+      this.frameContext.drawImage(source, 0, 0, cw, ch);
+      if (texture.width > cw) this.frameContext.drawImage(this.frameCanvas, cw - 1, 0, 1, ch, cw, 0, texture.width - cw, ch);
+      if (texture.height > ch) this.frameContext.drawImage(this.frameCanvas, 0, ch - 1, texture.width, 1, 0, ch, texture.width, texture.height - ch);
       device.queue.copyExternalImageToTexture({ source: this.frameCanvas }, { texture }, [texture.width, texture.height]);
     }
 
-    capture(index) {
+    capture(index, source = this.video) {
       const device = this.device;
       const slot = this.nextSlot;
       this.nextSlot = (slot + 1) % RING_SIZE;
       const encoder = device.createCommandEncoder();
-      this.readFrame(slot, encoder);
-      // The motion from the frame before, when it is the one right before. It goes first: an aligned
-      // upscaler uses it to move the previous upscaled frame onto this one.
+      this.readFrame(slot, encoder, source);
+      // The motion from the frame before. It goes first: an aligned upscaler uses it to move the
+      // previous upscaled frame onto this one. The frame before may be a few frames back when some
+      // were never captured (the page stalled): the motion across the gap still fills it in
+      // smoothly, where a cross-fade would show a jump.
       let motion = false;
-      const before = this.ring.find((entry) => entry.index === index - 1);
+      let before = null;
+      for (const entry of this.ring) {
+        if (entry.index < index && index - entry.index <= MAX_MOTION_GAP && (!before || entry.index > before.index)) before = entry;
+      }
       if (this.interpolator && this.interpolator.ready && before) {
-        if (this.inFlight < MAX_UPSCALES_IN_FLIGHT) {
+        if (this.inFlight < this.maxInFlight) {
           this.interpolator.run(encoder,
             { id: before.slot, view: this.slots[before.slot].view },
             { id: slot, view: this.slots[slot].view }, slot);
@@ -468,7 +637,7 @@
       }
       let upscaled = false;
       if (this.upscaler && this.upscaler.ready) {
-        if (this.inFlight < MAX_UPSCALES_IN_FLIGHT) {
+        if (this.inFlight < this.maxInFlight) {
           const previous = this.lastSlot >= 0 ? this.lastSlot : slot;
           const aligned = motion && before.upscaled
             ? { previous: { id: `u${before.slot}`, view: this.upscaledSlots[before.slot].view },
@@ -492,7 +661,7 @@
       }
       this.lastSlot = slot;
       this.ring = this.ring.filter((entry) => entry.slot !== slot);
-      this.ring.push({ index, slot, upscaled, motion });
+      this.ring.push({ index, slot, upscaled, motion, motionFrom: motion ? before.index : null });
       this.stats.captures++;
       if (this.onCapture) this.onCapture(this.slots[slot].texture, index);
     }
@@ -531,7 +700,7 @@
       if (!pair) return false;
       if (pair.hold) this.stats.holds++;
       const device = this.device;
-      const moving = !pair.hold && pair.b.motion && pair.b.index === pair.a.index + 1;
+      const moving = !pair.hold && pair.b.motion && pair.b.motionFrom === pair.a.index;
       const motion = moving ? this.interpolator.motionOf(pair.b.slot) : null;
       const upscaled = pair.a.upscaled && pair.b.upscaled;
       const key = `${pair.a.slot}:${pair.b.slot}:${+upscaled}:${moving ? 1 : 0}`;
@@ -552,7 +721,8 @@
       }
       if (moving) this.stats.synthesized++;
       const grid = this.interpolator ? [this.interpolator.w4, this.interpolator.h4] : [1, 1];
-      device.queue.writeBuffer(this.params, 0, new Float32Array([pair.t, grid[0], grid[1], this.sharpen, moving ? 1 : 0, 0, 0, 0]));
+      device.queue.writeBuffer(this.params, 0, new Float32Array([pair.t, grid[0], grid[1], this.sharpen, moving ? 1 : 0,
+        this.shown[0], this.shown[1], 0]));
       const encoder = device.createCommandEncoder();
       const pass = encoder.beginRenderPass({
         colorAttachments: [{
@@ -580,11 +750,56 @@
       if (this.interpolator) this.interpolator.destroy();
       for (const texture of this.still) texture.destroy();
       this.params.destroy();
+      this.captureScale.destroy();
       this.slots = [];
       this.upscaledSlots = [];
       this.presentGroups.clear();
     }
   }
 
-  root.STFramegen = { FrameGenerator, MediaClock, RateMeter, FrameTimeline, PRESENT_SHADER };
+  const MAX_OUTPUT_HEIGHT = 2160;
+  // Above this the network costs more than a frame on mid-range cards.
+  const MAX_MODEL_INPUT_HEIGHT = 1080;
+  const even = (n) => Math.max(2, Math.round(n / 2) * 2);
+
+  // What to capture and what to paint for a video of width x height. options: { resolution
+  // ("original", "display" or an output height), model, interpolator }; displayHeight is the
+  // screen's height in device pixels, for "display". The network only runs when the output is
+  // larger than the video.
+  function planSizes(width, height, options, displayHeight) {
+    let wanted = height;
+    if (options.resolution === "display") wanted = displayHeight;
+    else if (options.resolution !== "original") wanted = Number(options.resolution) || height;
+    const outputHeight = even(Math.min(MAX_OUTPUT_HEIGHT, wanted));
+    const useModel = !!options.model && outputHeight > height;
+    // The picture is captured at its own size, pixel for pixel (a near-1 resize blurs everything).
+    // The interpolator needs frames in multiples of 16: the slots get an edge band up to that size,
+    // which is never shown (FrameGenerator's contentWidth and contentHeight).
+    const inputHeight = even(Math.min(height, outputHeight, useModel ? MAX_MODEL_INPUT_HEIGHT : Infinity));
+    const inputWidth = even((width * inputHeight) / height);
+    const pad = options.interpolator ? (n) => Math.ceil(n / 16) * 16 : (n) => n;
+    return {
+      width: pad(inputWidth), height: pad(inputHeight), contentWidth: inputWidth, contentHeight: inputHeight,
+      outputWidth: even((width * outputHeight) / height), outputHeight,
+      model: useModel ? options.model : null,
+      interpolator: options.interpolator || null,
+    };
+  }
+
+  // The graphics memory a FrameGenerator built from that plan takes: the ring of captured frames,
+  // their upscaled copies, the networks' buffers, and the canvas counted with three images (the
+  // browser keeps a few to show them).
+  function memoryBytes(plan) {
+    const { width, height } = plan;
+    let bytes = RING_SIZE * width * height * 4 + 3 * plan.outputWidth * plan.outputHeight * 4;
+    if (plan.model) {
+      bytes += RING_SIZE * (width * 2) * (height * 2) * 4 + root.STFramegenSR.memoryBytes(plan.model, width, height);
+    }
+    if (plan.interpolator && width % 16 === 0 && height % 16 === 0) {
+      bytes += root.STFramegenFI.memoryBytes(plan.interpolator, width, height, RING_SIZE);
+    }
+    return bytes;
+  }
+
+  root.STFramegen = { FrameGenerator, MediaClock, RateMeter, FrameTimeline, StreamTimer, PRESENT_SHADER, planSizes, memoryBytes, BASE_DELAY_FRAMES };
 })(globalThis);

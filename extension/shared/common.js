@@ -10,6 +10,8 @@ globalThis.ST = ST;
 ST.DEFAULTS = {
   serverUrl: "",          // e.g. ws://192.168.1.10:9090  (empty = not configured yet)
   model: "",              // model id from the server ("" = server default)
+  engine: "server",       // server | local (Whisper on this computer's graphics card, whisper-local.js)
+  localModel: "",         // id of the local model (Whisper.CATALOG), once one is downloaded
   sourceLang: "",         // "" = auto-detect
   targetLang: "",         // "" = keep the original language
   captionLines: 2,
@@ -24,6 +26,7 @@ ST.DEFAULTS = {
   fgResolution: "original", // original | display | an output height
   fgSharpen: "medium",       // off | soft | medium | strong: adaptive sharpening of what is shown
   fgModel: "builtin-st",  // id of the smooth video model ("" = none: plain cross-fade and scaling)
+  fgSource: "local",      // local | server: where the smooth video models come from (they always run here)
   fgAutoStart: false,     // turn smooth video on by itself when the page plays a video
   subsAutoStart: false,   // start the subtitles by themselves when the page plays a video
 };
@@ -33,7 +36,7 @@ ST.DEFAULTS = {
 // if the user ticked those options. The rules live here so they can be tested without a browser.
 
 // What the page side of smooth video needs, and the watcher after it.
-ST.FG_FILES = ["common.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-page.js"];
+ST.FG_FILES = ["common.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-worker.js", "framegen-page.js"];
 ST.AUTO_FILES = ST.FG_FILES.concat("autostart.js");
 // The watcher alone, for the subtitles (they start from the background).
 ST.WATCHER_FILES = ["common.js", "autostart.js"];
@@ -121,8 +124,11 @@ ST.autoStartTracker = function (pageKey) {
 
 // Models that ship inside the extension. The background copies them into storage.local next to the
 // ones the user adds, so every page reads them the same way; they cannot be deleted.
+// HQ has an upscaler about three times larger: for powerful graphics cards. A built-in model whose
+// file is not in this build is simply left out.
 ST.BUILTIN_FG_MODELS = [
   { id: "builtin-st", kind: "st", name: "StreamRemaster", file: "models/streamremaster.stmodel" },
+  { id: "builtin-hq", kind: "st", name: "StreamRemaster HQ", file: "models/streamremaster-hq.stmodel", hq: true },
 ];
 
 // When the page goes fullscreen, the window follows. Chromium keeps a captured tab's fullscreen
@@ -159,9 +165,10 @@ ST.installBuiltinModels = async function () {
       const response = await fetch(ext.runtime.getURL(model.file));
       if (!response.ok) throw new Error(response.status);
       const buffer = await response.arrayBuffer();
-      models[model.id] = { id: model.id, kind: model.kind, name: model.name, size: buffer.byteLength, builtin: true, data: ST.bufferToBase64(buffer) };
+      models[model.id] = { id: model.id, kind: model.kind, name: model.name, size: buffer.byteLength, builtin: true,
+        hq: !!model.hq, data: ST.bufferToBase64(buffer) };
     } catch (error) {
-      console.warn("[streamremaster] built-in model not installed:", model.file, error);
+      if (!model.hq) console.warn("[streamremaster] built-in model not installed:", model.file, error);
     }
   }
   // Built-in models first, then the user's own; an old built-in entry is replaced.
@@ -169,6 +176,21 @@ ST.installBuiltinModels = async function () {
     if (!model.builtin) models[id] = model;
   }
   await ext.storage.local.set({ fgModels: models });
+};
+
+// Smooth video models kept on the server: the file comes down once, is stored next to the others
+// (marked as the server's) and runs on this computer's graphics card like any of them.
+ST.SERVER_FG_PREFIX = "srv:";
+
+ST.takeServerFgModel = async function (serverUrl, fileId) {
+  const res = await ST.serverRequest(serverUrl, { st_action: "get_video_model", id: fileId }, 30000);
+  if (!res.ok) return res;
+  const { fgModels } = await ext.storage.local.get("fgModels");
+  const models = fgModels || {};
+  const id = ST.SERVER_FG_PREFIX + fileId;
+  models[id] = { id, kind: res.kind, name: res.name, size: res.size, server: true, file: fileId, data: res.data };
+  await ext.storage.local.set({ fgModels: models });
+  return { ok: true, id };
 };
 
 // Small binary payloads (the video models) travel through storage.local as base64.
@@ -184,6 +206,11 @@ ST.base64ToBuffer = function (data) {
   const bytes = new Uint8Array(text.length);
   for (let i = 0; i < text.length; i++) bytes[i] = text.charCodeAt(i);
   return bytes.buffer;
+};
+
+// Subtitles can start: a server is set, or this computer with a model chosen.
+ST.subsReady = function (s) {
+  return s.engine === "local" ? !!s.localModel : !!s.serverUrl;
 };
 
 ST.getSettings = async function () {
@@ -273,7 +300,12 @@ ST.connectedText = function (n) {
 
 ST.formatBytes = function (n) {
   if (!n) return "0 MB";
-  if (n >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, "") + " GB";
+  if (n >= 1e9) {
+    // the decimal mark of the interface language: "1,1 GB" in Spanish
+    const lang = ST.i18n && ST.i18n.lang;
+    const gb = (n / 1e9).toFixed(1).replace(/\.0$/, "");
+    return (lang ? gb.replace(".", (1.5).toLocaleString(lang).charAt(1)) : gb) + " GB";
+  }
   if (n < 1e6) return Math.max(1, Math.round(n / 1e3)) + " KB";
   return Math.round(n / 1e6) + " MB";
 };

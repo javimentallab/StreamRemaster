@@ -15,13 +15,13 @@
   },
   "permissions": ["storage", "<all_urls>"],
   "background": {
-    "scripts": ["common.js", "i18n.js", "engine-common.js", "background.js"],
+    "scripts": ["common.js", "i18n.js", "engine-common.js", "whisper-store.js", "whisper-gpu.js", "whisper-local.js", "background.js"],
     "persistent": false
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["common.js", "engine-common.js", "overlay.js", "content.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-page.js", "autostart.js"],
+      "js": ["common.js", "engine-common.js", "overlay.js", "content.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-worker.js", "framegen-page.js", "autostart.js"],
       "run_at": "document_idle"
     }
   ],

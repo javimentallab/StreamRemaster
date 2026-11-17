@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "La carte graphique a arrêté le modèle de transcription plusieurs fois de suite."
+  },
+  "fg_hq_badge": {
+    "message": "Pour cartes graphiques puissantes"
+  },
+  "where_fg_models": {
+    "message": "Où sont les modèles"
+  },
+  "fg_local_title": {
+    "message": "Modèles de vidéo fluide sur cet ordinateur"
+  },
+  "fg_server_title": {
+    "message": "Modèles de vidéo fluide sur le serveur"
+  },
+  "fg_server_intro": {
+    "message": "Le serveur ne fait que les garder : le modèle choisi en est téléchargé et fonctionne sur la carte graphique de cet ordinateur."
+  },
+  "fg_server_none": {
+    "message": "Le serveur n’a encore aucun modèle de vidéo fluide."
+  },
+  "fg_server_old": {
+    "message": "Ce serveur ne garde pas de modèles de vidéo fluide : mettez-le à jour vers la dernière version."
+  },
+  "fg_add_server_title": {
+    "message": "Ajouter au serveur"
+  },
+  "fg_server_loading": {
+    "message": "Téléchargement du modèle depuis le serveur…"
+  },
+  "section_transcription": {
+    "message": "Modèles de transcription"
+  },
+  "transcription_intro": {
+    "message": "Choisissez où la parole devient du texte : sur un serveur WhisperLive ou sur la carte graphique de cet ordinateur."
+  },
+  "where_transcribe": {
+    "message": "Où transcrire"
+  },
+  "engine_server": {
+    "message": "Sur le serveur"
+  },
+  "engine_local": {
+    "message": "Sur cet ordinateur"
+  },
+  "trans_server_title": {
+    "message": "Modèles de transcription sur le serveur"
+  },
+  "trans_local_title": {
+    "message": "Modèles de transcription sur cet ordinateur"
+  },
+  "badge_in_use": {
+    "message": "Utilisé"
+  },
+  "fg_downloaded_title": {
+    "message": "Téléchargés"
+  },
+  "fg_add_title": {
+    "message": "Ajouter un modèle"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Adresse d’un fichier de modèle (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "Impossible de le télécharger ({0}). Téléchargez le fichier avec le navigateur et choisissez-le sur cet ordinateur."
+  },
+  "fg_memory": {
+    "message": "Mémoire graphique : environ {0} avec une vidéo 1080p"
+  },
+  "fg_memory_4k": {
+    "message": "environ {0} en agrandissant de 1080p à 4K"
+  },
+  "fg_memory_now": {
+    "message": "Mémoire graphique utilisée : environ {0}"
+  },
+  "fg_file_size": {
+    "message": "Fichier : {0}"
+  },
+  "fg_options": {
+    "message": "Options"
+  },
   "fg_sharpen": {
     "message": "Netteté"
   },
@@ -21,13 +102,13 @@
     "message": "Originale (sans agrandissement)"
   },
   "fg_model": {
-    "message": "Modèle d'IA"
+    "message": "Modèle de vidéo fluide"
   },
   "fg_kind_sr": {
-    "message": "Agrandissement"
+    "message": "Agrandissement seulement"
   },
   "fg_kind_fi": {
-    "message": "Images intermédiaires"
+    "message": "Images intermédiaires seulement"
   },
   "fg_builtin": {
     "message": "Intégré"
@@ -39,13 +120,13 @@
     "message": "Modèles de vidéo fluide"
   },
   "fg_models_hint": {
-    "message": "Téléchargez un fichier de modèle (.stmodel, .srmodel, .fimodel) et ajoutez-le ici. Il fonctionne sur votre propre carte graphique."
+    "message": "La vidéo fluide fonctionne toujours sur la carte graphique de cet ordinateur. StreamRemaster est fourni avec l’extension ; d’autres modèles peuvent être sur cet ordinateur ou sur votre serveur."
   },
   "fg_add_model": {
-    "message": "Ajouter un fichier de modèle"
+    "message": "Choisir un fichier sur cet ordinateur"
   },
   "fg_no_models": {
-    "message": "Aucun modèle ajouté pour le moment."
+    "message": "Aucun modèle téléchargé pour l’instant."
   },
   "fg_model_bad": {
     "message": "Ce fichier n'est pas un modèle valide."
@@ -138,7 +219,7 @@
     "message": "Pas de réponse"
   },
   "model": {
-    "message": "Modèle"
+    "message": "Modèle de transcription"
   },
   "model_server_default": {
     "message": "Celui du serveur"
@@ -192,7 +273,7 @@
     "message": "Connectez votre serveur"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster a besoin d’un serveur WhisperLive sur votre ordinateur ou votre réseau."
+    "message": "StreamRemaster transcrit avec un serveur WhisperLive sur votre ordinateur ou votre réseau, ou avec la carte graphique de cet ordinateur."
   },
   "server_address": {
     "message": "Adresse du serveur"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Réglages"
-  },
-  "section_server": {
-    "message": "Serveur"
-  },
-  "section_models": {
-    "message": "Modèles"
   },
   "section_subtitles": {
     "message": "Sous-titres"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "Les modèles restent dans le volume Docker et ne sont pas retéléchargés. Si vous avez modifié docker-compose.yml et que git pull proteste, lancez git stash avant et git stash pop après."
+  },
+  "setup_or": {
+    "message": "ou"
+  },
+  "use_local": {
+    "message": "Utiliser cet ordinateur"
+  },
+  "use_local_hint": {
+    "message": "Whisper tourne sur la carte graphique de cet ordinateur, sans serveur. Le modèle se télécharge une fois, dans les Paramètres."
+  },
+  "local_footer": {
+    "message": "Cet ordinateur"
+  },
+  "local_none": {
+    "message": "Aucun modèle : téléchargez-en un"
+  },
+  "local_intro": {
+    "message": "Whisper tourne dans le navigateur, sur votre carte graphique (WebGPU). Chaque modèle se télécharge une fois depuis Hugging Face et reste dans le navigateur. Les plus gros écrivent mieux et demandent plus de mémoire graphique."
+  },
+  "local_sizes": {
+    "message": "Téléchargement {0} · occupe {1} · environ {2} de mémoire graphique"
+  },
+  "local_progress": {
+    "message": "Téléchargement… {0} sur {1}"
+  },
+  "local_cancel": {
+    "message": "Annuler"
+  },
+  "local_gpu": {
+    "message": "Carte graphique : {0}"
+  },
+  "badge_downloaded": {
+    "message": "Téléchargé"
+  },
+  "error_no_webgpu": {
+    "message": "Ce navigateur ne peut pas utiliser la carte graphique (WebGPU) : il ne peut pas transcrire sur cet ordinateur."
+  },
+  "error_local_missing": {
+    "message": "Téléchargez d’abord un modèle, dans Paramètres → Modèles sur cet ordinateur."
+  },
+  "error_local_failed": {
+    "message": "La transcription sur cet ordinateur s’est arrêtée à cause d’une erreur."
+  },
+  "error_local_vram": {
+    "message": "⚠ Pas assez de mémoire graphique sur cet ordinateur pour ce modèle. Choisissez-en un plus petit."
+  },
+  "local_download_failed": {
+    "message": "Le téléchargement a échoué ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "Supprimer le modèle {0} de cet ordinateur ? Cela libère {1}."
+  },
+  "local_only_english": {
+    "message": "Sur cet ordinateur, les sous-titres ne peuvent être traduits qu’en anglais."
   }
 }

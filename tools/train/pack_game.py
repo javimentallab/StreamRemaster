@@ -11,7 +11,10 @@ Quick turns and muzzle flashes in a first person shooter can look much like a sw
 doubtful steps inside a clip (correlation under 0.45) are written to <name>.cuts.npy (index i
 means between frame i and i + 1) and interp.py never takes a pair across them.
 
-Usage: python pack_game.py <video.avi> <data dir> [--set games] [--keep 3] [--length 240] [--delete]
+With --size the frames are reduced to that size (area average) before they are saved: a recording
+made at twice the size gives clean, supersampled frames, without the aliasing of a 1:1 render.
+
+Usage: python pack_game.py <video.avi> <data dir> [--set games] [--keep 3] [--length 240] [--size 1280x720] [--delete]
 """
 import argparse
 import pathlib
@@ -69,6 +72,7 @@ def main():
     parser.add_argument("--set", default="games")
     parser.add_argument("--keep", type=int, default=3)
     parser.add_argument("--length", type=int, default=240)
+    parser.add_argument("--size", help="WxH to reduce the frames to before saving (area average)")
     parser.add_argument("--delete", action="store_true")
     args = parser.parse_args()
 
@@ -87,7 +91,7 @@ def main():
 
     out_dir = args.data / "packed120" / args.set
     out_dir.mkdir(parents=True, exist_ok=True)
-    size = video_size(args.video)
+    size = tuple(int(x) for x in args.size.lower().split("x")) if args.size else video_size(args.video)
     wanted = {m: k for k, (_, m) in enumerate(sorted(picks, key=lambda p: p[1]))}
     current = None
     for index, frame in enumerate(frames(args.video, size)):

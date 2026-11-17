@@ -20,6 +20,9 @@ body.popup { width: 360px; }
 main, .card { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 .card h2 { font-size: 15px; }
 .setup { border-bottom: 1px solid var(--line); }
+.setup-or { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+.setup-or::before, .setup-or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.btn.wide { width: 100%; }
 
 .big-btn {
   appearance: none; border: 0; cursor: pointer; width: 100%;

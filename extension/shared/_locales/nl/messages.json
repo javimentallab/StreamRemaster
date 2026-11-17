@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "De videokaart heeft het transcriptiemodel meerdere keren achter elkaar gestopt."
+  },
+  "fg_hq_badge": {
+    "message": "Voor krachtige videokaarten"
+  },
+  "where_fg_models": {
+    "message": "Waar de modellen staan"
+  },
+  "fg_local_title": {
+    "message": "Modellen voor vloeiende video op deze computer"
+  },
+  "fg_server_title": {
+    "message": "Modellen voor vloeiende video op de server"
+  },
+  "fg_server_intro": {
+    "message": "De server bewaart ze alleen: het gekozen model wordt ervan gedownload en draait op de videokaart van deze computer."
+  },
+  "fg_server_none": {
+    "message": "De server heeft nog geen modellen voor vloeiende video."
+  },
+  "fg_server_old": {
+    "message": "Deze server bewaart geen modellen voor vloeiende video: werk hem bij naar de nieuwste versie."
+  },
+  "fg_add_server_title": {
+    "message": "Toevoegen aan de server"
+  },
+  "fg_server_loading": {
+    "message": "Model wordt van de server gedownload…"
+  },
+  "section_transcription": {
+    "message": "Transcriptiemodellen"
+  },
+  "transcription_intro": {
+    "message": "Kies waar spraak tekst wordt: op een WhisperLive-server of op de videokaart van deze computer."
+  },
+  "where_transcribe": {
+    "message": "Waar transcriberen"
+  },
+  "engine_server": {
+    "message": "Op de server"
+  },
+  "engine_local": {
+    "message": "Op deze computer"
+  },
+  "trans_server_title": {
+    "message": "Transcriptiemodellen op de server"
+  },
+  "trans_local_title": {
+    "message": "Transcriptiemodellen op deze computer"
+  },
+  "badge_in_use": {
+    "message": "In gebruik"
+  },
+  "fg_downloaded_title": {
+    "message": "Gedownload"
+  },
+  "fg_add_title": {
+    "message": "Model toevoegen"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Adres van een modelbestand (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "Downloaden is mislukt ({0}). Download het bestand met de browser en kies het op deze computer."
+  },
+  "fg_memory": {
+    "message": "Videogeheugen: ongeveer {0} bij een 1080p-video"
+  },
+  "fg_memory_4k": {
+    "message": "ongeveer {0} bij opschalen van 1080p naar 4K"
+  },
+  "fg_memory_now": {
+    "message": "Videogeheugen in gebruik: ongeveer {0}"
+  },
+  "fg_file_size": {
+    "message": "Bestand: {0}"
+  },
+  "fg_options": {
+    "message": "Opties"
+  },
   "fg_sharpen": {
     "message": "Scherpte"
   },
@@ -21,13 +102,13 @@
     "message": "Origineel (zonder opschaling)"
   },
   "fg_model": {
-    "message": "AI-model"
+    "message": "Model voor vloeiende video"
   },
   "fg_kind_sr": {
-    "message": "Opschaling"
+    "message": "Alleen opschaling"
   },
   "fg_kind_fi": {
-    "message": "Tussenbeelden"
+    "message": "Alleen tussenbeelden"
   },
   "fg_builtin": {
     "message": "Ingebouwd"
@@ -39,13 +120,13 @@
     "message": "Modellen voor vloeiende video"
   },
   "fg_models_hint": {
-    "message": "Download een modelbestand (.stmodel, .srmodel, .fimodel) en voeg het hier toe. Het draait op je eigen videokaart."
+    "message": "Vloeiende video draait altijd op de videokaart van deze computer. StreamRemaster zit bij de extensie; andere modellen kunnen op deze computer of op je server staan."
   },
   "fg_add_model": {
-    "message": "Modelbestand toevoegen"
+    "message": "Kies een bestand op deze computer"
   },
   "fg_no_models": {
-    "message": "Nog geen modellen toegevoegd."
+    "message": "Nog geen gedownloade modellen."
   },
   "fg_model_bad": {
     "message": "Dit bestand is geen geldig model."
@@ -138,7 +219,7 @@
     "message": "Geen antwoord"
   },
   "model": {
-    "message": "Model"
+    "message": "Transcriptiemodel"
   },
   "model_server_default": {
     "message": "Dat van de server"
@@ -192,7 +273,7 @@
     "message": "Verbind je server"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster heeft een WhisperLive-server op je computer of in je netwerk nodig."
+    "message": "StreamRemaster transcribeert met een WhisperLive-server op je computer of in je netwerk, of met de videokaart van deze computer."
   },
   "server_address": {
     "message": "Serveradres"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Instellingen"
-  },
-  "section_server": {
-    "message": "Server"
-  },
-  "section_models": {
-    "message": "Modellen"
   },
   "section_subtitles": {
     "message": "Ondertitels"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "De modellen blijven in het Docker-volume en worden niet opnieuw gedownload. Als je docker-compose.yml hebt aangepast en git pull klaagt, voer dan eerst git stash uit en daarna git stash pop."
+  },
+  "setup_or": {
+    "message": "of"
+  },
+  "use_local": {
+    "message": "Deze computer gebruiken"
+  },
+  "use_local_hint": {
+    "message": "Whisper draait op de videokaart van deze computer, zonder server. Je downloadt het model één keer, in Instellingen."
+  },
+  "local_footer": {
+    "message": "Deze computer"
+  },
+  "local_none": {
+    "message": "Nog geen model: download er een"
+  },
+  "local_intro": {
+    "message": "Whisper draait in de browser, op je videokaart (WebGPU). Elk model wordt één keer van Hugging Face gedownload en blijft in de browser. De grotere schrijven beter en hebben meer videogeheugen nodig."
+  },
+  "local_sizes": {
+    "message": "Download {0} · neemt {1} in · ongeveer {2} videogeheugen"
+  },
+  "local_progress": {
+    "message": "Downloaden… {0} van {1}"
+  },
+  "local_cancel": {
+    "message": "Annuleren"
+  },
+  "local_gpu": {
+    "message": "Videokaart: {0}"
+  },
+  "badge_downloaded": {
+    "message": "Gedownload"
+  },
+  "error_no_webgpu": {
+    "message": "Deze browser kan de videokaart (WebGPU) niet gebruiken, dus kan hij niet op deze computer transcriberen."
+  },
+  "error_local_missing": {
+    "message": "Download eerst een model, in Instellingen → Modellen op deze computer."
+  },
+  "error_local_failed": {
+    "message": "Het transcriberen op deze computer is gestopt door een fout."
+  },
+  "error_local_vram": {
+    "message": "⚠ Niet genoeg videogeheugen op deze computer voor dit model. Kies een kleiner model."
+  },
+  "local_download_failed": {
+    "message": "Het downloaden is mislukt ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "Model {0} van deze computer verwijderen? Dat maakt {1} vrij."
+  },
+  "local_only_english": {
+    "message": "Op deze computer kunnen de ondertitels alleen naar het Engels worden vertaald."
   }
 }

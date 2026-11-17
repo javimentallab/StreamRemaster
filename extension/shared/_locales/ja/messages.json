@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "グラフィックカードが文字起こしモデルを何度も続けて停止しました。"
+  },
+  "fg_hq_badge": {
+    "message": "高性能なグラフィックカード向け"
+  },
+  "where_fg_models": {
+    "message": "モデルの場所"
+  },
+  "fg_local_title": {
+    "message": "このコンピューターのなめらか動画モデル"
+  },
+  "fg_server_title": {
+    "message": "サーバーのなめらか動画モデル"
+  },
+  "fg_server_intro": {
+    "message": "サーバーは保管するだけです。選んだモデルはサーバーからダウンロードされ、このコンピューターのグラフィックカードで動きます。"
+  },
+  "fg_server_none": {
+    "message": "サーバーにはまだなめらか動画のモデルがありません。"
+  },
+  "fg_server_old": {
+    "message": "このサーバーはなめらか動画のモデルを保管できません。最新版に更新してください。"
+  },
+  "fg_add_server_title": {
+    "message": "サーバーに追加"
+  },
+  "fg_server_loading": {
+    "message": "サーバーからモデルをダウンロードしています…"
+  },
+  "section_transcription": {
+    "message": "文字起こしモデル"
+  },
+  "transcription_intro": {
+    "message": "音声をどこで文字にするかを選びます：WhisperLive サーバーか、このコンピューターのグラフィックカードです。"
+  },
+  "where_transcribe": {
+    "message": "文字起こしの場所"
+  },
+  "engine_server": {
+    "message": "サーバー"
+  },
+  "engine_local": {
+    "message": "このコンピューター"
+  },
+  "trans_server_title": {
+    "message": "サーバーの文字起こしモデル"
+  },
+  "trans_local_title": {
+    "message": "このコンピューターの文字起こしモデル"
+  },
+  "badge_in_use": {
+    "message": "使用中"
+  },
+  "fg_downloaded_title": {
+    "message": "ダウンロード済み"
+  },
+  "fg_add_title": {
+    "message": "モデルを追加"
+  },
+  "fg_add_url_placeholder": {
+    "message": "モデルファイルのアドレス（.stmodel）"
+  },
+  "fg_download_failed": {
+    "message": "ダウンロードできませんでした（{0}）。ブラウザーでファイルをダウンロードし、このコンピューターから選んでください。"
+  },
+  "fg_memory": {
+    "message": "ビデオメモリ：1080p の動画で約 {0}"
+  },
+  "fg_memory_4k": {
+    "message": "1080p から 4K へのアップスケールで約 {0}"
+  },
+  "fg_memory_now": {
+    "message": "使用中のビデオメモリ：約 {0}"
+  },
+  "fg_file_size": {
+    "message": "ファイル：{0}"
+  },
+  "fg_options": {
+    "message": "オプション"
+  },
   "fg_sharpen": {
     "message": "シャープネス"
   },
@@ -21,13 +102,13 @@
     "message": "オリジナル（アップスケールなし）"
   },
   "fg_model": {
-    "message": "AIモデル"
+    "message": "なめらか動画のモデル"
   },
   "fg_kind_sr": {
-    "message": "アップスケール"
+    "message": "アップスケールのみ"
   },
   "fg_kind_fi": {
-    "message": "中間フレーム"
+    "message": "中間フレームのみ"
   },
   "fg_builtin": {
     "message": "内蔵"
@@ -39,13 +120,13 @@
     "message": "なめらか動画のモデル"
   },
   "fg_models_hint": {
-    "message": "モデルファイル（.stmodel、.srmodel、.fimodel）をダウンロードしてここに追加します。お使いのグラフィックカードで動作します。"
+    "message": "なめらか動画は常にこのコンピューターのグラフィックカードで動きます。StreamRemaster は拡張機能に含まれています。ほかのモデルはこのコンピューターかサーバーに置けます。"
   },
   "fg_add_model": {
-    "message": "モデルファイルを追加"
+    "message": "このコンピューターからファイルを選ぶ"
   },
   "fg_no_models": {
-    "message": "モデルはまだ追加されていません。"
+    "message": "ダウンロードしたモデルはまだありません。"
   },
   "fg_model_bad": {
     "message": "このファイルは有効なモデルではありません。"
@@ -138,7 +219,7 @@
     "message": "応答なし"
   },
   "model": {
-    "message": "モデル"
+    "message": "文字起こしモデル"
   },
   "model_server_default": {
     "message": "サーバーの既定"
@@ -192,7 +273,7 @@
     "message": "サーバーに接続"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster には、パソコンかネットワーク上で動く WhisperLive サーバーが必要です。"
+    "message": "StreamRemaster は、パソコンかネットワーク上の WhisperLive サーバー、またはこのコンピューターのグラフィックカードで文字起こしします。"
   },
   "server_address": {
     "message": "サーバーのアドレス"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · 設定"
-  },
-  "section_server": {
-    "message": "サーバー"
-  },
-  "section_models": {
-    "message": "モデル"
   },
   "section_subtitles": {
     "message": "字幕"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "モデルは Docker ボリュームに残り、再ダウンロードされません。docker-compose.yml を変更していて git pull がエラーになる場合は、先に git stash を、後で git stash pop を実行してください。"
+  },
+  "setup_or": {
+    "message": "または"
+  },
+  "use_local": {
+    "message": "このコンピューターを使う"
+  },
+  "use_local_hint": {
+    "message": "Whisper はこのコンピューターのグラフィックカードで動き、サーバーは不要です。モデルは設定で一度だけダウンロードします。"
+  },
+  "local_footer": {
+    "message": "このコンピューター"
+  },
+  "local_none": {
+    "message": "モデルがありません：ダウンロードしてください"
+  },
+  "local_intro": {
+    "message": "Whisper はブラウザー内で、あなたのグラフィックカード（WebGPU）を使って動きます。各モデルは Hugging Face から一度だけダウンロードされ、ブラウザーに保存されます。大きいモデルほど正確ですが、より多くのビデオメモリが必要です。"
+  },
+  "local_sizes": {
+    "message": "ダウンロード {0} · 容量 {1} · ビデオメモリ約 {2}"
+  },
+  "local_progress": {
+    "message": "ダウンロード中… {0} / {1}"
+  },
+  "local_cancel": {
+    "message": "キャンセル"
+  },
+  "local_gpu": {
+    "message": "グラフィックカード：{0}"
+  },
+  "badge_downloaded": {
+    "message": "ダウンロード済み"
+  },
+  "error_no_webgpu": {
+    "message": "このブラウザーはグラフィックカード（WebGPU）を使えないため、このコンピューターでは文字起こしできません。"
+  },
+  "error_local_missing": {
+    "message": "まず 設定 → このコンピューターのモデル でモデルをダウンロードしてください。"
+  },
+  "error_local_failed": {
+    "message": "このコンピューターでの文字起こしがエラーで停止しました。"
+  },
+  "error_local_vram": {
+    "message": "⚠ このコンピューターにはこのモデルに必要なビデオメモリが足りません。小さいモデルを選んでください。"
+  },
+  "local_download_failed": {
+    "message": "ダウンロードに失敗しました（{0}）。"
+  },
+  "local_confirm_delete": {
+    "message": "このコンピューターから {0} モデルを削除しますか？ {1} が空きます。"
+  },
+  "local_only_english": {
+    "message": "このコンピューターでは、字幕は英語にのみ翻訳できます。"
   }
 }

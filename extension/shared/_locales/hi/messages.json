@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "ग्राफ़िक्स कार्ड ने ट्रांसक्रिप्शन मॉडल को लगातार कई बार रोक दिया।"
+  },
+  "fg_hq_badge": {
+    "message": "शक्तिशाली ग्राफ़िक्स कार्ड के लिए"
+  },
+  "where_fg_models": {
+    "message": "मॉडल कहाँ हैं"
+  },
+  "fg_local_title": {
+    "message": "इस कंप्यूटर पर स्मूद वीडियो मॉडल"
+  },
+  "fg_server_title": {
+    "message": "सर्वर पर स्मूद वीडियो मॉडल"
+  },
+  "fg_server_intro": {
+    "message": "सर्वर इन्हें सिर्फ़ रखता है: चुना गया मॉडल उससे डाउनलोड होकर इस कंप्यूटर के ग्राफ़िक्स कार्ड पर चलता है।"
+  },
+  "fg_server_none": {
+    "message": "सर्वर पर अभी कोई स्मूद वीडियो मॉडल नहीं है।"
+  },
+  "fg_server_old": {
+    "message": "यह सर्वर स्मूद वीडियो मॉडल नहीं रखता: इसे नवीनतम संस्करण पर अपडेट करें।"
+  },
+  "fg_add_server_title": {
+    "message": "सर्वर में जोड़ें"
+  },
+  "fg_server_loading": {
+    "message": "सर्वर से मॉडल डाउनलोड हो रहा है…"
+  },
+  "section_transcription": {
+    "message": "ट्रांसक्रिप्शन मॉडल"
+  },
+  "transcription_intro": {
+    "message": "चुनें कि बोली को टेक्स्ट में कहाँ बदला जाए: WhisperLive सर्वर पर या इस कंप्यूटर के ग्राफ़िक्स कार्ड पर।"
+  },
+  "where_transcribe": {
+    "message": "कहाँ ट्रांसक्राइब करें"
+  },
+  "engine_server": {
+    "message": "सर्वर पर"
+  },
+  "engine_local": {
+    "message": "इस कंप्यूटर पर"
+  },
+  "trans_server_title": {
+    "message": "सर्वर पर ट्रांसक्रिप्शन मॉडल"
+  },
+  "trans_local_title": {
+    "message": "इस कंप्यूटर पर ट्रांसक्रिप्शन मॉडल"
+  },
+  "badge_in_use": {
+    "message": "उपयोग में"
+  },
+  "fg_downloaded_title": {
+    "message": "डाउनलोड किए गए"
+  },
+  "fg_add_title": {
+    "message": "मॉडल जोड़ें"
+  },
+  "fg_add_url_placeholder": {
+    "message": "मॉडल फ़ाइल का पता (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "डाउनलोड नहीं हो सका ({0})। ब्राउज़र से फ़ाइल डाउनलोड करें और इसे इस कंप्यूटर से चुनें।"
+  },
+  "fg_memory": {
+    "message": "ग्राफ़िक्स मेमोरी: 1080p वीडियो के साथ लगभग {0}"
+  },
+  "fg_memory_4k": {
+    "message": "1080p से 4K पर अपस्केल करते समय लगभग {0}"
+  },
+  "fg_memory_now": {
+    "message": "उपयोग में ग्राफ़िक्स मेमोरी: लगभग {0}"
+  },
+  "fg_file_size": {
+    "message": "फ़ाइल: {0}"
+  },
+  "fg_options": {
+    "message": "विकल्प"
+  },
   "fg_sharpen": {
     "message": "शार्पनेस"
   },
@@ -21,13 +102,13 @@
     "message": "मूल (बिना अपस्केलिंग)"
   },
   "fg_model": {
-    "message": "AI मॉडल"
+    "message": "स्मूद वीडियो मॉडल"
   },
   "fg_kind_sr": {
-    "message": "अपस्केलिंग"
+    "message": "केवल अपस्केलिंग"
   },
   "fg_kind_fi": {
-    "message": "बीच के फ़्रेम"
+    "message": "केवल बीच के फ़्रेम"
   },
   "fg_builtin": {
     "message": "अंतर्निहित"
@@ -39,13 +120,13 @@
     "message": "स्मूद वीडियो मॉडल"
   },
   "fg_models_hint": {
-    "message": "मॉडल फ़ाइल (.stmodel, .srmodel, .fimodel) डाउनलोड करें और उसे यहाँ जोड़ें। यह आपके अपने ग्राफ़िक्स कार्ड पर चलता है।"
+    "message": "स्मूद वीडियो हमेशा इस कंप्यूटर के ग्राफ़िक्स कार्ड पर चलता है। StreamRemaster एक्सटेंशन के साथ आता है; दूसरे मॉडल इस कंप्यूटर पर या आपके सर्वर पर रह सकते हैं।"
   },
   "fg_add_model": {
-    "message": "मॉडल फ़ाइल जोड़ें"
+    "message": "इस कंप्यूटर से फ़ाइल चुनें"
   },
   "fg_no_models": {
-    "message": "अभी तक कोई मॉडल नहीं जोड़ा गया।"
+    "message": "अभी तक कोई मॉडल डाउनलोड नहीं किया गया।"
   },
   "fg_model_bad": {
     "message": "यह फ़ाइल मान्य मॉडल नहीं है।"
@@ -138,7 +219,7 @@
     "message": "कोई जवाब नहीं"
   },
   "model": {
-    "message": "मॉडल"
+    "message": "ट्रांसक्रिप्शन मॉडल"
   },
   "model_server_default": {
     "message": "सर्वर का डिफ़ॉल्ट"
@@ -192,7 +273,7 @@
     "message": "अपना सर्वर कनेक्ट करें"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster को आपके कंप्यूटर या नेटवर्क पर चलता WhisperLive सर्वर चाहिए।"
+    "message": "StreamRemaster आपके कंप्यूटर या नेटवर्क के WhisperLive सर्वर से, या इस कंप्यूटर के ग्राफ़िक्स कार्ड से ट्रांसक्राइब करता है।"
   },
   "server_address": {
     "message": "सर्वर का पता"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · सेटिंग"
-  },
-  "section_server": {
-    "message": "सर्वर"
-  },
-  "section_models": {
-    "message": "मॉडल"
   },
   "section_subtitles": {
     "message": "सबटाइटल"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "मॉडल Docker वॉल्यूम में रहते हैं और दोबारा डाउनलोड नहीं होते। अगर आपने docker-compose.yml बदला है और git pull त्रुटि देता है, तो पहले git stash और बाद में git stash pop चलाएँ।"
+  },
+  "setup_or": {
+    "message": "या"
+  },
+  "use_local": {
+    "message": "यह कंप्यूटर इस्तेमाल करें"
+  },
+  "use_local_hint": {
+    "message": "Whisper इस कंप्यूटर के ग्राफ़िक्स कार्ड पर चलता है, बिना सर्वर के। मॉडल सेटिंग्स में एक बार डाउनलोड होता है।"
+  },
+  "local_footer": {
+    "message": "यह कंप्यूटर"
+  },
+  "local_none": {
+    "message": "अभी कोई मॉडल नहीं: एक डाउनलोड करें"
+  },
+  "local_intro": {
+    "message": "Whisper ब्राउज़र में आपके ग्राफ़िक्स कार्ड (WebGPU) पर चलता है। हर मॉडल Hugging Face से एक बार डाउनलोड होता है और ब्राउज़र में रहता है। बड़े मॉडल बेहतर लिखते हैं और ज़्यादा ग्राफ़िक्स मेमोरी लेते हैं।"
+  },
+  "local_sizes": {
+    "message": "डाउनलोड {0} · जगह {1} · लगभग {2} ग्राफ़िक्स मेमोरी"
+  },
+  "local_progress": {
+    "message": "डाउनलोड हो रहा है… {0} में से {1}"
+  },
+  "local_cancel": {
+    "message": "रद्द करें"
+  },
+  "local_gpu": {
+    "message": "ग्राफ़िक्स कार्ड: {0}"
+  },
+  "badge_downloaded": {
+    "message": "डाउनलोड हो गया"
+  },
+  "error_no_webgpu": {
+    "message": "यह ब्राउज़र ग्राफ़िक्स कार्ड (WebGPU) इस्तेमाल नहीं कर सकता, इसलिए इस कंप्यूटर पर ट्रांसक्राइब नहीं कर सकता।"
+  },
+  "error_local_missing": {
+    "message": "पहले सेटिंग्स → इस कंप्यूटर पर मॉडल में एक मॉडल डाउनलोड करें।"
+  },
+  "error_local_failed": {
+    "message": "इस कंप्यूटर पर ट्रांसक्रिप्शन एक गड़बड़ी की वजह से रुक गया।"
+  },
+  "error_local_vram": {
+    "message": "⚠ इस कंप्यूटर पर इस मॉडल के लिए पर्याप्त ग्राफ़िक्स मेमोरी नहीं है। छोटा मॉडल चुनें।"
+  },
+  "local_download_failed": {
+    "message": "डाउनलोड नहीं हो पाया ({0})।"
+  },
+  "local_confirm_delete": {
+    "message": "इस कंप्यूटर से {0} मॉडल हटाएँ? इससे {1} खाली होगा।"
+  },
+  "local_only_english": {
+    "message": "इस कंप्यूटर पर सबटाइटल का अनुवाद सिर्फ़ अंग्रेज़ी में हो सकता है।"
   }
 }

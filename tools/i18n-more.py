@@ -5,6 +5,33 @@
 LANGS = {}
 
 LANGS['pt_BR'] = """
+error_local_lost|A placa de vídeo parou o modelo de transcrição várias vezes seguidas.
+fg_hq_badge|Para placas de vídeo potentes
+where_fg_models|Onde ficam os modelos
+fg_local_title|Modelos de vídeo fluido neste computador
+fg_server_title|Modelos de vídeo fluido no servidor
+fg_server_intro|O servidor só os guarda: o modelo escolhido é baixado dele e roda na placa de vídeo deste computador.
+fg_server_none|O servidor ainda não tem modelos de vídeo fluido.
+fg_server_old|Este servidor não guarda modelos de vídeo fluido: atualize-o para a versão mais recente.
+fg_add_server_title|Adicionar ao servidor
+fg_server_loading|Baixando o modelo do servidor…
+section_transcription|Modelos de transcrição
+transcription_intro|Escolha onde a fala vira texto: em um servidor WhisperLive ou na placa de vídeo deste computador.
+where_transcribe|Onde transcrever
+engine_server|No servidor
+engine_local|Neste computador
+trans_server_title|Modelos de transcrição no servidor
+trans_local_title|Modelos de transcrição neste computador
+badge_in_use|Em uso
+fg_downloaded_title|Baixados
+fg_add_title|Adicionar um modelo
+fg_add_url_placeholder|Endereço de um arquivo de modelo (.stmodel)
+fg_download_failed|Não foi possível baixar ({0}). Baixe o arquivo pelo navegador e escolha-o neste computador.
+fg_memory|Memória de vídeo: cerca de {0} com um vídeo 1080p
+fg_memory_4k|cerca de {0} ampliando de 1080p para 4K
+fg_memory_now|Memória de vídeo em uso: cerca de {0}
+fg_file_size|Arquivo: {0}
+fg_options|Opções
 fg_sharpen|Nitidez
 fg_sharpen_off|Desativada
 fg_sharpen_soft|Suave
@@ -12,15 +39,15 @@ fg_sharpen_medium|Média
 fg_sharpen_strong|Forte
 fg_resolution|Resolução de destino da ampliação
 fg_res_original|Original (sem ampliar)
-fg_model|Modelo de IA
-fg_kind_sr|Ampliação
-fg_kind_fi|Quadros intermediários
+fg_model|Modelo de vídeo fluido
+fg_kind_sr|Só ampliação
+fg_kind_fi|Só quadros intermediários
 fg_builtin|Incluído
 fg_model_none|Nenhum (sem IA)
 section_fgmodels|Modelos de vídeo fluido
-fg_models_hint|Baixe um arquivo de modelo (.stmodel, .srmodel, .fimodel) e adicione-o aqui. Ele roda na sua própria placa de vídeo.
-fg_add_model|Adicionar arquivo de modelo
-fg_no_models|Nenhum modelo adicionado ainda.
+fg_models_hint|O vídeo fluido sempre roda na placa de vídeo deste computador. O StreamRemaster vem com a extensão; outros modelos podem ficar neste computador ou no seu servidor.
+fg_add_model|Escolher um arquivo neste computador
+fg_no_models|Nenhum modelo baixado ainda.
 fg_model_bad|Esse arquivo não é um modelo válido.
 tab_subs|Legendas
 tab_fg|Vídeo fluido
@@ -51,7 +78,7 @@ status_live|Ao vivo
 status_stalled|Áudio parado
 status_error|Erro
 status_noresponse|Sem resposta
-model|Modelo
+model|Modelo de transcrição
 model_server_default|O do servidor
 model_default_tag|{0} · padrão
 manage_models|Gerenciar modelos
@@ -69,7 +96,7 @@ settings|Configurações
 first_load_hint|Na primeira vez, um modelo pode levar até um minuto para carregar.
 options_locked|Desative as legendas para mudar estas opções.
 server_setup_title|Conecte seu servidor
-server_setup_hint|O StreamRemaster precisa de um servidor WhisperLive rodando no seu computador ou na sua rede.
+server_setup_hint|O StreamRemaster transcreve com um servidor WhisperLive no seu computador ou na sua rede, ou com a placa de vídeo deste computador.
 server_address|Endereço do servidor
 server_placeholder|ex.: localhost:9090 ou 192.168.1.10:9090
 connect|Conectar
@@ -96,8 +123,6 @@ warn_slow_load|⚠ O modelo está demorando demais para carregar. Pode não cabe
 error_reload|Recarregue a página (F5) e comece de novo.
 error_no_server|Primeiro configure o servidor.
 settings_title|StreamRemaster · Configurações
-section_server|Servidor
-section_models|Modelos
 section_subtitles|Legendas
 section_interface|Interface
 section_about|Sobre
@@ -181,9 +206,54 @@ server_update_available|Seu servidor tem a versão {0} e a {1} já está dispon�
 server_version_unknown|Seu servidor não informa a versão, então é anterior a esta verificação. Para atualizá-lo, execute isto no computador onde ele roda:
 server_update_latest|Seu servidor está atualizado ({0}).
 server_update_note|Os modelos ficam no volume do Docker e não são baixados de novo. Se você alterou o docker-compose.yml e o git pull reclamar, execute git stash antes e git stash pop depois.
+setup_or|ou
+use_local|Usar este computador
+use_local_hint|O Whisper roda na placa de vídeo deste computador, sem servidor. O modelo é baixado uma vez, nas Configurações.
+local_footer|Este computador
+local_none|Nenhum modelo: baixe um
+local_intro|O Whisper roda no navegador, na sua placa de vídeo (WebGPU). Cada modelo é baixado uma vez do Hugging Face e fica no navegador. Os maiores escrevem melhor e precisam de mais memória de vídeo.
+local_sizes|Download {0} · ocupa {1} · cerca de {2} de memória de vídeo
+local_progress|Baixando… {0} de {1}
+local_cancel|Cancelar
+local_gpu|Placa de vídeo: {0}
+badge_downloaded|Baixado
+error_no_webgpu|Este navegador não consegue usar a placa de vídeo (WebGPU), então não pode transcrever neste computador.
+error_local_missing|Baixe um modelo primeiro, em Configurações → Modelos neste computador.
+error_local_failed|A transcrição neste computador parou por causa de um erro.
+error_local_vram|⚠ Não há memória de vídeo suficiente neste computador para este modelo. Escolha um menor.
+local_download_failed|O download falhou ({0}).
+local_confirm_delete|Apagar o modelo {0} deste computador? Libera {1}.
+local_only_english|Neste computador as legendas só podem ser traduzidas para o inglês.
 """
 
 LANGS['fr'] = """
+error_local_lost|La carte graphique a arrêté le modèle de transcription plusieurs fois de suite.
+fg_hq_badge|Pour cartes graphiques puissantes
+where_fg_models|Où sont les modèles
+fg_local_title|Modèles de vidéo fluide sur cet ordinateur
+fg_server_title|Modèles de vidéo fluide sur le serveur
+fg_server_intro|Le serveur ne fait que les garder : le modèle choisi en est téléchargé et fonctionne sur la carte graphique de cet ordinateur.
+fg_server_none|Le serveur n’a encore aucun modèle de vidéo fluide.
+fg_server_old|Ce serveur ne garde pas de modèles de vidéo fluide : mettez-le à jour vers la dernière version.
+fg_add_server_title|Ajouter au serveur
+fg_server_loading|Téléchargement du modèle depuis le serveur…
+section_transcription|Modèles de transcription
+transcription_intro|Choisissez où la parole devient du texte : sur un serveur WhisperLive ou sur la carte graphique de cet ordinateur.
+where_transcribe|Où transcrire
+engine_server|Sur le serveur
+engine_local|Sur cet ordinateur
+trans_server_title|Modèles de transcription sur le serveur
+trans_local_title|Modèles de transcription sur cet ordinateur
+badge_in_use|Utilisé
+fg_downloaded_title|Téléchargés
+fg_add_title|Ajouter un modèle
+fg_add_url_placeholder|Adresse d’un fichier de modèle (.stmodel)
+fg_download_failed|Impossible de le télécharger ({0}). Téléchargez le fichier avec le navigateur et choisissez-le sur cet ordinateur.
+fg_memory|Mémoire graphique : environ {0} avec une vidéo 1080p
+fg_memory_4k|environ {0} en agrandissant de 1080p à 4K
+fg_memory_now|Mémoire graphique utilisée : environ {0}
+fg_file_size|Fichier : {0}
+fg_options|Options
 fg_sharpen|Netteté
 fg_sharpen_off|Désactivée
 fg_sharpen_soft|Douce
@@ -191,15 +261,15 @@ fg_sharpen_medium|Moyenne
 fg_sharpen_strong|Forte
 fg_resolution|Résolution cible de l'agrandissement
 fg_res_original|Originale (sans agrandissement)
-fg_model|Modèle d'IA
-fg_kind_sr|Agrandissement
-fg_kind_fi|Images intermédiaires
+fg_model|Modèle de vidéo fluide
+fg_kind_sr|Agrandissement seulement
+fg_kind_fi|Images intermédiaires seulement
 fg_builtin|Intégré
 fg_model_none|Aucun (sans IA)
 section_fgmodels|Modèles de vidéo fluide
-fg_models_hint|Téléchargez un fichier de modèle (.stmodel, .srmodel, .fimodel) et ajoutez-le ici. Il fonctionne sur votre propre carte graphique.
-fg_add_model|Ajouter un fichier de modèle
-fg_no_models|Aucun modèle ajouté pour le moment.
+fg_models_hint|La vidéo fluide fonctionne toujours sur la carte graphique de cet ordinateur. StreamRemaster est fourni avec l’extension ; d’autres modèles peuvent être sur cet ordinateur ou sur votre serveur.
+fg_add_model|Choisir un fichier sur cet ordinateur
+fg_no_models|Aucun modèle téléchargé pour l’instant.
 fg_model_bad|Ce fichier n'est pas un modèle valide.
 tab_subs|Sous-titres
 tab_fg|Vidéo fluide
@@ -230,7 +300,7 @@ status_live|En direct
 status_stalled|Audio arrêté
 status_error|Erreur
 status_noresponse|Pas de réponse
-model|Modèle
+model|Modèle de transcription
 model_server_default|Celui du serveur
 model_default_tag|{0} · par défaut
 manage_models|Gérer les modèles
@@ -248,7 +318,7 @@ settings|Réglages
 first_load_hint|La première fois, le chargement d’un modèle peut prendre jusqu’à une minute.
 options_locked|Arrêtez les sous-titres pour changer ces options.
 server_setup_title|Connectez votre serveur
-server_setup_hint|StreamRemaster a besoin d’un serveur WhisperLive sur votre ordinateur ou votre réseau.
+server_setup_hint|StreamRemaster transcrit avec un serveur WhisperLive sur votre ordinateur ou votre réseau, ou avec la carte graphique de cet ordinateur.
 server_address|Adresse du serveur
 server_placeholder|ex. localhost:9090 ou 192.168.1.10:9090
 connect|Connecter
@@ -275,8 +345,6 @@ warn_slow_load|⚠ Le modèle met trop de temps à charger. Il ne tient peut-êt
 error_reload|Rechargez la page (F5) et recommencez.
 error_no_server|Configurez d’abord le serveur.
 settings_title|StreamRemaster · Réglages
-section_server|Serveur
-section_models|Modèles
 section_subtitles|Sous-titres
 section_interface|Interface
 section_about|À propos
@@ -360,9 +428,54 @@ server_update_available|Votre serveur a la version {0} et la {1} est disponible.
 server_version_unknown|Votre serveur n’indique pas sa version : il est donc antérieur à cette vérification. Pour le mettre à jour, lancez ceci sur l’ordinateur qui l’héberge :
 server_update_latest|Votre serveur est à jour ({0}).
 server_update_note|Les modèles restent dans le volume Docker et ne sont pas retéléchargés. Si vous avez modifié docker-compose.yml et que git pull proteste, lancez git stash avant et git stash pop après.
+setup_or|ou
+use_local|Utiliser cet ordinateur
+use_local_hint|Whisper tourne sur la carte graphique de cet ordinateur, sans serveur. Le modèle se télécharge une fois, dans les Paramètres.
+local_footer|Cet ordinateur
+local_none|Aucun modèle : téléchargez-en un
+local_intro|Whisper tourne dans le navigateur, sur votre carte graphique (WebGPU). Chaque modèle se télécharge une fois depuis Hugging Face et reste dans le navigateur. Les plus gros écrivent mieux et demandent plus de mémoire graphique.
+local_sizes|Téléchargement {0} · occupe {1} · environ {2} de mémoire graphique
+local_progress|Téléchargement… {0} sur {1}
+local_cancel|Annuler
+local_gpu|Carte graphique : {0}
+badge_downloaded|Téléchargé
+error_no_webgpu|Ce navigateur ne peut pas utiliser la carte graphique (WebGPU) : il ne peut pas transcrire sur cet ordinateur.
+error_local_missing|Téléchargez d’abord un modèle, dans Paramètres → Modèles sur cet ordinateur.
+error_local_failed|La transcription sur cet ordinateur s’est arrêtée à cause d’une erreur.
+error_local_vram|⚠ Pas assez de mémoire graphique sur cet ordinateur pour ce modèle. Choisissez-en un plus petit.
+local_download_failed|Le téléchargement a échoué ({0}).
+local_confirm_delete|Supprimer le modèle {0} de cet ordinateur ? Cela libère {1}.
+local_only_english|Sur cet ordinateur, les sous-titres ne peuvent être traduits qu’en anglais.
 """
 
 LANGS['de'] = """
+error_local_lost|Die Grafikkarte hat das Transkriptionsmodell mehrmals hintereinander gestoppt.
+fg_hq_badge|Für leistungsstarke Grafikkarten
+where_fg_models|Wo die Modelle liegen
+fg_local_title|Modelle für flüssiges Video auf diesem Computer
+fg_server_title|Modelle für flüssiges Video auf dem Server
+fg_server_intro|Der Server bewahrt sie nur auf: Das gewählte Modell wird von ihm geladen und läuft auf der Grafikkarte dieses Computers.
+fg_server_none|Der Server hat noch keine Modelle für flüssiges Video.
+fg_server_old|Dieser Server bewahrt keine Modelle für flüssiges Video auf: Aktualisiere ihn auf die neueste Version.
+fg_add_server_title|Zum Server hinzufügen
+fg_server_loading|Modell wird vom Server geladen…
+section_transcription|Transkriptionsmodelle
+transcription_intro|Wähle, wo die Sprache zu Text wird: auf einem WhisperLive-Server oder auf der Grafikkarte dieses Computers.
+where_transcribe|Wo transkribieren
+engine_server|Auf dem Server
+engine_local|Auf diesem Computer
+trans_server_title|Transkriptionsmodelle auf dem Server
+trans_local_title|Transkriptionsmodelle auf diesem Computer
+badge_in_use|Aktiv
+fg_downloaded_title|Heruntergeladen
+fg_add_title|Modell hinzufügen
+fg_add_url_placeholder|Adresse einer Modelldatei (.stmodel)
+fg_download_failed|Der Download ist fehlgeschlagen ({0}). Lade die Datei mit dem Browser herunter und wähle sie auf diesem Computer aus.
+fg_memory|Grafikspeicher: etwa {0} bei einem 1080p-Video
+fg_memory_4k|etwa {0} beim Hochskalieren von 1080p auf 4K
+fg_memory_now|Belegter Grafikspeicher: etwa {0}
+fg_file_size|Datei: {0}
+fg_options|Optionen
 fg_sharpen|Schärfe
 fg_sharpen_off|Aus
 fg_sharpen_soft|Leicht
@@ -370,15 +483,15 @@ fg_sharpen_medium|Mittel
 fg_sharpen_strong|Stark
 fg_resolution|Zielauflösung der Hochskalierung
 fg_res_original|Original (ohne Hochskalierung)
-fg_model|KI-Modell
-fg_kind_sr|Hochskalierung
-fg_kind_fi|Zwischenbilder
+fg_model|Modell für flüssiges Video
+fg_kind_sr|Nur Hochskalierung
+fg_kind_fi|Nur Zwischenbilder
 fg_builtin|Integriert
 fg_model_none|Keines (ohne KI)
 section_fgmodels|Modelle für flüssiges Video
-fg_models_hint|Lade eine Modelldatei (.stmodel, .srmodel, .fimodel) herunter und füge sie hier hinzu. Sie läuft auf deiner eigenen Grafikkarte.
-fg_add_model|Modelldatei hinzufügen
-fg_no_models|Noch keine Modelle hinzugefügt.
+fg_models_hint|Flüssiges Video läuft immer auf der Grafikkarte dieses Computers. StreamRemaster ist in der Erweiterung enthalten; weitere Modelle können auf diesem Computer oder auf deinem Server liegen.
+fg_add_model|Datei auf diesem Computer wählen
+fg_no_models|Noch keine heruntergeladenen Modelle.
 fg_model_bad|Diese Datei ist kein gültiges Modell.
 tab_subs|Untertitel
 tab_fg|Flüssiges Video
@@ -409,7 +522,7 @@ status_live|Live
 status_stalled|Audio angehalten
 status_error|Fehler
 status_noresponse|Keine Antwort
-model|Modell
+model|Transkriptionsmodell
 model_server_default|Das des Servers
 model_default_tag|{0} · Standard
 manage_models|Modelle verwalten
@@ -427,7 +540,7 @@ settings|Einstellungen
 first_load_hint|Beim ersten Mal kann das Laden eines Modells bis zu einer Minute dauern.
 options_locked|Beende die Untertitel, um diese Optionen zu ändern.
 server_setup_title|Verbinde deinen Server
-server_setup_hint|StreamRemaster braucht einen WhisperLive-Server auf deinem Computer oder in deinem Netzwerk.
+server_setup_hint|StreamRemaster transkribiert mit einem WhisperLive-Server auf deinem Computer oder in deinem Netzwerk oder mit der Grafikkarte dieses Computers.
 server_address|Serveradresse
 server_placeholder|z. B. localhost:9090 oder 192.168.1.10:9090
 connect|Verbinden
@@ -454,8 +567,6 @@ warn_slow_load|⚠ Das Modell lädt zu lange. Vielleicht passt es nicht in den G
 error_reload|Lade die Seite neu (F5) und starte erneut.
 error_no_server|Richte zuerst den Server ein.
 settings_title|StreamRemaster · Einstellungen
-section_server|Server
-section_models|Modelle
 section_subtitles|Untertitel
 section_interface|Oberfläche
 section_about|Über
@@ -539,9 +650,54 @@ server_update_available|Ihr Server hat Version {0}, und {1} ist verfügbar. Füh
 server_version_unknown|Ihr Server meldet seine Version nicht, er ist also älter als diese Prüfung. Führen Sie zum Aktualisieren dies auf dem Computer aus, auf dem er läuft:
 server_update_latest|Ihr Server ist aktuell ({0}).
 server_update_note|Die Modelle bleiben im Docker-Volume und werden nicht erneut heruntergeladen. Wenn Sie docker-compose.yml geändert haben und git pull sich beschwert, führen Sie vorher git stash und danach git stash pop aus.
+setup_or|oder
+use_local|Diesen Computer verwenden
+use_local_hint|Whisper läuft auf der Grafikkarte dieses Computers, ohne Server. Das Modell wird einmal in den Einstellungen heruntergeladen.
+local_footer|Dieser Computer
+local_none|Noch kein Modell: lade eines herunter
+local_intro|Whisper läuft im Browser auf deiner Grafikkarte (WebGPU). Jedes Modell wird einmal von Hugging Face geladen und bleibt im Browser. Die größeren schreiben besser und brauchen mehr Grafikspeicher.
+local_sizes|Download {0} · belegt {1} · etwa {2} Grafikspeicher
+local_progress|Wird heruntergeladen… {0} von {1}
+local_cancel|Abbrechen
+local_gpu|Grafikkarte: {0}
+badge_downloaded|Heruntergeladen
+error_no_webgpu|Dieser Browser kann die Grafikkarte (WebGPU) nicht nutzen und daher nicht auf diesem Computer transkribieren.
+error_local_missing|Lade zuerst ein Modell herunter, unter Einstellungen → Modelle auf diesem Computer.
+error_local_failed|Die Transkription auf diesem Computer wurde wegen eines Fehlers beendet.
+error_local_vram|⚠ Nicht genug Grafikspeicher auf diesem Computer für dieses Modell. Wähle ein kleineres.
+local_download_failed|Der Download ist fehlgeschlagen ({0}).
+local_confirm_delete|Modell {0} von diesem Computer löschen? Das gibt {1} frei.
+local_only_english|Auf diesem Computer lassen sich die Untertitel nur ins Englische übersetzen.
 """
 
 LANGS['it'] = """
+error_local_lost|La scheda video ha fermato il modello di trascrizione più volte di seguito.
+fg_hq_badge|Per schede video potenti
+where_fg_models|Dove sono i modelli
+fg_local_title|Modelli per video fluido su questo computer
+fg_server_title|Modelli per video fluido sul server
+fg_server_intro|Il server si limita a conservarli: il modello scelto viene scaricato da lì e funziona sulla scheda video di questo computer.
+fg_server_none|Il server non ha ancora modelli per video fluido.
+fg_server_old|Questo server non conserva modelli per video fluido: aggiornalo all’ultima versione.
+fg_add_server_title|Aggiungi al server
+fg_server_loading|Download del modello dal server…
+section_transcription|Modelli di trascrizione
+transcription_intro|Scegli dove la voce diventa testo: su un server WhisperLive o sulla scheda video di questo computer.
+where_transcribe|Dove trascrivere
+engine_server|Sul server
+engine_local|Su questo computer
+trans_server_title|Modelli di trascrizione sul server
+trans_local_title|Modelli di trascrizione su questo computer
+badge_in_use|In uso
+fg_downloaded_title|Scaricati
+fg_add_title|Aggiungi un modello
+fg_add_url_placeholder|Indirizzo di un file di modello (.stmodel)
+fg_download_failed|Impossibile scaricarlo ({0}). Scarica il file con il browser e sceglilo da questo computer.
+fg_memory|Memoria video: circa {0} con un video 1080p
+fg_memory_4k|circa {0} ingrandendo da 1080p a 4K
+fg_memory_now|Memoria video in uso: circa {0}
+fg_file_size|File: {0}
+fg_options|Opzioni
 fg_sharpen|Nitidezza
 fg_sharpen_off|Disattivata
 fg_sharpen_soft|Leggera
@@ -549,15 +705,15 @@ fg_sharpen_medium|Media
 fg_sharpen_strong|Forte
 fg_resolution|Risoluzione di destinazione dell'ingrandimento
 fg_res_original|Originale (senza ingrandimento)
-fg_model|Modello di IA
-fg_kind_sr|Ingrandimento
-fg_kind_fi|Fotogrammi intermedi
+fg_model|Modello per video fluido
+fg_kind_sr|Solo ingrandimento
+fg_kind_fi|Solo fotogrammi intermedi
 fg_builtin|Integrato
 fg_model_none|Nessuno (senza IA)
 section_fgmodels|Modelli per video fluido
-fg_models_hint|Scarica un file di modello (.stmodel, .srmodel, .fimodel) e aggiungilo qui. Funziona sulla tua scheda grafica.
-fg_add_model|Aggiungi file di modello
-fg_no_models|Nessun modello aggiunto.
+fg_models_hint|Il video fluido funziona sempre sulla scheda video di questo computer. StreamRemaster è incluso nell’estensione; altri modelli possono stare su questo computer o sul tuo server.
+fg_add_model|Scegli un file su questo computer
+fg_no_models|Nessun modello scaricato per ora.
 fg_model_bad|Questo file non è un modello valido.
 tab_subs|Sottotitoli
 tab_fg|Video fluido
@@ -588,7 +744,7 @@ status_live|In diretta
 status_stalled|Audio fermo
 status_error|Errore
 status_noresponse|Nessuna risposta
-model|Modello
+model|Modello di trascrizione
 model_server_default|Quello del server
 model_default_tag|{0} · predefinito
 manage_models|Gestisci modelli
@@ -606,7 +762,7 @@ settings|Impostazioni
 first_load_hint|La prima volta il caricamento di un modello può richiedere fino a un minuto.
 options_locked|Disattiva i sottotitoli per cambiare queste opzioni.
 server_setup_title|Collega il tuo server
-server_setup_hint|StreamRemaster ha bisogno di un server WhisperLive sul tuo computer o nella tua rete.
+server_setup_hint|StreamRemaster trascrive con un server WhisperLive sul tuo computer o nella tua rete, oppure con la scheda video di questo computer.
 server_address|Indirizzo del server
 server_placeholder|es. localhost:9090 o 192.168.1.10:9090
 connect|Collega
@@ -633,8 +789,6 @@ warn_slow_load|⚠ Il modello ci mette troppo a caricarsi. Forse non entra nella
 error_reload|Ricarica la pagina (F5) e ricomincia.
 error_no_server|Prima configura il server.
 settings_title|StreamRemaster · Impostazioni
-section_server|Server
-section_models|Modelli
 section_subtitles|Sottotitoli
 section_interface|Interfaccia
 section_about|Informazioni
@@ -718,9 +872,54 @@ server_update_available|Il tuo server ha la versione {0} ed è disponibile la {1
 server_version_unknown|Il tuo server non dice quale versione ha, quindi è precedente a questa verifica. Per aggiornarlo, esegui questo sul computer che lo ospita:
 server_update_latest|Il tuo server è aggiornato ({0}).
 server_update_note|I modelli restano nel volume Docker e non vengono riscaricati. Se hai modificato docker-compose.yml e git pull si lamenta, esegui git stash prima e git stash pop dopo.
+setup_or|oppure
+use_local|Usa questo computer
+use_local_hint|Whisper gira sulla scheda video di questo computer, senza server. Il modello si scarica una volta, nelle Impostazioni.
+local_footer|Questo computer
+local_none|Nessun modello: scaricane uno
+local_intro|Whisper gira nel browser, sulla tua scheda video (WebGPU). Ogni modello si scarica una volta da Hugging Face e resta nel browser. I più grandi scrivono meglio e richiedono più memoria video.
+local_sizes|Download {0} · occupa {1} · circa {2} di memoria video
+local_progress|Download in corso… {0} di {1}
+local_cancel|Annulla
+local_gpu|Scheda video: {0}
+badge_downloaded|Scaricato
+error_no_webgpu|Questo browser non può usare la scheda video (WebGPU), quindi non può trascrivere su questo computer.
+error_local_missing|Prima scarica un modello, in Impostazioni → Modelli su questo computer.
+error_local_failed|La trascrizione su questo computer si è fermata per un errore.
+error_local_vram|⚠ Memoria video insufficiente su questo computer per questo modello. Scegline uno più piccolo.
+local_download_failed|Il download non è riuscito ({0}).
+local_confirm_delete|Eliminare il modello {0} da questo computer? Libera {1}.
+local_only_english|Su questo computer i sottotitoli si possono tradurre solo in inglese.
 """
 
 LANGS['nl'] = """
+error_local_lost|De videokaart heeft het transcriptiemodel meerdere keren achter elkaar gestopt.
+fg_hq_badge|Voor krachtige videokaarten
+where_fg_models|Waar de modellen staan
+fg_local_title|Modellen voor vloeiende video op deze computer
+fg_server_title|Modellen voor vloeiende video op de server
+fg_server_intro|De server bewaart ze alleen: het gekozen model wordt ervan gedownload en draait op de videokaart van deze computer.
+fg_server_none|De server heeft nog geen modellen voor vloeiende video.
+fg_server_old|Deze server bewaart geen modellen voor vloeiende video: werk hem bij naar de nieuwste versie.
+fg_add_server_title|Toevoegen aan de server
+fg_server_loading|Model wordt van de server gedownload…
+section_transcription|Transcriptiemodellen
+transcription_intro|Kies waar spraak tekst wordt: op een WhisperLive-server of op de videokaart van deze computer.
+where_transcribe|Waar transcriberen
+engine_server|Op de server
+engine_local|Op deze computer
+trans_server_title|Transcriptiemodellen op de server
+trans_local_title|Transcriptiemodellen op deze computer
+badge_in_use|In gebruik
+fg_downloaded_title|Gedownload
+fg_add_title|Model toevoegen
+fg_add_url_placeholder|Adres van een modelbestand (.stmodel)
+fg_download_failed|Downloaden is mislukt ({0}). Download het bestand met de browser en kies het op deze computer.
+fg_memory|Videogeheugen: ongeveer {0} bij een 1080p-video
+fg_memory_4k|ongeveer {0} bij opschalen van 1080p naar 4K
+fg_memory_now|Videogeheugen in gebruik: ongeveer {0}
+fg_file_size|Bestand: {0}
+fg_options|Opties
 fg_sharpen|Scherpte
 fg_sharpen_off|Uit
 fg_sharpen_soft|Licht
@@ -728,15 +927,15 @@ fg_sharpen_medium|Gemiddeld
 fg_sharpen_strong|Sterk
 fg_resolution|Doelresolutie van de opschaling
 fg_res_original|Origineel (zonder opschaling)
-fg_model|AI-model
-fg_kind_sr|Opschaling
-fg_kind_fi|Tussenbeelden
+fg_model|Model voor vloeiende video
+fg_kind_sr|Alleen opschaling
+fg_kind_fi|Alleen tussenbeelden
 fg_builtin|Ingebouwd
 fg_model_none|Geen (zonder AI)
 section_fgmodels|Modellen voor vloeiende video
-fg_models_hint|Download een modelbestand (.stmodel, .srmodel, .fimodel) en voeg het hier toe. Het draait op je eigen videokaart.
-fg_add_model|Modelbestand toevoegen
-fg_no_models|Nog geen modellen toegevoegd.
+fg_models_hint|Vloeiende video draait altijd op de videokaart van deze computer. StreamRemaster zit bij de extensie; andere modellen kunnen op deze computer of op je server staan.
+fg_add_model|Kies een bestand op deze computer
+fg_no_models|Nog geen gedownloade modellen.
 fg_model_bad|Dit bestand is geen geldig model.
 tab_subs|Ondertiteling
 tab_fg|Vloeiende video
@@ -767,7 +966,7 @@ status_live|Live
 status_stalled|Audio gestopt
 status_error|Fout
 status_noresponse|Geen antwoord
-model|Model
+model|Transcriptiemodel
 model_server_default|Dat van de server
 model_default_tag|{0} · standaard
 manage_models|Modellen beheren
@@ -785,7 +984,7 @@ settings|Instellingen
 first_load_hint|De eerste keer kan het laden van een model tot een minuut duren.
 options_locked|Zet de ondertitels uit om deze opties te wijzigen.
 server_setup_title|Verbind je server
-server_setup_hint|StreamRemaster heeft een WhisperLive-server op je computer of in je netwerk nodig.
+server_setup_hint|StreamRemaster transcribeert met een WhisperLive-server op je computer of in je netwerk, of met de videokaart van deze computer.
 server_address|Serveradres
 server_placeholder|bijv. localhost:9090 of 192.168.1.10:9090
 connect|Verbinden
@@ -812,8 +1011,6 @@ warn_slow_load|⚠ Het laden van het model duurt te lang. Misschien past het nie
 error_reload|Herlaad de pagina (F5) en begin opnieuw.
 error_no_server|Stel eerst de server in.
 settings_title|StreamRemaster · Instellingen
-section_server|Server
-section_models|Modellen
 section_subtitles|Ondertitels
 section_interface|Interface
 section_about|Over
@@ -897,9 +1094,54 @@ server_update_available|Je server heeft versie {0} en {1} is beschikbaar. Voer d
 server_version_unknown|Je server zegt niet welke versie hij heeft, dus hij is ouder dan deze controle. Voer dit uit op de computer waarop hij draait om hem bij te werken:
 server_update_latest|Je server is bijgewerkt ({0}).
 server_update_note|De modellen blijven in het Docker-volume en worden niet opnieuw gedownload. Als je docker-compose.yml hebt aangepast en git pull klaagt, voer dan eerst git stash uit en daarna git stash pop.
+setup_or|of
+use_local|Deze computer gebruiken
+use_local_hint|Whisper draait op de videokaart van deze computer, zonder server. Je downloadt het model één keer, in Instellingen.
+local_footer|Deze computer
+local_none|Nog geen model: download er een
+local_intro|Whisper draait in de browser, op je videokaart (WebGPU). Elk model wordt één keer van Hugging Face gedownload en blijft in de browser. De grotere schrijven beter en hebben meer videogeheugen nodig.
+local_sizes|Download {0} · neemt {1} in · ongeveer {2} videogeheugen
+local_progress|Downloaden… {0} van {1}
+local_cancel|Annuleren
+local_gpu|Videokaart: {0}
+badge_downloaded|Gedownload
+error_no_webgpu|Deze browser kan de videokaart (WebGPU) niet gebruiken, dus kan hij niet op deze computer transcriberen.
+error_local_missing|Download eerst een model, in Instellingen → Modellen op deze computer.
+error_local_failed|Het transcriberen op deze computer is gestopt door een fout.
+error_local_vram|⚠ Niet genoeg videogeheugen op deze computer voor dit model. Kies een kleiner model.
+local_download_failed|Het downloaden is mislukt ({0}).
+local_confirm_delete|Model {0} van deze computer verwijderen? Dat maakt {1} vrij.
+local_only_english|Op deze computer kunnen de ondertitels alleen naar het Engels worden vertaald.
 """
 
 LANGS['pl'] = """
+error_local_lost|Karta graficzna kilka razy z rzędu zatrzymała model transkrypcji.
+fg_hq_badge|Dla mocnych kart graficznych
+where_fg_models|Gdzie są modele
+fg_local_title|Modele płynnego wideo na tym komputerze
+fg_server_title|Modele płynnego wideo na serwerze
+fg_server_intro|Serwer tylko je przechowuje: wybrany model pobiera się z niego i działa na karcie graficznej tego komputera.
+fg_server_none|Serwer nie ma jeszcze modeli płynnego wideo.
+fg_server_old|Ten serwer nie przechowuje modeli płynnego wideo: zaktualizuj go do najnowszej wersji.
+fg_add_server_title|Dodaj do serwera
+fg_server_loading|Pobieranie modelu z serwera…
+section_transcription|Modele transkrypcji
+transcription_intro|Wybierz, gdzie mowa zamienia się w tekst: na serwerze WhisperLive czy na karcie graficznej tego komputera.
+where_transcribe|Gdzie transkrybować
+engine_server|Na serwerze
+engine_local|Na tym komputerze
+trans_server_title|Modele transkrypcji na serwerze
+trans_local_title|Modele transkrypcji na tym komputerze
+badge_in_use|W użyciu
+fg_downloaded_title|Pobrane
+fg_add_title|Dodaj model
+fg_add_url_placeholder|Adres pliku modelu (.stmodel)
+fg_download_failed|Nie udało się pobrać ({0}). Pobierz plik przeglądarką i wybierz go z tego komputera.
+fg_memory|Pamięć karty graficznej: około {0} przy filmie 1080p
+fg_memory_4k|około {0} przy skalowaniu z 1080p do 4K
+fg_memory_now|Używana pamięć karty graficznej: około {0}
+fg_file_size|Plik: {0}
+fg_options|Opcje
 fg_sharpen|Ostrość
 fg_sharpen_off|Wyłączona
 fg_sharpen_soft|Łagodna
@@ -907,15 +1149,15 @@ fg_sharpen_medium|Średnia
 fg_sharpen_strong|Mocna
 fg_resolution|Docelowa rozdzielczość skalowania
 fg_res_original|Oryginalna (bez skalowania)
-fg_model|Model AI
-fg_kind_sr|Skalowanie
-fg_kind_fi|Klatki pośrednie
+fg_model|Model płynnego wideo
+fg_kind_sr|Tylko skalowanie
+fg_kind_fi|Tylko klatki pośrednie
 fg_builtin|Wbudowany
 fg_model_none|Brak (bez AI)
 section_fgmodels|Modele płynnego wideo
-fg_models_hint|Pobierz plik modelu (.stmodel, .srmodel, .fimodel) i dodaj go tutaj. Działa na Twojej karcie graficznej.
-fg_add_model|Dodaj plik modelu
-fg_no_models|Nie dodano jeszcze żadnych modeli.
+fg_models_hint|Płynne wideo zawsze działa na karcie graficznej tego komputera. StreamRemaster jest dołączony do rozszerzenia; inne modele mogą być na tym komputerze lub na twoim serwerze.
+fg_add_model|Wybierz plik z tego komputera
+fg_no_models|Brak pobranych modeli.
 fg_model_bad|Ten plik nie jest prawidłowym modelem.
 tab_subs|Napisy
 tab_fg|Płynne wideo
@@ -946,7 +1188,7 @@ status_live|Na żywo
 status_stalled|Dźwięk zatrzymany
 status_error|Błąd
 status_noresponse|Brak odpowiedzi
-model|Model
+model|Model transkrypcji
 model_server_default|Domyślny serwera
 model_default_tag|{0} · domyślny
 manage_models|Zarządzaj modelami
@@ -964,7 +1206,7 @@ settings|Ustawienia
 first_load_hint|Za pierwszym razem wczytanie modelu może potrwać do minuty.
 options_locked|Wyłącz napisy, aby zmienić te opcje.
 server_setup_title|Połącz swój serwer
-server_setup_hint|StreamRemaster potrzebuje serwera WhisperLive na twoim komputerze lub w twojej sieci.
+server_setup_hint|StreamRemaster transkrybuje za pomocą serwera WhisperLive na twoim komputerze lub w twojej sieci albo karty graficznej tego komputera.
 server_address|Adres serwera
 server_placeholder|np. localhost:9090 lub 192.168.1.10:9090
 connect|Połącz
@@ -991,8 +1233,6 @@ warn_slow_load|⚠ Model wczytuje się za długo. Może nie mieścić się w pam
 error_reload|Odśwież stronę (F5) i zacznij od nowa.
 error_no_server|Najpierw skonfiguruj serwer.
 settings_title|StreamRemaster · Ustawienia
-section_server|Serwer
-section_models|Modele
 section_subtitles|Napisy
 section_interface|Interfejs
 section_about|Informacje
@@ -1076,9 +1316,54 @@ server_update_available|Twój serwer ma wersję {0}, a dostępna jest {1}. Aby g
 server_version_unknown|Twój serwer nie podaje swojej wersji, więc jest starszy niż to sprawdzanie. Aby go zaktualizować, uruchom to na komputerze, na którym działa:
 server_update_latest|Twój serwer jest aktualny ({0}).
 server_update_note|Modele zostają w woluminie Dockera i nie są pobierane ponownie. Jeśli plik docker-compose.yml był zmieniany, a git pull zgłasza błąd, uruchom przed nim git stash, a po nim git stash pop.
+setup_or|lub
+use_local|Użyj tego komputera
+use_local_hint|Whisper działa na karcie graficznej tego komputera, bez serwera. Model pobierasz raz, w Ustawieniach.
+local_footer|Ten komputer
+local_none|Brak modelu: pobierz jakiś
+local_intro|Whisper działa w przeglądarce, na Twojej karcie graficznej (WebGPU). Każdy model pobiera się raz z Hugging Face i zostaje w przeglądarce. Większe piszą lepiej i potrzebują więcej pamięci graficznej.
+local_sizes|Pobieranie {0} · zajmuje {1} · około {2} pamięci graficznej
+local_progress|Pobieranie… {0} z {1}
+local_cancel|Anuluj
+local_gpu|Karta graficzna: {0}
+badge_downloaded|Pobrany
+error_no_webgpu|Ta przeglądarka nie może używać karty graficznej (WebGPU), więc nie może transkrybować na tym komputerze.
+error_local_missing|Najpierw pobierz model w Ustawienia → Modele na tym komputerze.
+error_local_failed|Transkrypcja na tym komputerze zatrzymała się z powodu błędu.
+error_local_vram|⚠ Za mało pamięci graficznej na tym komputerze dla tego modelu. Wybierz mniejszy.
+local_download_failed|Pobieranie nie powiodło się ({0}).
+local_confirm_delete|Usunąć model {0} z tego komputera? Zwolni {1}.
+local_only_english|Na tym komputerze napisy można tłumaczyć tylko na angielski.
 """
 
 LANGS['ru'] = """
+error_local_lost|Видеокарта несколько раз подряд остановила модель распознавания.
+fg_hq_badge|Для мощных видеокарт
+where_fg_models|Где хранятся модели
+fg_local_title|Модели плавного видео на этом компьютере
+fg_server_title|Модели плавного видео на сервере
+fg_server_intro|Сервер только хранит их: выбранная модель скачивается с него и работает на видеокарте этого компьютера.
+fg_server_none|На сервере пока нет моделей плавного видео.
+fg_server_old|Этот сервер не хранит модели плавного видео: обновите его до последней версии.
+fg_add_server_title|Добавить на сервер
+fg_server_loading|Загрузка модели с сервера…
+section_transcription|Модели распознавания речи
+transcription_intro|Выберите, где речь превращается в текст: на сервере WhisperLive или на видеокарте этого компьютера.
+where_transcribe|Где распознавать
+engine_server|На сервере
+engine_local|На этом компьютере
+trans_server_title|Модели распознавания на сервере
+trans_local_title|Модели распознавания на этом компьютере
+badge_in_use|Используется
+fg_downloaded_title|Загруженные
+fg_add_title|Добавить модель
+fg_add_url_placeholder|Адрес файла модели (.stmodel)
+fg_download_failed|Не удалось загрузить ({0}). Скачайте файл через браузер и выберите его на этом компьютере.
+fg_memory|Видеопамять: около {0} для видео 1080p
+fg_memory_4k|около {0} при масштабировании с 1080p до 4K
+fg_memory_now|Занято видеопамяти: около {0}
+fg_file_size|Файл: {0}
+fg_options|Параметры
 fg_sharpen|Резкость
 fg_sharpen_off|Выключена
 fg_sharpen_soft|Слабая
@@ -1086,15 +1371,15 @@ fg_sharpen_medium|Средняя
 fg_sharpen_strong|Сильная
 fg_resolution|Целевое разрешение масштабирования
 fg_res_original|Исходное (без масштабирования)
-fg_model|Модель ИИ
-fg_kind_sr|Масштабирование
-fg_kind_fi|Промежуточные кадры
+fg_model|Модель плавного видео
+fg_kind_sr|Только масштабирование
+fg_kind_fi|Только промежуточные кадры
 fg_builtin|Встроенная
 fg_model_none|Нет (без ИИ)
 section_fgmodels|Модели плавного видео
-fg_models_hint|Скачайте файл модели (.stmodel, .srmodel, .fimodel) и добавьте его здесь. Он работает на вашей видеокарте.
-fg_add_model|Добавить файл модели
-fg_no_models|Модели ещё не добавлены.
+fg_models_hint|Плавное видео всегда работает на видеокарте этого компьютера. StreamRemaster входит в расширение; другие модели могут быть на этом компьютере или на вашем сервере.
+fg_add_model|Выбрать файл на этом компьютере
+fg_no_models|Загруженных моделей пока нет.
 fg_model_bad|Этот файл не является допустимой моделью.
 tab_subs|Субтитры
 tab_fg|Плавное видео
@@ -1125,7 +1410,7 @@ status_live|В эфире
 status_stalled|Звук остановлен
 status_error|Ошибка
 status_noresponse|Нет ответа
-model|Модель
+model|Модель распознавания
 model_server_default|Как на сервере
 model_default_tag|{0} · по умолчанию
 manage_models|Управлять моделями
@@ -1143,7 +1428,7 @@ settings|Настройки
 first_load_hint|В первый раз загрузка модели может занять до минуты.
 options_locked|Выключите субтитры, чтобы изменить эти параметры.
 server_setup_title|Подключите свой сервер
-server_setup_hint|StreamRemaster нужен сервер WhisperLive на вашем компьютере или в вашей сети.
+server_setup_hint|StreamRemaster распознаёт речь с помощью сервера WhisperLive на вашем компьютере или в сети либо на видеокарте этого компьютера.
 server_address|Адрес сервера
 server_placeholder|напр. localhost:9090 или 192.168.1.10:9090
 connect|Подключить
@@ -1170,8 +1455,6 @@ warn_slow_load|⚠ Модель загружается слишком долго
 error_reload|Перезагрузите страницу (F5) и начните заново.
 error_no_server|Сначала настройте сервер.
 settings_title|StreamRemaster · Настройки
-section_server|Сервер
-section_models|Модели
 section_subtitles|Субтитры
 section_interface|Интерфейс
 section_about|О программе
@@ -1255,9 +1538,54 @@ server_update_available|На вашем сервере версия {0}, а до
 server_version_unknown|Ваш сервер не сообщает свою версию, значит, он старше этой проверки. Чтобы обновить его, выполните это на компьютере, где он работает:
 server_update_latest|Ваш сервер обновлён ({0}).
 server_update_note|Модели остаются в томе Docker и заново не скачиваются. Если вы меняли docker-compose.yml и git pull выдаёт ошибку, выполните git stash перед ним и git stash pop после.
+setup_or|или
+use_local|Использовать этот компьютер
+use_local_hint|Whisper работает на видеокарте этого компьютера, без сервера. Модель скачивается один раз, в настройках.
+local_footer|Этот компьютер
+local_none|Модели нет: скачайте её
+local_intro|Whisper работает в браузере, на вашей видеокарте (WebGPU). Каждая модель скачивается один раз с Hugging Face и остаётся в браузере. Большие модели пишут точнее и требуют больше видеопамяти.
+local_sizes|Загрузка {0} · занимает {1} · около {2} видеопамяти
+local_progress|Загрузка… {0} из {1}
+local_cancel|Отмена
+local_gpu|Видеокарта: {0}
+badge_downloaded|Скачана
+error_no_webgpu|Этот браузер не может использовать видеокарту (WebGPU), поэтому не может распознавать речь на этом компьютере.
+error_local_missing|Сначала скачайте модель: Настройки → Модели на этом компьютере.
+error_local_failed|Распознавание на этом компьютере остановилось из-за ошибки.
+error_local_vram|⚠ На этом компьютере не хватает видеопамяти для этой модели. Выберите модель поменьше.
+local_download_failed|Загрузка не удалась ({0}).
+local_confirm_delete|Удалить модель {0} с этого компьютера? Освободится {1}.
+local_only_english|На этом компьютере субтитры можно переводить только на английский.
 """
 
 LANGS['uk'] = """
+error_local_lost|Відеокарта кілька разів поспіль зупинила модель розпізнавання.
+fg_hq_badge|Для потужних відеокарт
+where_fg_models|Де зберігаються моделі
+fg_local_title|Моделі плавного відео на цьому комп’ютері
+fg_server_title|Моделі плавного відео на сервері
+fg_server_intro|Сервер лише зберігає їх: вибрана модель завантажується з нього й працює на відеокарті цього комп’ютера.
+fg_server_none|На сервері ще немає моделей плавного відео.
+fg_server_old|Цей сервер не зберігає моделі плавного відео: оновіть його до останньої версії.
+fg_add_server_title|Додати на сервер
+fg_server_loading|Завантаження моделі з сервера…
+section_transcription|Моделі розпізнавання мовлення
+transcription_intro|Виберіть, де мовлення перетворюється на текст: на сервері WhisperLive чи на відеокарті цього комп’ютера.
+where_transcribe|Де розпізнавати
+engine_server|На сервері
+engine_local|На цьому комп’ютері
+trans_server_title|Моделі розпізнавання на сервері
+trans_local_title|Моделі розпізнавання на цьому комп’ютері
+badge_in_use|Використовується
+fg_downloaded_title|Завантажені
+fg_add_title|Додати модель
+fg_add_url_placeholder|Адреса файлу моделі (.stmodel)
+fg_download_failed|Не вдалося завантажити ({0}). Завантажте файл через браузер і виберіть його на цьому комп’ютері.
+fg_memory|Відеопам’ять: близько {0} для відео 1080p
+fg_memory_4k|близько {0} при масштабуванні з 1080p до 4K
+fg_memory_now|Зайнято відеопам’яті: близько {0}
+fg_file_size|Файл: {0}
+fg_options|Параметри
 fg_sharpen|Різкість
 fg_sharpen_off|Вимкнено
 fg_sharpen_soft|Слабка
@@ -1265,15 +1593,15 @@ fg_sharpen_medium|Середня
 fg_sharpen_strong|Сильна
 fg_resolution|Цільова роздільна здатність масштабування
 fg_res_original|Початкова (без масштабування)
-fg_model|Модель ШІ
-fg_kind_sr|Масштабування
-fg_kind_fi|Проміжні кадри
+fg_model|Модель плавного відео
+fg_kind_sr|Лише масштабування
+fg_kind_fi|Лише проміжні кадри
 fg_builtin|Вбудована
 fg_model_none|Немає (без ШІ)
 section_fgmodels|Моделі плавного відео
-fg_models_hint|Завантажте файл моделі (.stmodel, .srmodel, .fimodel) і додайте його тут. Він працює на вашій відеокарті.
-fg_add_model|Додати файл моделі
-fg_no_models|Моделі ще не додано.
+fg_models_hint|Плавне відео завжди працює на відеокарті цього комп’ютера. StreamRemaster входить до розширення; інші моделі можуть бути на цьому комп’ютері або на вашому сервері.
+fg_add_model|Вибрати файл на цьому комп’ютері
+fg_no_models|Завантажених моделей поки немає.
 fg_model_bad|Цей файл не є дійсною моделлю.
 tab_subs|Субтитри
 tab_fg|Плавне відео
@@ -1304,7 +1632,7 @@ status_live|Наживо
 status_stalled|Звук зупинено
 status_error|Помилка
 status_noresponse|Немає відповіді
-model|Модель
+model|Модель розпізнавання
 model_server_default|Як на сервері
 model_default_tag|{0} · типова
 manage_models|Керувати моделями
@@ -1322,7 +1650,7 @@ settings|Налаштування
 first_load_hint|Першого разу завантаження моделі може тривати до хвилини.
 options_locked|Вимкніть субтитри, щоб змінити ці параметри.
 server_setup_title|Підключіть свій сервер
-server_setup_hint|StreamRemaster потрібен сервер WhisperLive на вашому комп’ютері або у вашій мережі.
+server_setup_hint|StreamRemaster розпізнає мовлення за допомогою сервера WhisperLive на вашому комп’ютері чи в мережі або на відеокарті цього комп’ютера.
 server_address|Адреса сервера
 server_placeholder|напр. localhost:9090 або 192.168.1.10:9090
 connect|Підключити
@@ -1349,8 +1677,6 @@ warn_slow_load|⚠ Модель завантажується надто довг
 error_reload|Перезавантажте сторінку (F5) і почніть знову.
 error_no_server|Спершу налаштуйте сервер.
 settings_title|StreamRemaster · Налаштування
-section_server|Сервер
-section_models|Моделі
 section_subtitles|Субтитри
 section_interface|Інтерфейс
 section_about|Про програму
@@ -1434,9 +1760,54 @@ server_update_available|На вашому сервері версія {0}, а д
 server_version_unknown|Ваш сервер не повідомляє свою версію, отже, він старіший за цю перевірку. Щоб оновити його, виконайте це на комп’ютері, де він працює:
 server_update_latest|Ваш сервер оновлений ({0}).
 server_update_note|Моделі залишаються в томі Docker і не завантажуються знову. Якщо ви змінювали docker-compose.yml і git pull видає помилку, виконайте git stash перед ним і git stash pop після.
+setup_or|або
+use_local|Використовувати цей комп’ютер
+use_local_hint|Whisper працює на відеокарті цього комп’ютера, без сервера. Модель завантажується один раз, у налаштуваннях.
+local_footer|Цей комп’ютер
+local_none|Моделі немає: завантажте її
+local_intro|Whisper працює в браузері, на вашій відеокарті (WebGPU). Кожна модель завантажується один раз із Hugging Face і залишається в браузері. Більші моделі пишуть точніше й потребують більше відеопам’яті.
+local_sizes|Завантаження {0} · займає {1} · близько {2} відеопам’яті
+local_progress|Завантаження… {0} з {1}
+local_cancel|Скасувати
+local_gpu|Відеокарта: {0}
+badge_downloaded|Завантажено
+error_no_webgpu|Цей браузер не може використовувати відеокарту (WebGPU), тому не може розпізнавати мовлення на цьому комп’ютері.
+error_local_missing|Спершу завантажте модель: Налаштування → Моделі на цьому комп’ютері.
+error_local_failed|Розпізнавання на цьому комп’ютері зупинилося через помилку.
+error_local_vram|⚠ На цьому комп’ютері замало відеопам’яті для цієї моделі. Виберіть меншу.
+local_download_failed|Завантаження не вдалося ({0}).
+local_confirm_delete|Видалити модель {0} з цього комп’ютера? Звільниться {1}.
+local_only_english|На цьому комп’ютері субтитри можна перекладати лише англійською.
 """
 
 LANGS['zh_CN'] = """
+error_local_lost|显卡连续多次停止了转写模型。
+fg_hq_badge|适合高性能显卡
+where_fg_models|模型存放位置
+fg_local_title|这台电脑上的流畅视频模型
+fg_server_title|服务器上的流畅视频模型
+fg_server_intro|服务器只负责保存：选中的模型会从服务器下载，并在这台电脑的显卡上运行。
+fg_server_none|服务器上还没有流畅视频模型。
+fg_server_old|此服务器不保存流畅视频模型：请将其更新到最新版本。
+fg_add_server_title|添加到服务器
+fg_server_loading|正在从服务器下载模型…
+section_transcription|转写模型
+transcription_intro|选择在哪里把语音转成文字：WhisperLive 服务器，或这台电脑的显卡。
+where_transcribe|在哪里转写
+engine_server|在服务器上
+engine_local|在这台电脑上
+trans_server_title|服务器上的转写模型
+trans_local_title|这台电脑上的转写模型
+badge_in_use|使用中
+fg_downloaded_title|已下载
+fg_add_title|添加模型
+fg_add_url_placeholder|模型文件的地址（.stmodel）
+fg_download_failed|无法下载（{0}）。请用浏览器下载该文件，再从这台电脑中选择它。
+fg_memory|显存：1080p 视频约 {0}
+fg_memory_4k|从 1080p 放大到 4K 约 {0}
+fg_memory_now|正在使用的显存：约 {0}
+fg_file_size|文件：{0}
+fg_options|选项
 fg_sharpen|锐度
 fg_sharpen_off|关闭
 fg_sharpen_soft|柔和
@@ -1444,15 +1815,15 @@ fg_sharpen_medium|中等
 fg_sharpen_strong|强
 fg_resolution|放大目标分辨率
 fg_res_original|原始（不放大）
-fg_model|AI 模型
-fg_kind_sr|放大
-fg_kind_fi|插帧
+fg_model|流畅视频模型
+fg_kind_sr|仅放大
+fg_kind_fi|仅插帧
 fg_builtin|内置
 fg_model_none|无（不使用 AI）
 section_fgmodels|流畅视频模型
-fg_models_hint|下载模型文件（.stmodel、.srmodel、.fimodel）并在此添加。它在您自己的显卡上运行。
-fg_add_model|添加模型文件
-fg_no_models|尚未添加任何模型。
+fg_models_hint|流畅视频始终在这台电脑的显卡上运行。StreamRemaster 随扩展一起提供；其他模型可以放在这台电脑或你的服务器上。
+fg_add_model|从这台电脑选择文件
+fg_no_models|还没有下载任何模型。
 fg_model_bad|该文件不是有效的模型。
 tab_subs|字幕
 tab_fg|流畅视频
@@ -1483,7 +1854,7 @@ status_live|直播中
 status_stalled|音频已停止
 status_error|错误
 status_noresponse|无响应
-model|模型
+model|转写模型
 model_server_default|服务器默认
 model_default_tag|{0} · 默认
 manage_models|管理模型
@@ -1501,7 +1872,7 @@ settings|设置
 first_load_hint|首次加载模型可能需要一分钟左右。
 options_locked|关闭字幕后才能更改这些选项。
 server_setup_title|连接你的服务器
-server_setup_hint|StreamRemaster 需要在你的电脑或网络中运行 WhisperLive 服务器。
+server_setup_hint|StreamRemaster 可以用你电脑或网络中的 WhisperLive 服务器转写，也可以用这台电脑的显卡转写。
 server_address|服务器地址
 server_placeholder|例如 localhost:9090 或 192.168.1.10:9090
 connect|连接
@@ -1528,8 +1899,6 @@ warn_slow_load|⚠ 模型加载时间过长。可能放不进服务器的显存 
 error_reload|请刷新页面 (F5) 后重新开始。
 error_no_server|请先设置服务器。
 settings_title|StreamRemaster · 设置
-section_server|服务器
-section_models|模型
 section_subtitles|字幕
 section_interface|界面
 section_about|关于
@@ -1613,9 +1982,54 @@ server_update_available|你的服务器是 {0} 版，已有 {1} 版。要更新�
 server_version_unknown|你的服务器没有报告版本，说明它比这项检查更早。要更新，请在运行服务器的电脑上执行：
 server_update_latest|你的服务器已是最新（{0}）。
 server_update_note|模型保留在 Docker 卷中，不会重新下载。如果你改过 docker-compose.yml 且 git pull 报错，请先执行 git stash，之后再执行 git stash pop。
+setup_or|或
+use_local|使用这台电脑
+use_local_hint|Whisper 在这台电脑的显卡上运行，无需服务器。模型只需在设置中下载一次。
+local_footer|这台电脑
+local_none|还没有模型：请下载一个
+local_intro|Whisper 在浏览器中用你的显卡（WebGPU）运行。每个模型只需从 Hugging Face 下载一次，并保存在浏览器中。越大的模型写得越准，也需要越多显存。
+local_sizes|下载 {0} · 占用 {1} · 约 {2} 显存
+local_progress|正在下载… {0} / {1}
+local_cancel|取消
+local_gpu|显卡：{0}
+badge_downloaded|已下载
+error_no_webgpu|这个浏览器无法使用显卡（WebGPU），因此无法在这台电脑上转写。
+error_local_missing|请先在 设置 → 这台电脑上的模型 中下载一个模型。
+error_local_failed|这台电脑上的转写因出错而停止。
+error_local_vram|⚠ 这台电脑的显存不足以运行这个模型。请选择更小的模型。
+local_download_failed|下载失败（{0}）。
+local_confirm_delete|要从这台电脑删除 {0} 模型吗？将释放 {1}。
+local_only_english|在这台电脑上，字幕只能翻译成英语。
 """
 
 LANGS['ja'] = """
+error_local_lost|グラフィックカードが文字起こしモデルを何度も続けて停止しました。
+fg_hq_badge|高性能なグラフィックカード向け
+where_fg_models|モデルの場所
+fg_local_title|このコンピューターのなめらか動画モデル
+fg_server_title|サーバーのなめらか動画モデル
+fg_server_intro|サーバーは保管するだけです。選んだモデルはサーバーからダウンロードされ、このコンピューターのグラフィックカードで動きます。
+fg_server_none|サーバーにはまだなめらか動画のモデルがありません。
+fg_server_old|このサーバーはなめらか動画のモデルを保管できません。最新版に更新してください。
+fg_add_server_title|サーバーに追加
+fg_server_loading|サーバーからモデルをダウンロードしています…
+section_transcription|文字起こしモデル
+transcription_intro|音声をどこで文字にするかを選びます：WhisperLive サーバーか、このコンピューターのグラフィックカードです。
+where_transcribe|文字起こしの場所
+engine_server|サーバー
+engine_local|このコンピューター
+trans_server_title|サーバーの文字起こしモデル
+trans_local_title|このコンピューターの文字起こしモデル
+badge_in_use|使用中
+fg_downloaded_title|ダウンロード済み
+fg_add_title|モデルを追加
+fg_add_url_placeholder|モデルファイルのアドレス（.stmodel）
+fg_download_failed|ダウンロードできませんでした（{0}）。ブラウザーでファイルをダウンロードし、このコンピューターから選んでください。
+fg_memory|ビデオメモリ：1080p の動画で約 {0}
+fg_memory_4k|1080p から 4K へのアップスケールで約 {0}
+fg_memory_now|使用中のビデオメモリ：約 {0}
+fg_file_size|ファイル：{0}
+fg_options|オプション
 fg_sharpen|シャープネス
 fg_sharpen_off|オフ
 fg_sharpen_soft|弱
@@ -1623,15 +2037,15 @@ fg_sharpen_medium|中
 fg_sharpen_strong|強
 fg_resolution|アップスケール後の解像度
 fg_res_original|オリジナル（アップスケールなし）
-fg_model|AIモデル
-fg_kind_sr|アップスケール
-fg_kind_fi|中間フレーム
+fg_model|なめらか動画のモデル
+fg_kind_sr|アップスケールのみ
+fg_kind_fi|中間フレームのみ
 fg_builtin|内蔵
 fg_model_none|なし（AI なし）
 section_fgmodels|なめらか動画のモデル
-fg_models_hint|モデルファイル（.stmodel、.srmodel、.fimodel）をダウンロードしてここに追加します。お使いのグラフィックカードで動作します。
-fg_add_model|モデルファイルを追加
-fg_no_models|モデルはまだ追加されていません。
+fg_models_hint|なめらか動画は常にこのコンピューターのグラフィックカードで動きます。StreamRemaster は拡張機能に含まれています。ほかのモデルはこのコンピューターかサーバーに置けます。
+fg_add_model|このコンピューターからファイルを選ぶ
+fg_no_models|ダウンロードしたモデルはまだありません。
 fg_model_bad|このファイルは有効なモデルではありません。
 tab_subs|字幕
 tab_fg|なめらか動画
@@ -1662,7 +2076,7 @@ status_live|ライブ
 status_stalled|音声が止まりました
 status_error|エラー
 status_noresponse|応答なし
-model|モデル
+model|文字起こしモデル
 model_server_default|サーバーの既定
 model_default_tag|{0} · 既定
 manage_models|モデルを管理
@@ -1680,7 +2094,7 @@ settings|設定
 first_load_hint|モデルの初回読み込みには最大 1 分ほどかかることがあります。
 options_locked|これらの設定を変えるには字幕をオフにしてください。
 server_setup_title|サーバーに接続
-server_setup_hint|StreamRemaster には、パソコンかネットワーク上で動く WhisperLive サーバーが必要です。
+server_setup_hint|StreamRemaster は、パソコンかネットワーク上の WhisperLive サーバー、またはこのコンピューターのグラフィックカードで文字起こしします。
 server_address|サーバーのアドレス
 server_placeholder|例：localhost:9090 または 192.168.1.10:9090
 connect|接続
@@ -1707,8 +2121,6 @@ warn_slow_load|⚠ モデルの読み込みに時間がかかりすぎていま�
 error_reload|ページを再読み込み (F5) して、もう一度始めてください。
 error_no_server|先にサーバーを設定してください。
 settings_title|StreamRemaster · 設定
-section_server|サーバー
-section_models|モデル
 section_subtitles|字幕
 section_interface|インターフェース
 section_about|このアプリについて
@@ -1792,9 +2204,54 @@ server_update_available|サーバーはバージョン {0} で、{1} が出て�
 server_version_unknown|サーバーがバージョンを伝えていないため、この確認機能より古いものです。アップデートするには、サーバーが動いているパソコンで次を実行してください：
 server_update_latest|サーバーは最新です（{0}）。
 server_update_note|モデルは Docker ボリュームに残り、再ダウンロードされません。docker-compose.yml を変更していて git pull がエラーになる場合は、先に git stash を、後で git stash pop を実行してください。
+setup_or|または
+use_local|このコンピューターを使う
+use_local_hint|Whisper はこのコンピューターのグラフィックカードで動き、サーバーは不要です。モデルは設定で一度だけダウンロードします。
+local_footer|このコンピューター
+local_none|モデルがありません：ダウンロードしてください
+local_intro|Whisper はブラウザー内で、あなたのグラフィックカード（WebGPU）を使って動きます。各モデルは Hugging Face から一度だけダウンロードされ、ブラウザーに保存されます。大きいモデルほど正確ですが、より多くのビデオメモリが必要です。
+local_sizes|ダウンロード {0} · 容量 {1} · ビデオメモリ約 {2}
+local_progress|ダウンロード中… {0} / {1}
+local_cancel|キャンセル
+local_gpu|グラフィックカード：{0}
+badge_downloaded|ダウンロード済み
+error_no_webgpu|このブラウザーはグラフィックカード（WebGPU）を使えないため、このコンピューターでは文字起こしできません。
+error_local_missing|まず 設定 → このコンピューターのモデル でモデルをダウンロードしてください。
+error_local_failed|このコンピューターでの文字起こしがエラーで停止しました。
+error_local_vram|⚠ このコンピューターにはこのモデルに必要なビデオメモリが足りません。小さいモデルを選んでください。
+local_download_failed|ダウンロードに失敗しました（{0}）。
+local_confirm_delete|このコンピューターから {0} モデルを削除しますか？ {1} が空きます。
+local_only_english|このコンピューターでは、字幕は英語にのみ翻訳できます。
 """
 
 LANGS['ko'] = """
+error_local_lost|그래픽 카드가 받아쓰기 모델을 여러 번 연속으로 멈췄습니다.
+fg_hq_badge|고성능 그래픽 카드용
+where_fg_models|모델 위치
+fg_local_title|이 컴퓨터의 부드러운 영상 모델
+fg_server_title|서버의 부드러운 영상 모델
+fg_server_intro|서버는 모델을 보관만 합니다. 선택한 모델은 서버에서 내려받아 이 컴퓨터의 그래픽 카드에서 실행됩니다.
+fg_server_none|서버에 아직 부드러운 영상 모델이 없습니다.
+fg_server_old|이 서버는 부드러운 영상 모델을 보관하지 않습니다. 최신 버전으로 업데이트하세요.
+fg_add_server_title|서버에 추가
+fg_server_loading|서버에서 모델을 내려받는 중…
+section_transcription|받아쓰기 모델
+transcription_intro|음성을 어디에서 글자로 바꿀지 고르세요: WhisperLive 서버 또는 이 컴퓨터의 그래픽 카드.
+where_transcribe|받아쓰기 위치
+engine_server|서버에서
+engine_local|이 컴퓨터에서
+trans_server_title|서버의 받아쓰기 모델
+trans_local_title|이 컴퓨터의 받아쓰기 모델
+badge_in_use|사용 중
+fg_downloaded_title|다운로드한 모델
+fg_add_title|모델 추가
+fg_add_url_placeholder|모델 파일 주소(.stmodel)
+fg_download_failed|다운로드하지 못했습니다({0}). 브라우저로 파일을 받은 뒤 이 컴퓨터에서 선택하세요.
+fg_memory|그래픽 메모리: 1080p 영상에서 약 {0}
+fg_memory_4k|1080p를 4K로 업스케일하면 약 {0}
+fg_memory_now|사용 중인 그래픽 메모리: 약 {0}
+fg_file_size|파일: {0}
+fg_options|옵션
 fg_sharpen|선명도
 fg_sharpen_off|끄기
 fg_sharpen_soft|약하게
@@ -1802,15 +2259,15 @@ fg_sharpen_medium|보통
 fg_sharpen_strong|강하게
 fg_resolution|업스케일 목표 해상도
 fg_res_original|원본 (업스케일 없음)
-fg_model|AI 모델
-fg_kind_sr|업스케일
-fg_kind_fi|중간 프레임
+fg_model|부드러운 영상 모델
+fg_kind_sr|업스케일만
+fg_kind_fi|중간 프레임만
 fg_builtin|기본 제공
 fg_model_none|없음(AI 사용 안 함)
 section_fgmodels|부드러운 영상 모델
-fg_models_hint|모델 파일(.stmodel, .srmodel, .fimodel)을 다운로드하여 여기에 추가하세요. 사용자의 그래픽 카드에서 실행됩니다.
-fg_add_model|모델 파일 추가
-fg_no_models|추가된 모델이 없습니다.
+fg_models_hint|부드러운 영상은 항상 이 컴퓨터의 그래픽 카드에서 실행됩니다. StreamRemaster는 확장 프로그램에 포함되어 있으며, 다른 모델은 이 컴퓨터나 서버에 둘 수 있습니다.
+fg_add_model|이 컴퓨터에서 파일 선택
+fg_no_models|아직 다운로드한 모델이 없습니다.
 fg_model_bad|유효한 모델 파일이 아닙니다.
 tab_subs|자막
 tab_fg|부드러운 영상
@@ -1841,7 +2298,7 @@ status_live|실시간
 status_stalled|오디오 멈춤
 status_error|오류
 status_noresponse|응답 없음
-model|모델
+model|받아쓰기 모델
 model_server_default|서버 기본값
 model_default_tag|{0} · 기본
 manage_models|모델 관리
@@ -1859,7 +2316,7 @@ settings|설정
 first_load_hint|모델을 처음 불러올 때는 최대 1분 정도 걸릴 수 있습니다.
 options_locked|이 설정을 바꾸려면 자막을 끄세요.
 server_setup_title|서버 연결
-server_setup_hint|StreamRemaster을 쓰려면 컴퓨터나 네트워크에서 WhisperLive 서버가 실행 중이어야 합니다.
+server_setup_hint|StreamRemaster는 컴퓨터나 네트워크의 WhisperLive 서버, 또는 이 컴퓨터의 그래픽 카드로 받아씁니다.
 server_address|서버 주소
 server_placeholder|예: localhost:9090 또는 192.168.1.10:9090
 connect|연결
@@ -1886,8 +2343,6 @@ warn_slow_load|⚠ 모델을 불러오는 데 너무 오래 걸립니다. 서버
 error_reload|페이지를 새로 고침(F5)하고 다시 시작하세요.
 error_no_server|먼저 서버를 설정하세요.
 settings_title|StreamRemaster · 설정
-section_server|서버
-section_models|모델
 section_subtitles|자막
 section_interface|인터페이스
 section_about|정보
@@ -1971,9 +2426,54 @@ server_update_available|서버는 {0} 버전이고 {1} 버전이 나왔습니다
 server_version_unknown|서버가 버전을 알려 주지 않으므로 이 확인 기능보다 오래된 버전입니다. 업데이트하려면 서버가 실행 중인 컴퓨터에서 다음을 실행하세요:
 server_update_latest|서버가 최신 상태입니다 ({0}).
 server_update_note|모델은 Docker 볼륨에 남아 있어 다시 내려받지 않습니다. docker-compose.yml을 수정했고 git pull이 오류를 내면 먼저 git stash를, 끝난 뒤 git stash pop을 실행하세요.
+setup_or|또는
+use_local|이 컴퓨터 사용
+use_local_hint|Whisper가 서버 없이 이 컴퓨터의 그래픽 카드에서 실행됩니다. 모델은 설정에서 한 번만 내려받으면 됩니다.
+local_footer|이 컴퓨터
+local_none|모델 없음: 하나 내려받으세요
+local_intro|Whisper가 브라우저에서 그래픽 카드(WebGPU)로 실행됩니다. 각 모델은 Hugging Face에서 한 번만 내려받아 브라우저에 보관됩니다. 큰 모델일수록 더 정확하지만 그래픽 메모리가 더 필요합니다.
+local_sizes|다운로드 {0} · 용량 {1} · 그래픽 메모리 약 {2}
+local_progress|다운로드 중… {0} / {1}
+local_cancel|취소
+local_gpu|그래픽 카드: {0}
+badge_downloaded|다운로드됨
+error_no_webgpu|이 브라우저는 그래픽 카드(WebGPU)를 사용할 수 없어 이 컴퓨터에서 받아쓸 수 없습니다.
+error_local_missing|먼저 설정 → 이 컴퓨터의 모델에서 모델을 내려받으세요.
+error_local_failed|이 컴퓨터에서의 받아쓰기가 오류로 멈췄습니다.
+error_local_vram|⚠ 이 컴퓨터의 그래픽 메모리가 이 모델에 부족합니다. 더 작은 모델을 고르세요.
+local_download_failed|다운로드에 실패했습니다 ({0}).
+local_confirm_delete|이 컴퓨터에서 {0} 모델을 삭제할까요? {1}가 확보됩니다.
+local_only_english|이 컴퓨터에서는 자막을 영어로만 번역할 수 있습니다.
 """
 
 LANGS['th'] = """
+error_local_lost|การ์ดจอหยุดโมเดลถอดเสียงหลายครั้งติดต่อกัน
+fg_hq_badge|สำหรับการ์ดจอประสิทธิภาพสูง
+where_fg_models|โมเดลอยู่ที่ไหน
+fg_local_title|โมเดลวิดีโอลื่นไหลบนคอมพิวเตอร์เครื่องนี้
+fg_server_title|โมเดลวิดีโอลื่นไหลบนเซิร์ฟเวอร์
+fg_server_intro|เซิร์ฟเวอร์มีหน้าที่เก็บไว้เท่านั้น โมเดลที่เลือกจะถูกดาวน์โหลดจากเซิร์ฟเวอร์และทำงานบนการ์ดจอของคอมพิวเตอร์เครื่องนี้
+fg_server_none|เซิร์ฟเวอร์ยังไม่มีโมเดลวิดีโอลื่นไหล
+fg_server_old|เซิร์ฟเวอร์นี้ไม่เก็บโมเดลวิดีโอลื่นไหล โปรดอัปเดตเป็นเวอร์ชันล่าสุด
+fg_add_server_title|เพิ่มลงในเซิร์ฟเวอร์
+fg_server_loading|กำลังดาวน์โหลดโมเดลจากเซิร์ฟเวอร์…
+section_transcription|โมเดลถอดเสียง
+transcription_intro|เลือกว่าจะแปลงเสียงพูดเป็นข้อความที่ไหน: บนเซิร์ฟเวอร์ WhisperLive หรือบนการ์ดจอของคอมพิวเตอร์เครื่องนี้
+where_transcribe|ถอดเสียงที่ไหน
+engine_server|บนเซิร์ฟเวอร์
+engine_local|บนคอมพิวเตอร์เครื่องนี้
+trans_server_title|โมเดลถอดเสียงบนเซิร์ฟเวอร์
+trans_local_title|โมเดลถอดเสียงบนคอมพิวเตอร์เครื่องนี้
+badge_in_use|กำลังใช้
+fg_downloaded_title|ที่ดาวน์โหลดแล้ว
+fg_add_title|เพิ่มโมเดล
+fg_add_url_placeholder|ที่อยู่ของไฟล์โมเดล (.stmodel)
+fg_download_failed|ดาวน์โหลดไม่ได้ ({0}) ดาวน์โหลดไฟล์ด้วยเบราว์เซอร์แล้วเลือกจากคอมพิวเตอร์เครื่องนี้
+fg_memory|หน่วยความจำการ์ดจอ: ประมาณ {0} กับวิดีโอ 1080p
+fg_memory_4k|ประมาณ {0} เมื่อขยายภาพจาก 1080p เป็น 4K
+fg_memory_now|หน่วยความจำการ์ดจอที่ใช้อยู่: ประมาณ {0}
+fg_file_size|ไฟล์: {0}
+fg_options|ตัวเลือก
 fg_sharpen|ความคมชัด
 fg_sharpen_off|ปิด
 fg_sharpen_soft|เบา
@@ -1981,15 +2481,15 @@ fg_sharpen_medium|ปานกลาง
 fg_sharpen_strong|แรง
 fg_resolution|ความละเอียดเป้าหมายของการขยายภาพ
 fg_res_original|ต้นฉบับ (ไม่ขยายภาพ)
-fg_model|โมเดล AI
-fg_kind_sr|ขยายภาพ
-fg_kind_fi|เฟรมแทรก
+fg_model|โมเดลวิดีโอลื่นไหล
+fg_kind_sr|ขยายภาพเท่านั้น
+fg_kind_fi|เฟรมแทรกเท่านั้น
 fg_builtin|ในตัว
 fg_model_none|ไม่มี (ไม่ใช้ AI)
 section_fgmodels|โมเดลวิดีโอลื่นไหล
-fg_models_hint|ดาวน์โหลดไฟล์โมเดล (.stmodel, .srmodel, .fimodel) แล้วเพิ่มที่นี่ โมเดลจะทำงานบนการ์ดจอของคุณ
-fg_add_model|เพิ่มไฟล์โมเดล
-fg_no_models|ยังไม่ได้เพิ่มโมเดล
+fg_models_hint|วิดีโอลื่นไหลทำงานบนการ์ดจอของคอมพิวเตอร์เครื่องนี้เสมอ StreamRemaster มาพร้อมส่วนขยาย ส่วนโมเดลอื่นเก็บไว้ในคอมพิวเตอร์เครื่องนี้หรือบนเซิร์ฟเวอร์ของคุณก็ได้
+fg_add_model|เลือกไฟล์จากคอมพิวเตอร์เครื่องนี้
+fg_no_models|ยังไม่มีโมเดลที่ดาวน์โหลด
 fg_model_bad|ไฟล์นี้ไม่ใช่โมเดลที่ถูกต้อง
 tab_subs|คำบรรยาย
 tab_fg|วิดีโอลื่นไหล
@@ -2020,7 +2520,7 @@ status_live|สด
 status_stalled|เสียงหยุดแล้ว
 status_error|ข้อผิดพลาด
 status_noresponse|ไม่มีการตอบกลับ
-model|โมเดล
+model|โมเดลถอดเสียง
 model_server_default|ค่าเริ่มต้นของเซิร์ฟเวอร์
 model_default_tag|{0} · ค่าเริ่มต้น
 manage_models|จัดการโมเดล
@@ -2038,7 +2538,7 @@ settings|การตั้งค่า
 first_load_hint|การโหลดโมเดลครั้งแรกอาจใช้เวลาถึงหนึ่งนาที
 options_locked|ปิดคำบรรยายก่อนจึงจะเปลี่ยนตัวเลือกเหล่านี้ได้
 server_setup_title|เชื่อมต่อเซิร์ฟเวอร์ของคุณ
-server_setup_hint|StreamRemaster ต้องใช้เซิร์ฟเวอร์ WhisperLive ที่ทำงานบนคอมพิวเตอร์หรือในเครือข่ายของคุณ
+server_setup_hint|StreamRemaster ถอดเสียงด้วยเซิร์ฟเวอร์ WhisperLive บนคอมพิวเตอร์หรือในเครือข่ายของคุณ หรือด้วยการ์ดจอของคอมพิวเตอร์เครื่องนี้
 server_address|ที่อยู่เซิร์ฟเวอร์
 server_placeholder|เช่น localhost:9090 หรือ 192.168.1.10:9090
 connect|เชื่อมต่อ
@@ -2065,8 +2565,6 @@ warn_slow_load|⚠ โมเดลโหลดนานเกินไป อา
 error_reload|โหลดหน้าใหม่ (F5) แล้วเริ่มอีกครั้ง
 error_no_server|ตั้งค่าเซิร์ฟเวอร์ก่อน
 settings_title|StreamRemaster · การตั้งค่า
-section_server|เซิร์ฟเวอร์
-section_models|โมเดล
 section_subtitles|คำบรรยาย
 section_interface|หน้าตาโปรแกรม
 section_about|เกี่ยวกับ
@@ -2150,9 +2648,54 @@ server_update_available|เซิร์ฟเวอร์ของคุณเ�
 server_version_unknown|เซิร์ฟเวอร์ของคุณไม่ได้บอกเวอร์ชัน จึงเก่ากว่าการตรวจสอบนี้ หากต้องการอัปเดต ให้รันคำสั่งนี้บนคอมพิวเตอร์ที่เซิร์ฟเวอร์ทำงานอยู่:
 server_update_latest|เซิร์ฟเวอร์ของคุณเป็นเวอร์ชันล่าสุดแล้ว ({0})
 server_update_note|โมเดลยังอยู่ในวอลุ่มของ Docker และไม่ต้องดาวน์โหลดใหม่ หากคุณแก้ไข docker-compose.yml แล้ว git pull แจ้งข้อผิดพลาด ให้รัน git stash ก่อน และ git stash pop หลังจากนั้น
+setup_or|หรือ
+use_local|ใช้คอมพิวเตอร์เครื่องนี้
+use_local_hint|Whisper ทำงานบนการ์ดจอของคอมพิวเตอร์เครื่องนี้ ไม่ต้องใช้เซิร์ฟเวอร์ ดาวน์โหลดโมเดลครั้งเดียวในการตั้งค่า
+local_footer|คอมพิวเตอร์เครื่องนี้
+local_none|ยังไม่มีโมเดล: ดาวน์โหลดสักตัว
+local_intro|Whisper ทำงานในเบราว์เซอร์บนการ์ดจอของคุณ (WebGPU) แต่ละโมเดลดาวน์โหลดจาก Hugging Face ครั้งเดียวและเก็บไว้ในเบราว์เซอร์ โมเดลที่ใหญ่กว่าจะแม่นยำกว่าและใช้หน่วยความจำการ์ดจอมากกว่า
+local_sizes|ดาวน์โหลด {0} · ใช้พื้นที่ {1} · หน่วยความจำการ์ดจอประมาณ {2}
+local_progress|กำลังดาวน์โหลด… {0} จาก {1}
+local_cancel|ยกเลิก
+local_gpu|การ์ดจอ: {0}
+badge_downloaded|ดาวน์โหลดแล้ว
+error_no_webgpu|เบราว์เซอร์นี้ใช้การ์ดจอ (WebGPU) ไม่ได้ จึงถอดเสียงบนคอมพิวเตอร์เครื่องนี้ไม่ได้
+error_local_missing|ดาวน์โหลดโมเดลก่อนที่ การตั้งค่า → โมเดลบนคอมพิวเตอร์เครื่องนี้
+error_local_failed|การถอดเสียงบนคอมพิวเตอร์เครื่องนี้หยุดเพราะเกิดข้อผิดพลาด
+error_local_vram|⚠ หน่วยความจำการ์ดจอของเครื่องนี้ไม่พอสำหรับโมเดลนี้ เลือกโมเดลที่เล็กกว่า
+local_download_failed|ดาวน์โหลดไม่สำเร็จ ({0})
+local_confirm_delete|ลบโมเดล {0} ออกจากคอมพิวเตอร์เครื่องนี้ไหม? จะได้พื้นที่คืน {1}
+local_only_english|บนคอมพิวเตอร์เครื่องนี้ แปลคำบรรยายได้เป็นภาษาอังกฤษเท่านั้น
 """
 
 LANGS['hi'] = """
+error_local_lost|ग्राफ़िक्स कार्ड ने ट्रांसक्रिप्शन मॉडल को लगातार कई बार रोक दिया।
+fg_hq_badge|शक्तिशाली ग्राफ़िक्स कार्ड के लिए
+where_fg_models|मॉडल कहाँ हैं
+fg_local_title|इस कंप्यूटर पर स्मूद वीडियो मॉडल
+fg_server_title|सर्वर पर स्मूद वीडियो मॉडल
+fg_server_intro|सर्वर इन्हें सिर्फ़ रखता है: चुना गया मॉडल उससे डाउनलोड होकर इस कंप्यूटर के ग्राफ़िक्स कार्ड पर चलता है।
+fg_server_none|सर्वर पर अभी कोई स्मूद वीडियो मॉडल नहीं है।
+fg_server_old|यह सर्वर स्मूद वीडियो मॉडल नहीं रखता: इसे नवीनतम संस्करण पर अपडेट करें।
+fg_add_server_title|सर्वर में जोड़ें
+fg_server_loading|सर्वर से मॉडल डाउनलोड हो रहा है…
+section_transcription|ट्रांसक्रिप्शन मॉडल
+transcription_intro|चुनें कि बोली को टेक्स्ट में कहाँ बदला जाए: WhisperLive सर्वर पर या इस कंप्यूटर के ग्राफ़िक्स कार्ड पर।
+where_transcribe|कहाँ ट्रांसक्राइब करें
+engine_server|सर्वर पर
+engine_local|इस कंप्यूटर पर
+trans_server_title|सर्वर पर ट्रांसक्रिप्शन मॉडल
+trans_local_title|इस कंप्यूटर पर ट्रांसक्रिप्शन मॉडल
+badge_in_use|उपयोग में
+fg_downloaded_title|डाउनलोड किए गए
+fg_add_title|मॉडल जोड़ें
+fg_add_url_placeholder|मॉडल फ़ाइल का पता (.stmodel)
+fg_download_failed|डाउनलोड नहीं हो सका ({0})। ब्राउज़र से फ़ाइल डाउनलोड करें और इसे इस कंप्यूटर से चुनें।
+fg_memory|ग्राफ़िक्स मेमोरी: 1080p वीडियो के साथ लगभग {0}
+fg_memory_4k|1080p से 4K पर अपस्केल करते समय लगभग {0}
+fg_memory_now|उपयोग में ग्राफ़िक्स मेमोरी: लगभग {0}
+fg_file_size|फ़ाइल: {0}
+fg_options|विकल्प
 fg_sharpen|शार्पनेस
 fg_sharpen_off|बंद
 fg_sharpen_soft|हल्की
@@ -2160,15 +2703,15 @@ fg_sharpen_medium|मध्यम
 fg_sharpen_strong|तेज़
 fg_resolution|अपस्केलिंग का लक्ष्य रिज़ॉल्यूशन
 fg_res_original|मूल (बिना अपस्केलिंग)
-fg_model|AI मॉडल
-fg_kind_sr|अपस्केलिंग
-fg_kind_fi|बीच के फ़्रेम
+fg_model|स्मूद वीडियो मॉडल
+fg_kind_sr|केवल अपस्केलिंग
+fg_kind_fi|केवल बीच के फ़्रेम
 fg_builtin|अंतर्निहित
 fg_model_none|कोई नहीं (AI के बिना)
 section_fgmodels|स्मूद वीडियो मॉडल
-fg_models_hint|मॉडल फ़ाइल (.stmodel, .srmodel, .fimodel) डाउनलोड करें और उसे यहाँ जोड़ें। यह आपके अपने ग्राफ़िक्स कार्ड पर चलता है।
-fg_add_model|मॉडल फ़ाइल जोड़ें
-fg_no_models|अभी तक कोई मॉडल नहीं जोड़ा गया।
+fg_models_hint|स्मूद वीडियो हमेशा इस कंप्यूटर के ग्राफ़िक्स कार्ड पर चलता है। StreamRemaster एक्सटेंशन के साथ आता है; दूसरे मॉडल इस कंप्यूटर पर या आपके सर्वर पर रह सकते हैं।
+fg_add_model|इस कंप्यूटर से फ़ाइल चुनें
+fg_no_models|अभी तक कोई मॉडल डाउनलोड नहीं किया गया।
 fg_model_bad|यह फ़ाइल मान्य मॉडल नहीं है।
 tab_subs|उपशीर्षक
 tab_fg|स्मूद वीडियो
@@ -2199,7 +2742,7 @@ status_live|लाइव
 status_stalled|ऑडियो रुक गया
 status_error|त्रुटि
 status_noresponse|कोई जवाब नहीं
-model|मॉडल
+model|ट्रांसक्रिप्शन मॉडल
 model_server_default|सर्वर का डिफ़ॉल्ट
 model_default_tag|{0} · डिफ़ॉल्ट
 manage_models|मॉडल प्रबंधित करें
@@ -2217,7 +2760,7 @@ settings|सेटिंग
 first_load_hint|पहली बार मॉडल लोड होने में एक मिनट तक लग सकता है।
 options_locked|ये विकल्प बदलने के लिए सबटाइटल बंद करें।
 server_setup_title|अपना सर्वर कनेक्ट करें
-server_setup_hint|StreamRemaster को आपके कंप्यूटर या नेटवर्क पर चलता WhisperLive सर्वर चाहिए।
+server_setup_hint|StreamRemaster आपके कंप्यूटर या नेटवर्क के WhisperLive सर्वर से, या इस कंप्यूटर के ग्राफ़िक्स कार्ड से ट्रांसक्राइब करता है।
 server_address|सर्वर का पता
 server_placeholder|जैसे localhost:9090 या 192.168.1.10:9090
 connect|कनेक्ट करें
@@ -2244,8 +2787,6 @@ warn_slow_load|⚠ मॉडल लोड होने में बहुत �
 error_reload|पेज फिर से लोड करें (F5) और दोबारा शुरू करें।
 error_no_server|पहले सर्वर सेट करें।
 settings_title|StreamRemaster · सेटिंग
-section_server|सर्वर
-section_models|मॉडल
 section_subtitles|सबटाइटल
 section_interface|इंटरफ़ेस
 section_about|परिचय
@@ -2329,4 +2870,22 @@ server_update_available|आपके सर्वर पर संस्कर�
 server_version_unknown|आपका सर्वर अपना संस्करण नहीं बताता, यानी वह इस जाँच से पुराना है। अपडेट करने के लिए, जिस कंप्यूटर पर सर्वर चलता है वहाँ यह चलाएँ:
 server_update_latest|आपका सर्वर अप-टू-डेट है ({0})।
 server_update_note|मॉडल Docker वॉल्यूम में रहते हैं और दोबारा डाउनलोड नहीं होते। अगर आपने docker-compose.yml बदला है और git pull त्रुटि देता है, तो पहले git stash और बाद में git stash pop चलाएँ।
+setup_or|या
+use_local|यह कंप्यूटर इस्तेमाल करें
+use_local_hint|Whisper इस कंप्यूटर के ग्राफ़िक्स कार्ड पर चलता है, बिना सर्वर के। मॉडल सेटिंग्स में एक बार डाउनलोड होता है।
+local_footer|यह कंप्यूटर
+local_none|अभी कोई मॉडल नहीं: एक डाउनलोड करें
+local_intro|Whisper ब्राउज़र में आपके ग्राफ़िक्स कार्ड (WebGPU) पर चलता है। हर मॉडल Hugging Face से एक बार डाउनलोड होता है और ब्राउज़र में रहता है। बड़े मॉडल बेहतर लिखते हैं और ज़्यादा ग्राफ़िक्स मेमोरी लेते हैं।
+local_sizes|डाउनलोड {0} · जगह {1} · लगभग {2} ग्राफ़िक्स मेमोरी
+local_progress|डाउनलोड हो रहा है… {0} में से {1}
+local_cancel|रद्द करें
+local_gpu|ग्राफ़िक्स कार्ड: {0}
+badge_downloaded|डाउनलोड हो गया
+error_no_webgpu|यह ब्राउज़र ग्राफ़िक्स कार्ड (WebGPU) इस्तेमाल नहीं कर सकता, इसलिए इस कंप्यूटर पर ट्रांसक्राइब नहीं कर सकता।
+error_local_missing|पहले सेटिंग्स → इस कंप्यूटर पर मॉडल में एक मॉडल डाउनलोड करें।
+error_local_failed|इस कंप्यूटर पर ट्रांसक्रिप्शन एक गड़बड़ी की वजह से रुक गया।
+error_local_vram|⚠ इस कंप्यूटर पर इस मॉडल के लिए पर्याप्त ग्राफ़िक्स मेमोरी नहीं है। छोटा मॉडल चुनें।
+local_download_failed|डाउनलोड नहीं हो पाया ({0})।
+local_confirm_delete|इस कंप्यूटर से {0} मॉडल हटाएँ? इससे {1} खाली होगा।
+local_only_english|इस कंप्यूटर पर सबटाइटल का अनुवाद सिर्फ़ अंग्रेज़ी में हो सकता है।
 """

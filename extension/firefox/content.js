@@ -113,9 +113,9 @@
     observer = new MutationObserver(() => mediaElements().forEach(hook));
     observer.observe(document.documentElement, { childList: true, subtree: true });
 
-    session = new Engine.Session({
-      serverUrl: msg.serverUrl, options: msg.options, translating: msg.translating, emit,
-    });
+    session = msg.localModel
+      ? new Engine.PortSession({ modelId: msg.localModel, options: msg.options, emit })
+      : new Engine.Session({ serverUrl: msg.serverUrl, options: msg.options, translating: msg.translating, emit });
     session.connect();
     lastAudioAt = Date.now();
     watchdog = setInterval(checkAudio, 2000);

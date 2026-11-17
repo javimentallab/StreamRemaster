@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "显卡连续多次停止了转写模型。"
+  },
+  "fg_hq_badge": {
+    "message": "适合高性能显卡"
+  },
+  "where_fg_models": {
+    "message": "模型存放位置"
+  },
+  "fg_local_title": {
+    "message": "这台电脑上的流畅视频模型"
+  },
+  "fg_server_title": {
+    "message": "服务器上的流畅视频模型"
+  },
+  "fg_server_intro": {
+    "message": "服务器只负责保存：选中的模型会从服务器下载，并在这台电脑的显卡上运行。"
+  },
+  "fg_server_none": {
+    "message": "服务器上还没有流畅视频模型。"
+  },
+  "fg_server_old": {
+    "message": "此服务器不保存流畅视频模型：请将其更新到最新版本。"
+  },
+  "fg_add_server_title": {
+    "message": "添加到服务器"
+  },
+  "fg_server_loading": {
+    "message": "正在从服务器下载模型…"
+  },
+  "section_transcription": {
+    "message": "转写模型"
+  },
+  "transcription_intro": {
+    "message": "选择在哪里把语音转成文字：WhisperLive 服务器，或这台电脑的显卡。"
+  },
+  "where_transcribe": {
+    "message": "在哪里转写"
+  },
+  "engine_server": {
+    "message": "在服务器上"
+  },
+  "engine_local": {
+    "message": "在这台电脑上"
+  },
+  "trans_server_title": {
+    "message": "服务器上的转写模型"
+  },
+  "trans_local_title": {
+    "message": "这台电脑上的转写模型"
+  },
+  "badge_in_use": {
+    "message": "使用中"
+  },
+  "fg_downloaded_title": {
+    "message": "已下载"
+  },
+  "fg_add_title": {
+    "message": "添加模型"
+  },
+  "fg_add_url_placeholder": {
+    "message": "模型文件的地址（.stmodel）"
+  },
+  "fg_download_failed": {
+    "message": "无法下载（{0}）。请用浏览器下载该文件，再从这台电脑中选择它。"
+  },
+  "fg_memory": {
+    "message": "显存：1080p 视频约 {0}"
+  },
+  "fg_memory_4k": {
+    "message": "从 1080p 放大到 4K 约 {0}"
+  },
+  "fg_memory_now": {
+    "message": "正在使用的显存：约 {0}"
+  },
+  "fg_file_size": {
+    "message": "文件：{0}"
+  },
+  "fg_options": {
+    "message": "选项"
+  },
   "fg_sharpen": {
     "message": "锐度"
   },
@@ -21,13 +102,13 @@
     "message": "原始（不放大）"
   },
   "fg_model": {
-    "message": "AI 模型"
+    "message": "流畅视频模型"
   },
   "fg_kind_sr": {
-    "message": "放大"
+    "message": "仅放大"
   },
   "fg_kind_fi": {
-    "message": "插帧"
+    "message": "仅插帧"
   },
   "fg_builtin": {
     "message": "内置"
@@ -39,13 +120,13 @@
     "message": "流畅视频模型"
   },
   "fg_models_hint": {
-    "message": "下载模型文件（.stmodel、.srmodel、.fimodel）并在此添加。它在您自己的显卡上运行。"
+    "message": "流畅视频始终在这台电脑的显卡上运行。StreamRemaster 随扩展一起提供；其他模型可以放在这台电脑或你的服务器上。"
   },
   "fg_add_model": {
-    "message": "添加模型文件"
+    "message": "从这台电脑选择文件"
   },
   "fg_no_models": {
-    "message": "尚未添加任何模型。"
+    "message": "还没有下载任何模型。"
   },
   "fg_model_bad": {
     "message": "该文件不是有效的模型。"
@@ -138,7 +219,7 @@
     "message": "无响应"
   },
   "model": {
-    "message": "模型"
+    "message": "转写模型"
   },
   "model_server_default": {
     "message": "服务器默认"
@@ -192,7 +273,7 @@
     "message": "连接你的服务器"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster 需要在你的电脑或网络中运行 WhisperLive 服务器。"
+    "message": "StreamRemaster 可以用你电脑或网络中的 WhisperLive 服务器转写，也可以用这台电脑的显卡转写。"
   },
   "server_address": {
     "message": "服务器地址"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · 设置"
-  },
-  "section_server": {
-    "message": "服务器"
-  },
-  "section_models": {
-    "message": "模型"
   },
   "section_subtitles": {
     "message": "字幕"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "模型保留在 Docker 卷中，不会重新下载。如果你改过 docker-compose.yml 且 git pull 报错，请先执行 git stash，之后再执行 git stash pop。"
+  },
+  "setup_or": {
+    "message": "或"
+  },
+  "use_local": {
+    "message": "使用这台电脑"
+  },
+  "use_local_hint": {
+    "message": "Whisper 在这台电脑的显卡上运行，无需服务器。模型只需在设置中下载一次。"
+  },
+  "local_footer": {
+    "message": "这台电脑"
+  },
+  "local_none": {
+    "message": "还没有模型：请下载一个"
+  },
+  "local_intro": {
+    "message": "Whisper 在浏览器中用你的显卡（WebGPU）运行。每个模型只需从 Hugging Face 下载一次，并保存在浏览器中。越大的模型写得越准，也需要越多显存。"
+  },
+  "local_sizes": {
+    "message": "下载 {0} · 占用 {1} · 约 {2} 显存"
+  },
+  "local_progress": {
+    "message": "正在下载… {0} / {1}"
+  },
+  "local_cancel": {
+    "message": "取消"
+  },
+  "local_gpu": {
+    "message": "显卡：{0}"
+  },
+  "badge_downloaded": {
+    "message": "已下载"
+  },
+  "error_no_webgpu": {
+    "message": "这个浏览器无法使用显卡（WebGPU），因此无法在这台电脑上转写。"
+  },
+  "error_local_missing": {
+    "message": "请先在 设置 → 这台电脑上的模型 中下载一个模型。"
+  },
+  "error_local_failed": {
+    "message": "这台电脑上的转写因出错而停止。"
+  },
+  "error_local_vram": {
+    "message": "⚠ 这台电脑的显存不足以运行这个模型。请选择更小的模型。"
+  },
+  "local_download_failed": {
+    "message": "下载失败（{0}）。"
+  },
+  "local_confirm_delete": {
+    "message": "要从这台电脑删除 {0} 模型吗？将释放 {1}。"
+  },
+  "local_only_english": {
+    "message": "在这台电脑上，字幕只能翻译成英语。"
   }
 }

@@ -185,7 +185,7 @@ function renderModelList(res) {
     actions.className = "actions";
     if (m.id !== selected) {
       const use = button(t("use_model"), "btn ghost sm", async () => {
-        settings = await ST.setSettings({ model: m.id });
+        settings = await ST.setSettings({ model: m.id, engine: "server" });
         renderModelList(info);
       });
       actions.append(use);
@@ -332,7 +332,8 @@ function schedulePoll(active) {
 }
 
 // ------------------------------------------------------------------- smooth video models
-// The user downloads a model file and adds it here. It stays in the browser's own storage.
+// StreamRemaster comes with the extension. Other models are downloaded from an address or chosen
+// from a file; they stay in the browser's own storage. All of them run on this computer's card.
 
 function initFgModels() {
   $("fgAutoStart").checked = !!settings.fgAutoStart;
@@ -352,9 +353,120 @@ function initFgModels() {
   $("fgModelFile").addEventListener("change", async (e) => {
     const file = e.target.files[0];
     e.target.value = "";
-    if (file) await addFgModel(file);
+    if (file) await addFgModel(await file.arrayBuffer().catch(() => null), file.name);
   });
+  $("fgModelDownload").addEventListener("click", downloadFgModel);
+  $("fgModelUrl").addEventListener("keydown", (e) => { if (e.key === "Enter") downloadFgModel(); });
+  $("fgSourceSeg").addEventListener("click", async (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.dataset.v === settings.fgSource) return;
+    settings = await ST.setSettings({ fgSource: b.dataset.v });
+    renderFgModels();
+  });
+  $("fgServerDownload").addEventListener("click", downloadServerFgModel);
+  $("fgServerSource").addEventListener("keydown", (e) => { if (e.key === "Enter") downloadServerFgModel(); });
   renderFgModels();
+  renderServerFgModels();
+}
+
+// ------------------------------------------------- smooth video models kept on the server
+// The server only keeps the files; the chosen one comes down and runs on this computer's card.
+
+let serverFgInfo = null;
+
+function fgServerErrorText(res) {
+  switch (res.error) {
+    case "unknown_action": case "unsupported": return t("fg_server_old");
+    case "not_video_model": case "too_big": return t("fg_model_bad");
+    case "invalid_source": return t("server_bad_url");
+    case "timeout": return t("server_timeout");
+    case "unreachable": return t("server_unreachable");
+    default: return errText(res.error, res.detail);
+  }
+}
+
+async function renderServerFgModels() {
+  const list = $("fgServerList");
+  list.textContent = "";
+  $("fgServerAdd").hidden = true;
+  if (!settings.serverUrl) {
+    setMsg($("fgServerMsg"), t("error_no_server"), "warn");
+    return;
+  }
+  setMsg($("fgServerMsg"), t("server_checking"));
+  const res = await ST.serverRequest(settings.serverUrl, { st_action: "list_video_models" }, 20000);
+  serverFgInfo = res;
+  if (!res.ok) {
+    setMsg($("fgServerMsg"), fgServerErrorText(res), "warn");
+    return;
+  }
+  setMsg($("fgServerMsg"), res.models.length ? "" : t("fg_server_none"));
+  $("fgServerAdd").hidden = !res.management;
+  for (const model of res.models) {
+    const id = ST.SERVER_FG_PREFIX + model.id;
+    const selected = settings.fgSource === "server" && settings.fgModel === id;
+    const item = document.createElement("li");
+    item.className = "model" + (selected ? " selected" : "");
+    const details = document.createElement("div");
+    details.className = "info";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = model.name;
+    name.title = model.id;
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.append(document.createTextNode(t("fg_file_size", ST.formatBytes(model.size))));
+    if (FG_PARTIAL[model.kind]) meta.append(badge(t(FG_PARTIAL[model.kind]), ""));
+    if (selected) meta.append(badge(t("badge_selected"), "accent"));
+    details.append(name, meta);
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    if (!selected) {
+      actions.append(button(t("use_model"), "btn ghost sm", async (e) => {
+        e.target.disabled = true;
+        setMsg($("fgServerMsg"), t("fg_server_loading"));
+        const taken = await ST.takeServerFgModel(settings.serverUrl, model.id);
+        if (!taken.ok) {
+          e.target.disabled = false;
+          setMsg($("fgServerMsg"), fgServerErrorText(taken), "bad");
+          return;
+        }
+        settings = await ST.setSettings({ fgSource: "server", fgModel: taken.id });
+        setMsg($("fgServerMsg"), "");
+        renderFgModels();
+      }));
+    }
+    if (res.management) {
+      actions.append(button(t("delete_model"), "btn danger sm", async () => {
+        if (!confirm(t("confirm_delete", model.name, ST.formatBytes(model.size)))) return;
+        const done = await ST.serverRequest(settings.serverUrl, { st_action: "delete_video_model", id: model.id }, 20000);
+        if (!done.ok) {
+          setMsg($("fgServerMsg"), fgServerErrorText(done), "bad");
+          return;
+        }
+        if (settings.fgModel === id) settings = await ST.setSettings({ fgModel: "" });
+        renderServerFgModels();
+      }));
+    }
+    item.append(details, actions);
+    list.append(item);
+  }
+}
+
+async function downloadServerFgModel() {
+  const source = $("fgServerSource").value.trim();
+  if (!source) return;
+  $("fgServerDownload").disabled = true;
+  setMsg($("fgServerAddMsg"), t("server_checking"));
+  const res = await ST.serverRequest(settings.serverUrl, { st_action: "download_video_model", source }, 60000);
+  $("fgServerDownload").disabled = false;
+  if (!res.ok) {
+    setMsg($("fgServerAddMsg"), fgServerErrorText(res), "bad");
+    return;
+  }
+  setMsg($("fgServerAddMsg"), "");
+  $("fgServerSource").value = "";
+  renderServerFgModels();
 }
 
 async function renderFgAutoHint() {
@@ -366,65 +478,128 @@ async function storedFgModels() {
   return fgModels || {};
 }
 
-// One choice for every kind of model file. Models added before there were kinds are upscalers.
-const fgKind = (model) => model.kind || "sr";
-const FG_KIND_BADGES = { sr: ["fg_kind_sr"], fi: ["fg_kind_fi"], st: ["fg_kind_sr", "fg_kind_fi"] };
+// A model file can carry the upscaler, the in-between frames network or both; only a partial one says so.
+const FG_PARTIAL = { sr: "fg_kind_sr", fi: "fg_kind_fi" };
 
-async function addFgModel(file) {
-  let model;
-  let buffer;
-  let kind;
+async function downloadFgModel() {
+  const raw = $("fgModelUrl").value.trim();
+  if (!raw) return;
+  let url;
   try {
-    if (file.size > STFramegenModel.MAX_MODEL_BYTES) throw new Error("too big");
-    buffer = await file.arrayBuffer();
-    model = STFramegenModel.parse(buffer);
-    kind = model.kind;
-  } catch (error) {
-    setMsg($("fgModelMsg"), t("fg_model_bad"), "bad");
+    url = new URL(raw);
+    if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("scheme");
+  } catch (e) {
+    setMsg($("fgModelMsg"), t("fg_download_failed", t("server_bad_url")), "bad");
     return;
   }
-  const id = `${kind}-${model.name}-${file.size}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  $("fgModelDownload").disabled = true;
+  setMsg($("fgModelMsg"), t("server_checking"));
+  try {
+    const response = await fetch(url.href, { credentials: "omit" });
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const length = Number(response.headers.get("content-length")) || 0;
+    if (length > STFramegenModel.MAX_MODEL_BYTES) throw new Error("too big");
+    const buffer = await response.arrayBuffer();
+    if (await addFgModel(buffer, url.pathname.split("/").pop())) $("fgModelUrl").value = "";
+  } catch (e) {
+    setMsg($("fgModelMsg"), t("fg_download_failed", (e && e.message) || String(e)), "bad");
+  } finally {
+    $("fgModelDownload").disabled = false;
+  }
+}
+
+// true when the model was added (and chosen).
+async function addFgModel(buffer, fileName) {
+  let model;
+  try {
+    if (!buffer || buffer.byteLength > STFramegenModel.MAX_MODEL_BYTES) throw new Error("size");
+    model = STFramegenModel.parse(buffer);
+  } catch (error) {
+    setMsg($("fgModelMsg"), t("fg_model_bad"), "bad");
+    return false;
+  }
+  const kind = model.kind;
+  const id = `${kind}-${model.name}-${buffer.byteLength}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const models = await storedFgModels();
-  models[id] = { id, kind, name: model.name, size: file.size, data: ST.bufferToBase64(buffer) };
+  const data = ST.bufferToBase64(buffer);
+  // the same file as one that comes with the extension: that one is chosen, nothing is added
+  const same = Object.values(models).find((entry) => entry.builtin && entry.data === data);
+  if (same) {
+    settings = await ST.setSettings({ fgModel: same.id, fgSource: "local" });
+    setMsg($("fgModelMsg"), "");
+    renderFgModels();
+    return true;
+  }
+  models[id] = { id, kind, name: model.name, size: buffer.byteLength, file: fileName || "", data };
   await ext.storage.local.set({ fgModels: models });
-  settings = await ST.setSettings({ fgModel: id });
+  settings = await ST.setSettings({ fgModel: id, fgSource: "local" });
   setMsg($("fgModelMsg"), "");
   renderFgModels();
+  return true;
+}
+
+// The graphics memory line: a 1080p video shown as it is and, with an upscaler, taken to 4K.
+function fgMemoryText(entry) {
+  let model;
+  try {
+    model = STFramegenModel.parse(ST.base64ToBuffer(entry.data));
+  } catch (e) {
+    return "";
+  }
+  const at = (resolution) => STFramegen.memoryBytes(STFramegen.planSizes(1920, 1080,
+    { resolution, model: model.sr, interpolator: model.fi }, 2160));
+  const parts = [t("fg_memory", ST.formatBytes(at("original")))];
+  if (model.sr) parts.push(t("fg_memory_4k", ST.formatBytes(at("2160"))));
+  return parts.join(" · ");
+}
+
+function fgModelItem(model) {
+  const item = document.createElement("li");
+  const selected = model.id === settings.fgModel && settings.fgSource !== "server";
+  item.className = "model" + (selected ? " selected" : "");
+  const details = document.createElement("div");
+  details.className = "info";
+  const name = document.createElement("div");
+  name.className = "name";
+  name.textContent = model.name;
+  if (model.file) name.title = model.file;
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.append(document.createTextNode(t("fg_file_size", ST.formatBytes(model.size))));
+  if (FG_PARTIAL[model.kind || "sr"]) meta.append(badge(t(FG_PARTIAL[model.kind || "sr"]), ""));
+  if (model.hq) meta.append(badge(t("fg_hq_badge"), ""));
+  if (selected) meta.append(badge(t("badge_selected"), "accent"));
+  const memory = document.createElement("div");
+  memory.className = "meta memory";
+  memory.textContent = fgMemoryText(model);
+  details.append(name, meta, memory);
+  const actions = document.createElement("div");
+  actions.className = "actions";
+  if (!selected) {
+    actions.append(button(t("use_model"), "btn ghost sm", async () => {
+      settings = await ST.setSettings({ fgModel: model.id, fgSource: "local" });
+      renderFgModels();
+    }));
+  }
+  if (!model.builtin) actions.append(button(t("delete_model"), "btn danger sm", () => deleteFgModel(model)));
+  item.append(details, actions);
+  return item;
 }
 
 async function renderFgModels() {
+  const server = settings.fgSource === "server";
+  $("fgSourceSeg").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.v === settings.fgSource));
+  $("fgLocalInUse").hidden = server;
+  $("fgServerInUse").hidden = !server;
+  if (serverFgInfo) renderServerFgModels();
   const models = Object.values(await storedFgModels());
-  const list = $("fgModelList");
-  list.textContent = "";
-  $("fgNoModels").hidden = models.length > 0;
-  models.forEach((model) => {
-    const item = document.createElement("li");
-    const selected = model.id === settings.fgModel;
-    item.className = "model" + (selected ? " selected" : "");
-    const details = document.createElement("div");
-    details.className = "info";
-    const name = document.createElement("div");
-    name.className = "name";
-    name.textContent = model.name;
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    meta.append(document.createTextNode(ST.formatBytes(model.size)));
-    for (const key of FG_KIND_BADGES[fgKind(model)] || []) meta.append(badge(t(key), ""));
-    if (model.builtin) meta.append(badge(t("fg_builtin"), ""));
-    if (selected) meta.append(badge(t("badge_selected"), "accent"));
-    details.append(name, meta);
-    const actions = document.createElement("div");
-    actions.className = "actions";
-    if (!selected) {
-      actions.append(button(t("use_model"), "btn ghost sm", async () => {
-        settings = await ST.setSettings({ fgModel: model.id });
-        renderFgModels();
-      }));
-    }
-    if (!model.builtin) actions.append(button(t("delete_model"), "btn danger sm", () => deleteFgModel(model)));
-    item.append(details, actions);
-    list.append(item);
-  });
+  const builtin = models.filter((model) => model.builtin);
+  const own = models.filter((model) => !model.builtin && !model.server);
+  $("fgBuiltinList").textContent = "";
+  builtin.forEach((model) => $("fgBuiltinList").append(fgModelItem(model)));
+  $("fgModelList").textContent = "";
+  own.forEach((model) => $("fgModelList").append(fgModelItem(model)));
+  $("fgNoModels").hidden = own.length > 0;
 }
 
 async function deleteFgModel(model) {
@@ -433,7 +608,8 @@ async function deleteFgModel(model) {
   const models = await storedFgModels();
   delete models[model.id];
   await ext.storage.local.set({ fgModels: models });
-  if (settings.fgModel === model.id) settings = await ST.setSettings({ fgModel: "" });
+  // back to the one that comes with the extension
+  if (settings.fgModel === model.id) settings = await ST.setSettings({ fgModel: ST.DEFAULTS.fgModel });
   renderFgModels();
 }
 

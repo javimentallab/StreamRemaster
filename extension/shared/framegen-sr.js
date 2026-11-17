@@ -10,7 +10,7 @@
 // detail found in earlier frames carries on; without motion it gets the current frame enlarged.
 "use strict";
 
-(function (root) {
+(globalThis.STFramegenSRInstall = function (root) {
   const MAGIC = 0x314d5253; // "SRM1"
   const HIDDEN = 4;
   const INPUT_CHANNELS = 2 * 3 * 4 + HIDDEN; // current and previous frame unpacked, plus the state
@@ -367,5 +367,11 @@ ${body}}`;
     }
   }
 
-  root.STFramegenSR = { parseModel, buildShaders, weightCount, Upscaler, MAX_MODEL_BYTES, convolution, depthwise, literal };
+  // The graphics memory the Upscaler's buffers take for captured frames of width x height.
+  function memoryBytes(model, width, height) {
+    const cells = (width / 2) * (height / 2);
+    return 4 * cells * (inputsOf(!!model.aligned) + 3 * model.channels + OUTPUT_CHANNELS);
+  }
+
+  root.STFramegenSR = { parseModel, buildShaders, weightCount, memoryBytes, Upscaler, MAX_MODEL_BYTES, convolution, depthwise, literal };
 })(globalThis);

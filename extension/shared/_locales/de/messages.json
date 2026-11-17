@@ -1,4 +1,85 @@
 {
+  "error_local_lost": {
+    "message": "Die Grafikkarte hat das Transkriptionsmodell mehrmals hintereinander gestoppt."
+  },
+  "fg_hq_badge": {
+    "message": "Für leistungsstarke Grafikkarten"
+  },
+  "where_fg_models": {
+    "message": "Wo die Modelle liegen"
+  },
+  "fg_local_title": {
+    "message": "Modelle für flüssiges Video auf diesem Computer"
+  },
+  "fg_server_title": {
+    "message": "Modelle für flüssiges Video auf dem Server"
+  },
+  "fg_server_intro": {
+    "message": "Der Server bewahrt sie nur auf: Das gewählte Modell wird von ihm geladen und läuft auf der Grafikkarte dieses Computers."
+  },
+  "fg_server_none": {
+    "message": "Der Server hat noch keine Modelle für flüssiges Video."
+  },
+  "fg_server_old": {
+    "message": "Dieser Server bewahrt keine Modelle für flüssiges Video auf: Aktualisiere ihn auf die neueste Version."
+  },
+  "fg_add_server_title": {
+    "message": "Zum Server hinzufügen"
+  },
+  "fg_server_loading": {
+    "message": "Modell wird vom Server geladen…"
+  },
+  "section_transcription": {
+    "message": "Transkriptionsmodelle"
+  },
+  "transcription_intro": {
+    "message": "Wähle, wo die Sprache zu Text wird: auf einem WhisperLive-Server oder auf der Grafikkarte dieses Computers."
+  },
+  "where_transcribe": {
+    "message": "Wo transkribieren"
+  },
+  "engine_server": {
+    "message": "Auf dem Server"
+  },
+  "engine_local": {
+    "message": "Auf diesem Computer"
+  },
+  "trans_server_title": {
+    "message": "Transkriptionsmodelle auf dem Server"
+  },
+  "trans_local_title": {
+    "message": "Transkriptionsmodelle auf diesem Computer"
+  },
+  "badge_in_use": {
+    "message": "Aktiv"
+  },
+  "fg_downloaded_title": {
+    "message": "Heruntergeladen"
+  },
+  "fg_add_title": {
+    "message": "Modell hinzufügen"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Adresse einer Modelldatei (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "Der Download ist fehlgeschlagen ({0}). Lade die Datei mit dem Browser herunter und wähle sie auf diesem Computer aus."
+  },
+  "fg_memory": {
+    "message": "Grafikspeicher: etwa {0} bei einem 1080p-Video"
+  },
+  "fg_memory_4k": {
+    "message": "etwa {0} beim Hochskalieren von 1080p auf 4K"
+  },
+  "fg_memory_now": {
+    "message": "Belegter Grafikspeicher: etwa {0}"
+  },
+  "fg_file_size": {
+    "message": "Datei: {0}"
+  },
+  "fg_options": {
+    "message": "Optionen"
+  },
   "fg_sharpen": {
     "message": "Schärfe"
   },
@@ -21,13 +102,13 @@
     "message": "Original (ohne Hochskalierung)"
   },
   "fg_model": {
-    "message": "KI-Modell"
+    "message": "Modell für flüssiges Video"
   },
   "fg_kind_sr": {
-    "message": "Hochskalierung"
+    "message": "Nur Hochskalierung"
   },
   "fg_kind_fi": {
-    "message": "Zwischenbilder"
+    "message": "Nur Zwischenbilder"
   },
   "fg_builtin": {
     "message": "Integriert"
@@ -39,13 +120,13 @@
     "message": "Modelle für flüssiges Video"
   },
   "fg_models_hint": {
-    "message": "Lade eine Modelldatei (.stmodel, .srmodel, .fimodel) herunter und füge sie hier hinzu. Sie läuft auf deiner eigenen Grafikkarte."
+    "message": "Flüssiges Video läuft immer auf der Grafikkarte dieses Computers. StreamRemaster ist in der Erweiterung enthalten; weitere Modelle können auf diesem Computer oder auf deinem Server liegen."
   },
   "fg_add_model": {
-    "message": "Modelldatei hinzufügen"
+    "message": "Datei auf diesem Computer wählen"
   },
   "fg_no_models": {
-    "message": "Noch keine Modelle hinzugefügt."
+    "message": "Noch keine heruntergeladenen Modelle."
   },
   "fg_model_bad": {
     "message": "Diese Datei ist kein gültiges Modell."
@@ -138,7 +219,7 @@
     "message": "Keine Antwort"
   },
   "model": {
-    "message": "Modell"
+    "message": "Transkriptionsmodell"
   },
   "model_server_default": {
     "message": "Das des Servers"
@@ -192,7 +273,7 @@
     "message": "Verbinde deinen Server"
   },
   "server_setup_hint": {
-    "message": "StreamRemaster braucht einen WhisperLive-Server auf deinem Computer oder in deinem Netzwerk."
+    "message": "StreamRemaster transkribiert mit einem WhisperLive-Server auf deinem Computer oder in deinem Netzwerk oder mit der Grafikkarte dieses Computers."
   },
   "server_address": {
     "message": "Serveradresse"
@@ -271,12 +352,6 @@
   },
   "settings_title": {
     "message": "StreamRemaster · Einstellungen"
-  },
-  "section_server": {
-    "message": "Server"
-  },
-  "section_models": {
-    "message": "Modelle"
   },
   "section_subtitles": {
     "message": "Untertitel"
@@ -526,5 +601,59 @@
   },
   "server_update_note": {
     "message": "Die Modelle bleiben im Docker-Volume und werden nicht erneut heruntergeladen. Wenn Sie docker-compose.yml geändert haben und git pull sich beschwert, führen Sie vorher git stash und danach git stash pop aus."
+  },
+  "setup_or": {
+    "message": "oder"
+  },
+  "use_local": {
+    "message": "Diesen Computer verwenden"
+  },
+  "use_local_hint": {
+    "message": "Whisper läuft auf der Grafikkarte dieses Computers, ohne Server. Das Modell wird einmal in den Einstellungen heruntergeladen."
+  },
+  "local_footer": {
+    "message": "Dieser Computer"
+  },
+  "local_none": {
+    "message": "Noch kein Modell: lade eines herunter"
+  },
+  "local_intro": {
+    "message": "Whisper läuft im Browser auf deiner Grafikkarte (WebGPU). Jedes Modell wird einmal von Hugging Face geladen und bleibt im Browser. Die größeren schreiben besser und brauchen mehr Grafikspeicher."
+  },
+  "local_sizes": {
+    "message": "Download {0} · belegt {1} · etwa {2} Grafikspeicher"
+  },
+  "local_progress": {
+    "message": "Wird heruntergeladen… {0} von {1}"
+  },
+  "local_cancel": {
+    "message": "Abbrechen"
+  },
+  "local_gpu": {
+    "message": "Grafikkarte: {0}"
+  },
+  "badge_downloaded": {
+    "message": "Heruntergeladen"
+  },
+  "error_no_webgpu": {
+    "message": "Dieser Browser kann die Grafikkarte (WebGPU) nicht nutzen und daher nicht auf diesem Computer transkribieren."
+  },
+  "error_local_missing": {
+    "message": "Lade zuerst ein Modell herunter, unter Einstellungen → Modelle auf diesem Computer."
+  },
+  "error_local_failed": {
+    "message": "Die Transkription auf diesem Computer wurde wegen eines Fehlers beendet."
+  },
+  "error_local_vram": {
+    "message": "⚠ Nicht genug Grafikspeicher auf diesem Computer für dieses Modell. Wähle ein kleineres."
+  },
+  "local_download_failed": {
+    "message": "Der Download ist fehlgeschlagen ({0})."
+  },
+  "local_confirm_delete": {
+    "message": "Modell {0} von diesem Computer löschen? Das gibt {1} frei."
+  },
+  "local_only_english": {
+    "message": "Auf diesem Computer lassen sich die Untertitel nur ins Englische übersetzen."
   }
 }

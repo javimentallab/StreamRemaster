@@ -16,8 +16,7 @@
 
   <main class="wrap">
     <nav class="toc">
-      <a href="#server" data-i18n="section_server"></a>
-      <a href="#models" data-i18n="section_models"></a>
+      <a href="#transcription" data-i18n="section_transcription"></a>
       <a href="#fgmodels" data-i18n="section_fgmodels"></a>
       <a href="#subtitles" data-i18n="section_subtitles"></a>
       <a href="#performance" data-i18n="section_performance"></a>
@@ -25,86 +24,141 @@
       <a href="#about" data-i18n="section_about"></a>
     </nav>
 
-    <!-- Server -->
-    <section class="panel" id="server">
-      <h2 data-i18n="section_server"></h2>
-      <label class="field">
-        <span data-i18n="server_address"></span>
-        <div class="row">
-          <input type="text" id="serverUrl" spellcheck="false" autocomplete="off" data-i18n-placeholder="server_placeholder">
-          <button class="btn" id="serverSave" data-i18n="connect"></button>
-        </div>
-      </label>
-      <p class="msg" id="serverMsg" role="status"></p>
-      <details class="help">
-        <summary data-i18n="server_help"></summary>
-        <div class="help-body">
-          <p data-i18n="server_help_1"></p>
-          <p data-i18n="server_help_2"></p>
-          <p data-i18n="server_help_3"></p>
-          <p><a class="link" href="https://github.com/javimentallab/stream-transcription#server" target="_blank" rel="noopener" data-i18n="server_help_guide"></a></p>
-        </div>
-      </details>
-    </section>
-
-    <!-- Models -->
-    <section class="panel" id="models">
-      <h2 data-i18n="section_models"></h2>
-
-      <div id="modelsManaged">
-        <h3 data-i18n="installed_models"></h3>
-        <ul class="models" id="modelList"></ul>
-        <p class="muted" id="noModels" data-i18n="no_models" hidden></p>
-        <p class="hint" data-i18n="vram_hint"></p>
-
-        <div id="addBlock">
-          <h3 data-i18n="add_model"></h3>
-          <p class="muted" data-i18n="add_model_hint"></p>
-          <div class="row">
-            <input type="text" id="addSource" spellcheck="false" autocomplete="off" data-i18n-placeholder="add_model_placeholder">
-            <button class="btn" id="addBtn" data-i18n="download"></button>
-          </div>
-          <p class="msg" id="addMsg" role="status"></p>
-          <div class="chips">
-            <span class="hint" data-i18n="suggestions"></span>
-            <span id="suggestions"></span>
-            <a class="link small" href="https://huggingface.co/models?other=whisper&sort=downloads" target="_blank" rel="noopener" data-i18n="browse_hf"></a>
-          </div>
-          <ul class="jobs" id="jobList"></ul>
-          <p class="hint" id="keepOpen" data-i18n="keep_open" hidden></p>
+    <!-- Transcription models: on a server or on this computer -->
+    <section class="panel" id="transcription">
+      <h2 data-i18n="section_transcription"></h2>
+      <p class="muted" data-i18n="transcription_intro"></p>
+      <div class="field narrow">
+        <span data-i18n="where_transcribe"></span>
+        <div class="seg" id="engineSeg" role="radiogroup">
+          <button data-v="server" data-i18n="engine_server"></button><button data-v="local" data-i18n="engine_local"></button>
         </div>
       </div>
 
-      <div id="modelsPlain" hidden>
-        <p class="muted" data-i18n="plain_server_hint"></p>
-        <label class="field narrow">
-          <span data-i18n="model_name"></span>
+      <div class="sub" id="server">
+        <h3><span data-i18n="trans_server_title"></span> <span class="badge accent" id="serverInUse" data-i18n="badge_in_use" hidden></span></h3>
+        <label class="field">
+          <span data-i18n="server_address"></span>
           <div class="row">
-            <input type="text" id="plainModel" list="stockModels" spellcheck="false">
-            <button class="btn" id="plainSave" data-i18n="save"></button>
+            <input type="text" id="serverUrl" spellcheck="false" autocomplete="off" data-i18n-placeholder="server_placeholder">
+            <button class="btn" id="serverSave" data-i18n="connect"></button>
           </div>
         </label>
-        <datalist id="stockModels"></datalist>
+        <p class="msg" id="serverMsg" role="status"></p>
+        <details class="help">
+          <summary data-i18n="server_help"></summary>
+          <div class="help-body">
+            <p data-i18n="server_help_1"></p>
+            <p data-i18n="server_help_2"></p>
+            <p data-i18n="server_help_3"></p>
+            <p><a class="link" href="https://github.com/javimentallab/stream-transcription#server" target="_blank" rel="noopener" data-i18n="server_help_guide"></a></p>
+          </div>
+        </details>
+
+        <div id="models">
+          <div id="modelsManaged">
+            <h4 data-i18n="installed_models"></h4>
+            <ul class="models" id="modelList"></ul>
+            <p class="muted" id="noModels" data-i18n="no_models" hidden></p>
+            <p class="hint" data-i18n="vram_hint"></p>
+
+            <div id="addBlock">
+              <h4 data-i18n="add_model"></h4>
+              <p class="muted" data-i18n="add_model_hint"></p>
+              <div class="row">
+                <input type="text" id="addSource" spellcheck="false" autocomplete="off" data-i18n-placeholder="add_model_placeholder">
+                <button class="btn" id="addBtn" data-i18n="download"></button>
+              </div>
+              <p class="msg" id="addMsg" role="status"></p>
+              <div class="chips">
+                <span class="hint" data-i18n="suggestions"></span>
+                <span id="suggestions"></span>
+                <a class="link small" href="https://huggingface.co/models?other=whisper&sort=downloads" target="_blank" rel="noopener" data-i18n="browse_hf"></a>
+              </div>
+              <ul class="jobs" id="jobList"></ul>
+              <p class="hint" id="keepOpen" data-i18n="keep_open" hidden></p>
+            </div>
+          </div>
+
+          <div id="modelsPlain" hidden>
+            <p class="muted" data-i18n="plain_server_hint"></p>
+            <label class="field narrow">
+              <span data-i18n="model_name"></span>
+              <div class="row">
+                <input type="text" id="plainModel" list="stockModels" spellcheck="false">
+                <button class="btn" id="plainSave" data-i18n="save"></button>
+              </div>
+            </label>
+            <datalist id="stockModels"></datalist>
+          </div>
+
+          <p class="msg" id="modelsMsg" role="status"></p>
+        </div>
       </div>
 
-      <p class="msg" id="modelsMsg" role="status"></p>
+      <div class="sub" id="local">
+        <h3><span data-i18n="trans_local_title"></span> <span class="badge accent" id="localInUse" data-i18n="badge_in_use" hidden></span></h3>
+        <p class="muted" data-i18n="local_intro"></p>
+        <p class="msg" id="localGpu" role="status"></p>
+        <ul class="models" id="localList"></ul>
+        <p class="hint" id="localKeepOpen" data-i18n="keep_open" hidden></p>
+        <p class="msg" id="localMsg" role="status"></p>
+      </div>
     </section>
 
-    <!-- Smooth video models -->
+    <!-- Smooth video models: always on this computer's graphics card -->
     <section class="panel" id="fgmodels">
       <h2 data-i18n="section_fgmodels"></h2>
-      <div class="field">
-        <label class="check"><input type="checkbox" id="fgAutoStart"><span data-i18n="fg_auto_start"></span></label>
-        <p class="hint" id="fgAutoHint" hidden><span data-i18n="auto_start_hint"></span> <a class="link small" id="fgAllowAll" href="#" data-i18n="fg_allow_all_sites"></a></p>
-      </div>
       <p class="muted" data-i18n="fg_models_hint"></p>
-      <ul class="models" id="fgModelList"></ul>
-      <p class="muted" id="fgNoModels" data-i18n="fg_no_models" hidden></p>
-      <div class="row">
-        <input type="file" id="fgModelFile" accept=".stmodel,.srmodel,.fimodel" hidden>
-        <button class="btn" id="fgModelAdd" data-i18n="fg_add_model"></button>
+      <p class="msg" id="fgGpu" role="status"></p>
+      <div class="field narrow">
+        <span data-i18n="where_fg_models"></span>
+        <div class="seg" id="fgSourceSeg" role="radiogroup">
+          <button data-v="local" data-i18n="engine_local"></button><button data-v="server" data-i18n="engine_server"></button>
+        </div>
       </div>
-      <p class="msg" id="fgModelMsg" role="status"></p>
+
+      <div class="sub" id="fglocal">
+        <h3><span data-i18n="fg_local_title"></span> <span class="badge accent" id="fgLocalInUse" data-i18n="badge_in_use" hidden></span></h3>
+        <h4 data-i18n="fg_builtin"></h4>
+        <ul class="models" id="fgBuiltinList"></ul>
+        <h4 data-i18n="fg_downloaded_title"></h4>
+        <ul class="models" id="fgModelList"></ul>
+        <p class="muted" id="fgNoModels" data-i18n="fg_no_models" hidden></p>
+        <h4 data-i18n="fg_add_title"></h4>
+        <div class="row">
+          <input type="text" id="fgModelUrl" spellcheck="false" autocomplete="off" data-i18n-placeholder="fg_add_url_placeholder">
+          <button class="btn" id="fgModelDownload" data-i18n="download"></button>
+        </div>
+        <div class="row">
+          <input type="file" id="fgModelFile" accept=".stmodel,.srmodel,.fimodel" hidden>
+          <button class="btn ghost" id="fgModelAdd" data-i18n="fg_add_model"></button>
+        </div>
+        <p class="msg" id="fgModelMsg" role="status"></p>
+      </div>
+
+      <div class="sub" id="fgserver">
+        <h3><span data-i18n="fg_server_title"></span> <span class="badge accent" id="fgServerInUse" data-i18n="badge_in_use" hidden></span></h3>
+        <p class="muted" data-i18n="fg_server_intro"></p>
+        <ul class="models" id="fgServerList"></ul>
+        <p class="msg" id="fgServerMsg" role="status"></p>
+        <div id="fgServerAdd" hidden>
+          <h4 data-i18n="fg_add_server_title"></h4>
+          <div class="row">
+            <input type="text" id="fgServerSource" spellcheck="false" autocomplete="off" data-i18n-placeholder="fg_add_url_placeholder">
+            <button class="btn" id="fgServerDownload" data-i18n="download"></button>
+          </div>
+          <p class="msg" id="fgServerAddMsg" role="status"></p>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3 data-i18n="fg_options"></h3>
+        <div class="field">
+          <label class="check"><input type="checkbox" id="fgAutoStart"><span data-i18n="fg_auto_start"></span></label>
+          <p class="hint" id="fgAutoHint" hidden><span data-i18n="auto_start_hint"></span> <a class="link small" id="fgAllowAll" href="#" data-i18n="fg_allow_all_sites"></a></p>
+        </div>
+      </div>
     </section>
 
     <!-- Subtitles -->
@@ -209,9 +263,12 @@
 
   <script src="common.js"></script>
   <script src="i18n.js"></script>
+  <script src="framegen.js"></script>
   <script src="framegen-sr.js"></script>
   <script src="framegen-fi.js"></script>
   <script src="framegen-model.js"></script>
   <script src="settings.js"></script>
+  <script src="whisper-store.js"></script>
+  <script src="settings-local.js"></script>
 </body>
 </html>
