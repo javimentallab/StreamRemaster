@@ -298,6 +298,8 @@
     // The extension was reloaded or removed: this copy can no longer be reached from the popup,
     // so it takes its canvas away instead of staying over the video for good.
     if (!ext.runtime || !ext.runtime.id) { stop(); return; }
+    // A newer copy took this one's canvas away (see clearLeftovers): this one is the old copy.
+    if (!state.canvas.isConnected) { stop(); return; }
     if (video.videoWidth && (video.videoWidth !== state.sourceWidth || video.videoHeight !== state.sourceHeight)) {
       if (state.worker) {
         state.plan = planSizes(video, state.options);
@@ -350,14 +352,32 @@
 
   function makeCanvas(video) {
     const canvas = document.createElement("canvas");
+    canvas.dataset.streamRemaster = "";
     canvas.style.cssText = "position:absolute;pointer-events:none;margin:0;padding:0;border:0;visibility:hidden;";
     video.insertAdjacentElement("afterend", canvas);
     return canvas;
   }
 
   // options.mainThread: skip the worker (the test bench uses it to compare both paths).
+  // A copy of this script from before the extension was reloaded can leave its canvas and its meter
+  // over the video for good (Firefox does not always let the old copy run again to take them away):
+  // the new copy clears whatever is not its own. Canvases made before they were marked are known by
+  // their place right after a video and their style.
+  function clearLeftovers() {
+    const own = run ? [run.canvas, run.meter.host] : [];
+    const found = [...document.querySelectorAll("canvas[data-stream-remaster], stream-remaster-fps")];
+    for (const video of document.querySelectorAll("video")) {
+      const next = video.nextElementSibling;
+      if (next && next.tagName === "CANVAS" && !next.id && !next.className
+          && next.style.pointerEvents === "none" && next.style.position === "absolute") found.push(next);
+    }
+    for (const element of found) if (!own.includes(element)) element.remove();
+  }
+  clearLeftovers();
+
   async function start(targetFps, options = {}) {
     stop();
+    clearLeftovers();
     lastError = null;
     lastDetail = null;
     target = Number(targetFps) || 0;
