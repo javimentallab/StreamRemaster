@@ -12,6 +12,8 @@
   if (globalThis.STFramegenPage) return;
 
   const LAYOUT_EVERY_TICKS = 8;
+  // How often the page is looked at again for parts to put away (see QUIET): about twice a second.
+  const QUIET_EVERY_TICKS = 64;
   // With nothing painted for this long (paused, seeking, buffering) the real video shows through.
   const HIDE_AFTER_MS = 200;
   const METER_EVERY_MS = 250;
@@ -149,7 +151,7 @@
     state.plan = planSizes(video, state.options);
     state.sourceWidth = video.videoWidth;
     state.sourceHeight = video.videoHeight;
-    state.canvas.style.visibility = "hidden";
+    showCanvas(state, false);
     state.gen = new globalThis.STFramegen.FrameGenerator({
       device: state.device, video, canvas: state.canvas, ...state.plan, carry,
       onCapture: (texture, index) => { if (api.onCapture) api.onCapture(texture, index); },
@@ -238,11 +240,9 @@
       state.remote = message;
       // The worker shows its canvas but has painted nothing for a while: take the canvas away so the
       // video itself shows, never a frozen picture over it. The worker shows it again when it paints.
-      if (message.sincePaintMs > STALE_PAINT_MS && state.canvas.style.visibility !== "hidden") {
-        state.canvas.style.visibility = "hidden";
-      }
+      if (message.sincePaintMs > STALE_PAINT_MS) showCanvas(state, false);
     }
-    else if (message.type === "visible") state.canvas.style.visibility = message.visible ? "visible" : "hidden";
+    else if (message.type === "visible") showCanvas(state, !!message.visible);
     else if (message.type === "ended") restart(state); // the video changed source: a new track
     else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
   }
@@ -358,6 +358,7 @@
       state.layoutKey = "";
     }
     if (state.ticks % LAYOUT_EVERY_TICKS === 1) checkShownSize(state, now);
+    if (state.shown && state.ticks % QUIET_EVERY_TICKS === 2) quiet(state, true);
     if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
 
     if (state.lastTick) {
@@ -371,10 +372,10 @@
     if (!state.worker) {
       if (state.gen.tick(now)) {
         state.lastPaint = now;
-        state.canvas.style.visibility = "visible";
+        showCanvas(state, true);
         state.paints.push(now);
       } else if (now - state.lastPaint > HIDE_AFTER_MS) {
-        state.canvas.style.visibility = "hidden";
+        showCanvas(state, false);
       }
       while (state.paints.length && state.paints[0] <= now - 1000) state.paints.shift();
     }
@@ -391,6 +392,59 @@
     let on = false;
     try { on = localStorage.getItem("st-fg-debug") === "1"; } catch { /* storage blocked */ }
     if (on) document.documentElement.setAttribute("data-st-fg-status", JSON.stringify(status()));
+  }
+
+  // Shows the canvas, or takes it away so the video itself shows through. In Chromium the video
+  // beneath a shown canvas is hidden: left visible it keeps being handed to the screen as a layer
+  // of its own under ours, and with a large player the browser then stalls when it presents the
+  // two (measured on YouTube, a 3091 x 1739 player in a window, no networks, the card at 8 %: the
+  // swap in the GPU process blocked for up to 48 ms, 11-19 stalls over 20 ms every 8 s; 1-8 with
+  // the video hidden). Its frames keep coming: reading a hidden video updates it. Gecko is left
+  // alone: nothing was measured there, and it may stop decoding a video nobody sees.
+  const HIDE_VIDEO_BENEATH = !/firefox/i.test(navigator.userAgent);
+
+  // Parts of a page that are costly to show under a picture repainted on every refresh, put away
+  // while the canvas shows. YouTube's ambient mode, the blurred glow of the video around the
+  // player: with it the browser stalled when presenting (3-10 stalls over 20 ms every 8 s, frames
+  // stepped over; none in six runs without it, same page, same video). It is why YouTube stuttered
+  // and Twitch did not. In full screen YouTube turns it off by itself.
+  const QUIET = [{ host: /(^|\.)youtube\.com$/, selector: "#cinematics" }];
+  const quietRule = QUIET.find((rule) => rule.host.test(location.hostname)) || null;
+
+  // Hides the page's costly parts, or gives them back as they were. Called again while the canvas
+  // shows, it takes in the ones the page has added since.
+  function quiet(state, on) {
+    if (!quietRule) return;
+    if (on) {
+      for (const element of document.querySelectorAll(quietRule.selector)) {
+        if (state.quieted.some((entry) => entry[0] === element)) continue;
+        state.quieted.push([element, element.style.getPropertyValue("display"), element.style.getPropertyPriority("display")]);
+        element.style.setProperty("display", "none", "important");
+      }
+    } else {
+      for (const [element, value, priority] of state.quieted) {
+        element.style.removeProperty("display");
+        if (value) element.style.setProperty("display", value, priority);
+      }
+      state.quieted = [];
+    }
+  }
+
+  function showCanvas(state, visible) {
+    const wanted = visible ? "visible" : "hidden";
+    if (state.canvas.style.visibility !== wanted) state.canvas.style.visibility = wanted;
+    if (state.shown === visible) return;
+    state.shown = visible;
+    quiet(state, visible);
+    if (!HIDE_VIDEO_BENEATH) return;
+    const style = state.video.style;
+    if (visible) {
+      state.videoVisibility = [style.getPropertyValue("visibility"), style.getPropertyPriority("visibility")];
+      style.setProperty("visibility", "hidden", "important");
+    } else {
+      style.removeProperty("visibility");
+      if (state.videoVisibility && state.videoVisibility[0]) style.setProperty("visibility", ...state.videoVisibility);
+    }
   }
 
   function makeCanvas(video) {
@@ -420,7 +474,7 @@
 
     const state = {
       device: null, video, canvas: makeCanvas(video), options: settings, plan: null, gen: null,
-      worker: null, track: null, remote: null, restarting: false,
+      worker: null, track: null, remote: null, restarting: false, shown: false, videoVisibility: null, quieted: [],
       ticks: 0, lastPaint: 0, lastTick: 0, paints: [],
       gaps20: 0, gaps50: 0, raf: 0, layoutKey: "", sourceWidth: 0, sourceHeight: 0,
       sourceResets: 0,
@@ -444,6 +498,7 @@
         await startWorker(state);
       } catch (error) {
         console.warn("[streamremaster] smooth video on its own thread unavailable, using the page's:", error);
+        showCanvas(state, false);
         state.canvas.remove(); // handed over to the worker: it cannot be drawn on from here
         state.canvas = makeCanvas(video);
       }
@@ -460,6 +515,7 @@
     if (run) { // started again meanwhile
       endWorker(state);
       if (state.gen) state.gen.destroy();
+      showCanvas(state, false);
       state.canvas.remove();
       return status();
     }
@@ -504,6 +560,7 @@
     state.meter.host.remove();
     endWorker(state);
     if (state.gen) state.gen.destroy();
+    showCanvas(state, false);
     state.canvas.remove();
     return status();
   }

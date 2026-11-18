@@ -22,6 +22,10 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   the frame rate.
 - Changing the size of the player (full screen, another window size) no longer stops the smooth video
   for two seconds: it goes on from the timing it already had.
+- No more stutter on YouTube with a large player in a window. While the smooth video paints, the
+  page's own picture beneath it is hidden (Chromium browsers) and YouTube's ambient mode, the glow
+  around the player, is put away; both come back when the smooth video pauses or stops. With them
+  the browser stalled several times a second when it handed the picture to the screen.
 - Videos that carry fewer pictures than frames (24, 25 or 30 pictures a second sent as 60 frames, as in
   much game footage and film) are now smooth too. Shown as they come, the motion went in bursts: one
   frame's time moving, one or two still. The smooth video now tells the copies from the new pictures
