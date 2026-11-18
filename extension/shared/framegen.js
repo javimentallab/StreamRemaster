@@ -17,6 +17,9 @@
   // may not have swapped to it yet at that very moment, and a tick that lands just before the swap
   // would take the old frame twice.
   const CAPTURE_LAG = 0.25;
+  // Without a frame from requestVideoFrameCallback for this long, the display tick captures again.
+  const FRAME_CAPTURE_STALE_MS = 100;
+  const FRAME_CAPTURE_DELAY_FRAMES = 2.25;
   // The frame timeline is fitted to the presentation times of the last few seconds of frames.
   const TIMELINE_WINDOW_S = 8;
   const TIMELINE_MIN_SPAN_S = 0.5;
@@ -454,11 +457,17 @@
       this.rate = new RateMeter(video);
       this.timeline = new FrameTimeline();
       this.frameCallback = 0;
+      // When the last frame was captured from requestVideoFrameCallback (see captureOnFrame).
+      this.frameCapturedAt = -Infinity;
+      this.frameCaptureOff = FIREFOX;
       if (video && typeof video.requestVideoFrameCallback === "function") {
         const onFrame = (_, metadata) => {
           if (this.destroyed) return;
-          if (metadata && typeof metadata.mediaTime === "number") this.timeline.add(metadata.mediaTime, this.rate.hz);
           this.frameCallback = video.requestVideoFrameCallback(onFrame);
+          if (metadata && typeof metadata.mediaTime === "number") {
+            this.timeline.add(metadata.mediaTime, this.rate.hz);
+            this.captureOnFrame(metadata.mediaTime);
+          }
         };
         this.frameCallback = video.requestVideoFrameCallback(onFrame);
       }
@@ -575,11 +584,38 @@
       const position = this.timeline.position(media, hz);
       const index = Math.floor(position - CAPTURE_LAG);
       if (index < this.lastIndex - hz) this.reset(); // a seek or a loop
-      if (index > this.lastIndex) {
+      // Frames are being captured as the video shows them (captureOnFrame): the tick only paints.
+      const onFrames = now - this.frameCapturedAt < FRAME_CAPTURE_STALE_MS;
+      if (!onFrames && index > this.lastIndex) {
         this.lastIndex = index;
         this.capture(index);
       }
-      return this.present(position - DELAY_FRAMES, now);
+      // Captured on the video's frame callback, a frame comes in when the video shows it, which can
+      // be a little after the clock expects it: running a bit further behind keeps the next frame
+      // in hand (at 1.5 there were ~3 repeated pictures a second on Twitch).
+      return this.present(position - (this.frameCaptureOff ? DELAY_FRAMES : FRAME_CAPTURE_DELAY_FRAMES), now);
+    }
+
+    // Chromium calls requestVideoFrameCallback for every frame, right when the video shows it, and
+    // the <video> holds that very frame during the callback. Taking it there takes each frame once:
+    // on the display tick, a tick that lands just before the video swaps frames takes the old one
+    // twice and misses the next (measured on Twitch: 9-24 % of the captures were repeats, with as
+    // many frames missed). Gecko calls it about 25 times a second, so there the tick keeps doing it.
+    captureOnFrame(media) {
+      const video = this.video;
+      if (this.frameCaptureOff || !this.timeline.hz || video.paused || video.seeking) return;
+      const index = Math.round(this.timeline.position(media, this.timeline.hz));
+      this.frameCapturedAt = performance.now();
+      if (index <= this.lastIndex) return;
+      this.lastIndex = index;
+      try {
+        this.capture(index);
+      } catch (error) {
+        // Out of the page's own loop, nothing would catch this: hand the job back to the tick.
+        console.warn("[streamremaster] capture on the video's frame callback failed:", error);
+        this.frameCaptureOff = true;
+        this.frameCapturedAt = -Infinity;
+      }
     }
 
     // Firefox on Linux has WebGPU without external textures: there the frame goes through a 2D canvas.
