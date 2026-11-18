@@ -98,10 +98,7 @@
     // the nearest step that is not far below it: 1620 rows on screen take 1440, not 2160 (half again
     // the pixels for a picture the browser then shrinks)
     const step = DISPLAY_STEPS.find((h) => h >= needed * DISPLAY_STEP_SLACK) || DISPLAY_STEPS[DISPLAY_STEPS.length - 1];
-    // Never below the video's own height: shrinking it at capture loses detail and the motion,
-    // worked out on fewer pixels, shows more noise (seen at 720 for a 1080p video in a small
-    // player). The browser shrinks the canvas to the player better than that.
-    return Math.max(Math.min(step, screenHeight), video.videoHeight || 0);
+    return Math.min(step, screenHeight);
   }
 
   function planSizes(video, options) {
