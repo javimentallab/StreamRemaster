@@ -81,6 +81,14 @@
   const DISPLAY_STEPS = [720, 1080, 1440, 2160];
   const DISPLAY_STEP_SLACK = 0.85;
   const RESIZE_SETTLE_MS = 500;
+  // The card's load is looked at this often. Each frame's work may take as long as the video takes
+  // to bring the next frame, within these limits: past that the card is falling behind the video.
+  // (Tried with one and a half display ticks, 10 ms at 144 Hz: on a card that other programs keep
+  // at 80 % the work takes 5-11 ms even at 720p, and everything went to the lowest step for good.)
+  const LOAD_EVERY_MS = 250;
+  const LOAD_BUDGET_MIN_MS = 12;
+  const LOAD_BUDGET_MAX_MS = 25;
+  const TICK_GAPS_KEPT = 300;
 
   function shownHeight(video) {
     const dpr = devicePixelRatio || 1;
@@ -95,18 +103,29 @@
     return Math.min(step, screenHeight);
   }
 
-  function planSizes(video, options) {
+  // cap: the tallest picture the graphics card can take right now (see LoadGovernor in framegen.js).
+  function planSizes(video, options, cap = Infinity) {
     const shown = shownHeight(video);
     // "Original" is the video's own height, "Match the screen" the player's, a number the one chosen:
     // all three capped at the player's.
     const chosen = options.resolution === "display" ? shown
       : options.resolution === "original" ? video.videoHeight || shown
       : Number(options.resolution) || video.videoHeight || shown;
-    const sized = Object.assign({}, options, { resolution: Math.min(chosen, shown) });
+    const wanted = Math.min(chosen, shown);
+    const sized = Object.assign({}, options, { resolution: Math.min(wanted, cap) });
     const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, sized, shown);
     plan.sharpen = SHARPEN[options.sharpen] ?? SHARPEN.medium;
     plan.shownHeight = shown;
+    plan.wantedHeight = wanted;
+    plan.lowered = cap < wanted;
     return plan;
+  }
+
+  // The same buffers and the same networks: nothing to build again.
+  function samePlan(a, b) {
+    return a.width === b.width && a.height === b.height && a.contentWidth === b.contentWidth && a.contentHeight === b.contentHeight
+      && a.outputWidth === b.outputWidth && a.outputHeight === b.outputHeight && a.sharpen === b.sharpen
+      && a.model === b.model && a.interpolator === b.interpolator;
   }
 
   // The player changed size (window resized, full screen on or off): new sizes once it holds.
@@ -122,22 +141,76 @@
       state.plan = planSizes(state.video, state.options);
       state.worker.postMessage({ type: "plan", plan: state.plan });
     } else {
-      build(state);
+      // With the work lowered for the card's sake the sizes can stay as they were.
+      const plan = planSizes(state.video, state.options, state.governor.cap);
+      if (samePlan(plan, state.plan)) state.plan = plan;
+      else build(state);
     }
     state.layoutKey = "";
   }
 
+  // A new generator for the sizes of this moment. It goes on from the timing of the one before, so
+  // a change of size costs a couple of frames and not two seconds; the canvas, emptied by its new
+  // size, stays hidden until the first frame is painted on it (the video itself shows meanwhile).
   function build(state) {
-    if (state.gen) state.gen.destroy();
+    let carry = null;
+    if (state.gen) {
+      carry = state.gen.handover();
+      state.gen.destroy();
+    }
     const video = state.video;
-    state.plan = planSizes(video, state.options);
+    state.plan = planSizes(video, state.options, state.governor.cap);
     state.sourceWidth = video.videoWidth;
     state.sourceHeight = video.videoHeight;
+    state.canvas.style.visibility = "hidden";
     state.gen = new globalThis.STFramegen.FrameGenerator({
-      device: state.device, video, canvas: state.canvas, ...state.plan,
+      device: state.device, video, canvas: state.canvas, ...state.plan, carry,
       onCapture: (texture, index) => { if (api.onCapture) api.onCapture(texture, index); },
+      onWork: (ms) => state.governor.sample(ms, performance.now()),
     });
-    state.gen.targetFps = target;
+    applyTarget(state);
+  }
+
+  // The rate asked for in the popup, or half the display's when the card cannot take more.
+  function applyTarget(state) {
+    if (!state.gen) return;
+    let fps = target;
+    if (state.governor.slow && state.displayMs) {
+      const half = Math.round(500 / state.displayMs);
+      fps = fps ? Math.min(fps, half) : half;
+    }
+    if (state.gen.targetFps === fps) return;
+    state.gen.targetFps = fps;
+    state.gen.nextPresentAt = 0;
+  }
+
+  // The display's interval, from the page's own ticks: the short end of the last few seconds, so
+  // ticks that came late with the card or the page busy do not count.
+  function displayInterval(state) {
+    if (state.tickGaps.length < 60) return 0;
+    const sorted = state.tickGaps.slice().sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length * 0.1)];
+  }
+
+  // Four times a second: is the card keeping up? (LoadGovernor, in framegen.js.)
+  function checkLoad(state, now) {
+    if (now - state.loadAt < LOAD_EVERY_MS) return;
+    state.loadAt = now;
+    if (!state.gen || !state.plan) return;
+    state.displayMs = displayInterval(state) || state.displayMs;
+    const hz = state.gen.sourceHz();
+    if (!state.displayMs || !hz) return;
+    const budget = Math.min(LOAD_BUDGET_MAX_MS, Math.max(LOAD_BUDGET_MIN_MS, 1000 / hz));
+    state.loadBudget = budget;
+    if (!state.governor.update(now, budget, state.plan.wantedHeight)) return;
+    const plan = planSizes(state.video, state.options, state.governor.cap);
+    if (samePlan(plan, state.plan)) {
+      state.plan = plan;
+    } else {
+      build(state);
+      state.layoutKey = "";
+    }
+    applyTarget(state);
   }
 
   async function readOptions() {
@@ -293,7 +366,9 @@
     const { hz, fps, sr, fi } = liveInfo(state);
     // two decimals when the rate is not a whole number (59.94, 29.97, 23.98), so it can be told apart
     const source = Math.abs(hz - Math.round(hz)) < 0.005 ? String(Math.round(hz)) : hz.toFixed(2);
-    state.meter.label.textContent = hz ? `${source} → ${fps} fps${sr ? " · SR" : ""}${fi ? " · FI" : ""}` : "… fps";
+    // "↓1080p": the work was lowered to that height because the graphics card was not keeping up
+    const lowered = !state.worker && state.plan && state.plan.lowered ? ` · ↓${state.plan.outputHeight}p` : "";
+    state.meter.label.textContent = hz ? `${source} → ${fps} fps${sr ? " · SR" : ""}${fi ? " · FI" : ""}${lowered}` : "… fps";
   }
 
   // Same box as the video, inside the same positioned parent, so the page's own layout moves both.
@@ -343,8 +418,11 @@
       const gap = now - state.lastTick;
       if (gap > 20) state.gaps20++;
       if (gap > 50) state.gaps50++;
+      state.tickGaps.push(gap);
+      if (state.tickGaps.length > TICK_GAPS_KEPT) state.tickGaps.shift();
     }
     state.lastTick = now;
+    if (!state.worker) checkLoad(state, now);
 
     // On the worker path the worker paints and says when to show or hide the canvas.
     if (!state.worker) {
@@ -403,6 +481,7 @@
       ticks: 0, lastPaint: 0, lastTick: 0, paints: [],
       gaps20: 0, gaps50: 0, raf: 0, layoutKey: "", sourceWidth: 0, sourceHeight: 0,
       sourceResets: 0,
+      governor: new globalThis.STFramegen.LoadGovernor(), tickGaps: [], displayMs: 0, loadAt: 0, loadBudget: 0,
       onSource: () => {
         state.sourceResets++;
         if (state.worker) restart(state);
@@ -491,8 +570,8 @@
     target = Number(targetFps) || 0;
     if (run && run.worker) run.worker.postMessage({ type: "target", target });
     if (run && run.gen) {
-      run.gen.targetFps = target;
       run.gen.nextPresentAt = 0;
+      applyTarget(run);
     }
     return status();
   }
@@ -537,6 +616,12 @@
       size: run.plan ? [run.plan.outputWidth, run.plan.outputHeight] : null,
       input: run.plan ? [run.plan.width, run.plan.height] : null,
       memory: run.plan ? globalThis.STFramegen.memoryBytes(run.plan) : null,
+      load: run.worker ? null : {
+        cap: Number.isFinite(run.governor.cap) ? run.governor.cap : null, slow: run.governor.slow,
+        workMs: Number.isFinite(run.governor.median) ? +run.governor.median.toFixed(1) : null,
+        budgetMs: +run.loadBudget.toFixed(1), displayMs: +run.displayMs.toFixed(2),
+        gen: run.gen ? run.gen.targetFps : null,
+      },
       model: run.plan && run.plan.model ? run.plan.model.name : null,
       modelReady: info.sr,
       interpolator: run.plan && run.plan.interpolator ? run.plan.interpolator.name : null,

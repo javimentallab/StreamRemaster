@@ -325,6 +325,99 @@
     }
   }
 
+  // ---- how much work the graphics card can take --------------------------------------------------
+  //
+  // A card that is full (a game, an animated wallpaper, other tabs) still takes the work, only late:
+  // the frames are painted but many never reach the screen, which is seen as a fast stutter while
+  // the counter reads the full rate. The sign is how long the card takes to finish each frame's
+  // work. When that goes over the budget for a while the work is lowered a step (a smaller picture,
+  // and last of all half the frames); when it has been well under for some time it is raised again.
+  const GOVERNOR_STEPS = [720, 1080, 1440];
+  const GOVERNOR_WINDOW_MS = 1500;
+  const GOVERNOR_MIN_SAMPLES = 20;
+  // After a change the first moments say nothing (new buffers, the networks warming up).
+  const GOVERNOR_SETTLE_MS = 1000;
+  // A bigger picture is tried only when the work takes under this share of the budget (the work
+  // grows with the picture); all the frames again, which cost little, under this other share...
+  const GOVERNOR_CALM_SHARE = 0.4;
+  const GOVERNOR_FRAMES_SHARE = 0.8;
+  // ...for this long. A raise that had to be undone doubles the wait, up to the longest one.
+  const GOVERNOR_RAISE_AFTER_MS = 20000;
+  const GOVERNOR_RAISE_AFTER_MAX_MS = 600000;
+  const GOVERNOR_PROBATION_MS = 30000;
+
+  class LoadGovernor {
+    constructor() {
+      this.cap = Infinity; // the tallest picture the work may be done at
+      this.slow = false;   // half the display's frames
+      this.samples = [];
+      this.settleUntil = 0;
+      this.calmSince = 0;
+      this.raisedAt = 0;
+      this.raiseAfter = GOVERNOR_RAISE_AFTER_MS;
+      this.median = 0;
+    }
+
+    // One frame's work took ms to finish; Infinity when it was skipped with the card behind.
+    sample(ms, now) {
+      this.samples.push({ at: now, ms });
+    }
+
+    lower(height) {
+      const current = Math.min(height, this.cap);
+      const below = GOVERNOR_STEPS.filter((step) => step < current).pop();
+      if (below) { this.cap = below; return true; }
+      if (!this.slow) { this.slow = true; return true; }
+      return false;
+    }
+
+    raise(height) {
+      if (this.slow) { this.slow = false; return true; }
+      if (this.cap >= height) { this.cap = Infinity; return false; }
+      const above = GOVERNOR_STEPS.find((step) => step > this.cap);
+      this.cap = above && above < height ? above : Infinity;
+      return true;
+    }
+
+    // budget: how long a frame's work may take, in ms. height: the picture's height with no cap.
+    // Returns true when cap or slow changed.
+    update(now, budget, height) {
+      while (this.samples.length && this.samples[0].at <= now - GOVERNOR_WINDOW_MS) this.samples.shift();
+      if (now < this.settleUntil) { this.samples.length = 0; return false; }
+      if (this.samples.length < GOVERNOR_MIN_SAMPLES) { this.calmSince = 0; return false; }
+      const sorted = this.samples.map((sample) => sample.ms).sort((a, b) => a - b);
+      const median = sorted[sorted.length >> 1];
+      this.median = median;
+      if (this.raisedAt && now - this.raisedAt > GOVERNOR_PROBATION_MS) {
+        this.raisedAt = 0; // the last raise held
+        this.raiseAfter = GOVERNOR_RAISE_AFTER_MS;
+      }
+      let changed = false;
+      if (median > budget) {
+        this.calmSince = 0;
+        changed = this.lower(height);
+        if (changed && this.raisedAt) {
+          this.raisedAt = 0;
+          this.raiseAfter = Math.min(this.raiseAfter * 2, GOVERNOR_RAISE_AFTER_MAX_MS);
+        }
+      } else if (median < budget * (this.slow ? GOVERNOR_FRAMES_SHARE : GOVERNOR_CALM_SHARE)) {
+        if (!this.calmSince) this.calmSince = now;
+        if ((this.slow || this.cap < Infinity) && now - this.calmSince >= this.raiseAfter) {
+          this.calmSince = 0;
+          changed = this.raise(height);
+          if (changed) this.raisedAt = now;
+        }
+      } else {
+        this.calmSince = 0;
+      }
+      if (changed) {
+        this.samples.length = 0;
+        this.settleUntil = now + GOVERNOR_SETTLE_MS;
+      }
+      return changed;
+    }
+  }
+
   const FULLSCREEN = `
     struct Out { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     @vertex fn vs(@builtin(vertex_index) i: u32) -> Out {
@@ -443,23 +536,28 @@
     // band (see CAPTURE_SHADER); by default all of it.
     // video can be null: frames are then handed to capture() one by one (the worker, with VideoFrames)
     // and tick() is not used.
-    constructor({ device, video = null, canvas, width, height, contentWidth = width, contentHeight = height, outputWidth = width, outputHeight = height, model = null, interpolator = null, sharpen = 0, onCapture = null, maxInFlight = MAX_UPSCALES_IN_FLIGHT }) {
+    // carry is what the generator before this one left with handover(), on the same video: the new
+    // one then goes on from its timing instead of measuring the frame rate again (1.5 s with nothing
+    // painted, at every change of size).
+    // onWork(ms) is told how long the card took over each frame's work (see LoadGovernor).
+    constructor({ device, video = null, canvas, width, height, contentWidth = width, contentHeight = height, outputWidth = width, outputHeight = height, model = null, interpolator = null, sharpen = 0, onCapture = null, maxInFlight = MAX_UPSCALES_IN_FLIGHT, carry = null, onWork = null }) {
       this.device = device;
       this.video = video;
       this.onCapture = onCapture;
+      this.onWork = onWork;
       this.sharpen = sharpen; // 0 = off; about 0.3 soft to 0.9 strong
       this.maxInFlight = maxInFlight;
       this.inFlight = 0;
       this.nudging = false;
       this.destroyed = false;
       this.lastSlot = -1;
-      this.clock = new MediaClock(video);
-      this.rate = new RateMeter(video);
-      this.timeline = new FrameTimeline();
+      this.clock = carry ? carry.clock : new MediaClock(video);
+      this.rate = carry ? carry.rate : new RateMeter(video);
+      this.timeline = carry ? carry.timeline : new FrameTimeline();
       this.frameCallback = 0;
       // When the last frame was captured from requestVideoFrameCallback (see captureOnFrame).
-      this.frameCapturedAt = -Infinity;
-      this.frameCaptureOff = FIREFOX;
+      this.frameCapturedAt = carry ? carry.frameCapturedAt : -Infinity;
+      this.frameCaptureOff = carry ? carry.frameCaptureOff : FIREFOX;
       if (video && typeof video.requestVideoFrameCallback === "function") {
         const onFrame = (_, metadata) => {
           if (this.destroyed) return;
@@ -474,7 +572,7 @@
       this.targetFps = 0; // 0 = every display tick
       this.ring = [];
       this.nextSlot = 0;
-      this.lastIndex = -1;
+      this.lastIndex = carry ? carry.lastIndex : -1;
       this.nextPresentAt = 0;
       this.stats = { captures: 0, presents: 0, holds: 0, upscaled: 0, upscaleSkipped: 0, interpolated: 0, interpolateSkipped: 0, synthesized: 0 };
 
@@ -564,6 +662,14 @@
       this.rate.reset();
       this.timeline.reset();
       this.reset();
+    }
+
+    // What the next generator on this video needs to go on without measuring again (see carry).
+    handover() {
+      return {
+        clock: this.clock, rate: this.rate, timeline: this.timeline, lastIndex: this.lastIndex,
+        frameCapturedAt: this.frameCapturedAt, frameCaptureOff: this.frameCaptureOff,
+      };
     }
 
     // The source frame rate: the fitted one once there is a fit, else the measured one.
@@ -682,6 +788,7 @@
           this.stats.interpolated++;
         } else {
           this.stats.interpolateSkipped++;
+          if (this.onWork) this.onWork(Infinity);
         }
       }
       let upscaled = false;
@@ -705,7 +812,11 @@
       device.queue.submit([encoder.finish()]);
       if (upscaled || motion) {
         this.inFlight++;
-        device.queue.onSubmittedWorkDone().then(() => { this.inFlight--; }, () => { this.inFlight--; });
+        const submitted = performance.now();
+        device.queue.onSubmittedWorkDone().then(() => {
+          this.inFlight--;
+          if (this.onWork && !this.destroyed) this.onWork(performance.now() - submitted);
+        }, () => { this.inFlight--; });
         this.nudge();
       }
       this.lastSlot = slot;
@@ -850,5 +961,5 @@
     return bytes;
   }
 
-  root.STFramegen = { FrameGenerator, MediaClock, RateMeter, FrameTimeline, StreamTimer, PRESENT_SHADER, planSizes, memoryBytes, BASE_DELAY_FRAMES };
+  root.STFramegen = { FrameGenerator, MediaClock, RateMeter, FrameTimeline, StreamTimer, LoadGovernor, PRESENT_SHADER, planSizes, memoryBytes, BASE_DELAY_FRAMES };
 })(globalThis);

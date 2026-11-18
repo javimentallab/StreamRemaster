@@ -20,6 +20,12 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   Match the screen, 1080p, 1440p or 4K). **Match the screen** follows the size the picture takes on
   screen, so a video in a small player is not upscaled to 4K. While it is on, a meter on the page shows
   the frame rate.
+- The smooth video looks after the graphics card. When the card takes longer over a frame than the
+  video takes to bring the next one (a game, an animated wallpaper or other tabs keep it busy), the work
+  is done on a smaller picture, a step at a time (1440p, 1080p, 720p), and last of all at half the
+  screen's frame rate. When the card has room again it goes back up by itself. The meter shows the
+  height in use, for example `↓720p`. Changing the size of the player (full screen, another window size)
+  no longer stops the smooth video for two seconds.
 - A built-in model, **StreamRemaster**: two small networks, one for upscaling and one for motion, trained
   from scratch by the author, with no third-party weights. How it was made and on what data:
   [docs/MODEL.md](docs/MODEL.md).
