@@ -277,19 +277,6 @@
       return { index, reset };
     }
 
-    // The window was in the background (its animation frames stopped): frames came in as the
-    // browser pleased meanwhile, and the lateness measured then says nothing about now. Without
-    // this the output kept up to 200 ms of delay for many seconds after coming back, looked for
-    // frames already gone and stuttered.
-    forgetLateness() {
-      this.offsets = [];
-      this.offset = NaN;
-      this.lates = [];
-      this.delay = 0;
-      this.lastArrival = NaN;
-      this.lastPosition = -Infinity;
-    }
-
     observeArrival(ts, arrival) {
       const gap = arrival - ts;
       this.offsets.push([arrival, gap]);
@@ -336,14 +323,13 @@
   // colour planes are padded past the picture (1080 rows are decoded as 1088); the clamp of
   // textureSampleBaseClampToEdge is not always applied to the colour plane, so sampling the last
   // row or the band past it blended in empty colour, which is green, and the band then repeated it
-  // as green lines along the bottom or right edge. The same holds one pixel in from the left and top
-  // edges: frames from a captured stream (Chromium's own thread) showed a green bar on the left.
+  // as green lines along the bottom or right edge.
   const CAPTURE_SHADER = FULLSCREEN + `
     @group(0) @binding(0) var frame: texture_external;
     @group(0) @binding(1) var smp: sampler;
     @group(0) @binding(2) var<uniform> scale: vec4f;
     @fragment fn fs(in: Out) -> @location(0) vec4f {
-      return vec4f(textureSampleBaseClampToEdge(frame, smp, clamp(in.uv * scale.xy, vec2f(1.0) - scale.zw, scale.zw)).rgb, 1.0);
+      return vec4f(textureSampleBaseClampToEdge(frame, smp, min(in.uv * scale.xy, scale.zw)).rgb, 1.0);
     }`;
 
   // The frame at instant t between a and b. With the interpolator's motion (in quarter-grid pixels,

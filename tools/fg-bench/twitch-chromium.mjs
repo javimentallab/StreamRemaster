@@ -205,7 +205,7 @@ async function main() {
       return;
     }
     await measure(cdp, 'control (no smooth video)', false);
-    for (const [label, id] of [['StreamRemaster', 'builtin-st'], ['none (cross-fade)', '']]) {
+    for (const [label, id] of [['StreamRemaster', 'builtin-st'], ['StreamRemaster HQ', 'builtin-hq'], ['none (cross-fade)', '']]) {
       await command(cdp, { cmd: 'model', id });
       await sleep(1000);
       await command(cdp, { cmd: 'start', target: 144 });

@@ -124,11 +124,11 @@ ST.autoStartTracker = function (pageKey) {
 
 // Models that ship inside the extension. The background copies them into storage.local next to the
 // ones the user adds, so every page reads them the same way; they cannot be deleted.
-// A built-in model whose file is not in this build is simply left out. An entry may carry hq: true
-// (a larger model for powerful graphics cards, shown with a badge); the HQ tried in November 2026
-// looked worse and stalled the graphics card, so it was taken out.
+// HQ has an upscaler about three times larger: for powerful graphics cards. A built-in model whose
+// file is not in this build is simply left out.
 ST.BUILTIN_FG_MODELS = [
   { id: "builtin-st", kind: "st", name: "StreamRemaster", file: "models/streamremaster.stmodel" },
+  { id: "builtin-hq", kind: "st", name: "StreamRemaster HQ", file: "models/streamremaster-hq.stmodel", hq: true },
 ];
 
 // When the page goes fullscreen, the window follows. Chromium keeps a captured tab's fullscreen
@@ -176,11 +176,6 @@ ST.installBuiltinModels = async function () {
     if (!model.builtin) models[id] = model;
   }
   await ext.storage.local.set({ fgModels: models });
-  // A built-in model that is gone (the HQ) leaves whoever had it chosen on the regular one.
-  const settings = await ST.getSettings();
-  if (settings.fgModel && settings.fgModel.startsWith("builtin-") && !models[settings.fgModel] && models["builtin-st"]) {
-    await ST.setSettings({ fgModel: "builtin-st" });
-  }
 };
 
 // Smooth video models kept on the server: the file comes down once, is stored next to the others

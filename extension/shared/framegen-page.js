@@ -13,14 +13,9 @@
   const LAYOUT_EVERY_TICKS = 8;
   // With nothing painted for this long (paused, seeking, buffering) the real video shows through.
   const HIDE_AFTER_MS = 200;
-  // Without animation frames for this long, a clock of its own drives the page (see start()).
-  const FALLBACK_AFTER_MS = 50;
-  const FALLBACK_EVERY_MS = 4;
   const METER_EVERY_MS = 250;
   // How long the worker may take to set up its GPU before the main thread takes over.
   const WORKER_START_TIMEOUT_MS = 8000;
-  // A worker that has not painted for this long has its canvas hidden (see onWorkerMessage).
-  const STALE_PAINT_MS = 400;
   // Frames waiting for the worker while the page is busy: about half a second at 60 fps.
   const FRAME_QUEUE = 30;
   // Same level as the subtitles: a fixed element in its own shadow root, above everything on the
@@ -172,14 +167,7 @@
 
   function onWorkerMessage(state, message) {
     if (run !== state) return;
-    if (message.type === "status") {
-      state.remote = message;
-      // The worker shows its canvas but has painted nothing for a while: take the canvas away so the
-      // video itself shows, never a frozen picture over it. The worker shows it again when it paints.
-      if (message.sincePaintMs > STALE_PAINT_MS && state.canvas.style.visibility !== "hidden") {
-        state.canvas.style.visibility = "hidden";
-      }
-    }
+    if (message.type === "status") state.remote = message;
     else if (message.type === "visible") state.canvas.style.visibility = message.visible ? "visible" : "hidden";
     else if (message.type === "ended") restart(state); // the video changed source: a new track
     else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
@@ -365,11 +353,6 @@
       meter: createMeter(),
       meterAt: 0,
       onFullscreen: () => placeMeter(state),
-      // Back from the background: the worker starts its timing afresh (see forgetLateness).
-      onVisibility: () => {
-        if (!state.worker) return;
-        state.worker.postMessage({ type: document.visibilityState === "visible" ? "resume" : "hidden" });
-      },
     };
 
     if (!options.mainThread && workerPossible(video)) {
@@ -399,11 +382,12 @@
     video.addEventListener("emptied", state.onSource);
     video.addEventListener("loadedmetadata", state.onSource);
     document.addEventListener("fullscreenchange", state.onFullscreen);
-    document.addEventListener("visibilitychange", state.onVisibility);
     document.addEventListener("webkitfullscreenchange", state.onFullscreen);
     placeMeter(state);
     run = state;
-    const tick = (now) => {
+    const loop = (now) => {
+      if (run !== state) return;
+      state.raf = requestAnimationFrame(loop);
       try {
         step(state, now);
       } catch (error) {
@@ -411,22 +395,7 @@
         stop(errorCode(error));
       }
     };
-    const loop = (now) => {
-      if (run !== state) return;
-      state.raf = requestAnimationFrame(loop);
-      state.lastLoopAt = now;
-      tick(now);
-    };
     state.raf = requestAnimationFrame(loop);
-    // The browser can stop giving the page animation frames while the window is not the active one
-    // or is partly covered, although it is still on screen: the smooth video then stopped and its
-    // last picture stayed frozen over the video. This clock carries on while animation frames are
-    // missing (only with the page visible: a minimized window is not painted for nobody).
-    state.fallback = setInterval(() => {
-      if (run !== state) return;
-      const now = performance.now();
-      if (document.visibilityState === "visible" && state.lastLoopAt && now - state.lastLoopAt > FALLBACK_AFTER_MS) tick(now);
-    }, FALLBACK_EVERY_MS);
     return status();
   }
 
@@ -442,11 +411,9 @@
     if (!state) return status();
     run = null;
     cancelAnimationFrame(state.raf);
-    clearInterval(state.fallback);
     state.video.removeEventListener("emptied", state.onSource);
     state.video.removeEventListener("loadedmetadata", state.onSource);
     document.removeEventListener("fullscreenchange", state.onFullscreen);
-    document.removeEventListener("visibilitychange", state.onVisibility);
     document.removeEventListener("webkitfullscreenchange", state.onFullscreen);
     state.meter.host.remove();
     endWorker(state);

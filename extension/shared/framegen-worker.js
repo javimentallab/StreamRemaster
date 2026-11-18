@@ -17,11 +17,6 @@ globalThis.STFramegenWorkerMain = function (self) {
   // Frames come in bursts after a stall: let the networks queue a little more work than on the main
   // thread before a frame goes without them.
   const MAX_IN_FLIGHT = 4;
-  // A gap between animation frames this long means the window was in the background or covered.
-  const RESUME_GAP_MS = 100;
-  // Without animation frames for this long, the worker's own clock paints (see fallback()).
-  const FALLBACK_AFTER_MS = 50;
-  const FALLBACK_EVERY_MS = 4;
 
   let device = null;
   let canvas = null;
@@ -33,9 +28,6 @@ globalThis.STFramegenWorkerMain = function (self) {
   let lastFrameAt = 0;
   let raf = 0;
   let statusTimer = 0;
-  let fallbackTimer = 0;
-  let pageVisible = true;
-  let lastPaintAt = 0;
   const paints = [];
   const timer = new StreamTimer();
   // for the status: the worker's own frames late by more than 20 ms, and source frames never captured
@@ -60,9 +52,7 @@ globalThis.STFramegenWorkerMain = function (self) {
   async function init(message) {
     canvas = message.canvas;
     target = Number(message.target) || 0;
-    // The same graphics card as the page and the video decoder: a frame shared between two cards
-    // can arrive with its colour corrupted (green).
-    const adapter = self.navigator.gpu ? await self.navigator.gpu.requestAdapter({ powerPreference: "high-performance" }) : null;
+    const adapter = self.navigator.gpu ? await self.navigator.gpu.requestAdapter() : null;
     if (!adapter) throw Object.assign(new Error("no adapter"), { code: "no_webgpu" });
     device = await adapter.requestDevice({
       requiredLimits: {
@@ -79,7 +69,6 @@ globalThis.STFramegenWorkerMain = function (self) {
     read();
     raf = self.requestAnimationFrame(loop);
     statusTimer = self.setInterval(sendStatus, STATUS_EVERY_MS);
-    fallbackTimer = self.setTimeout(fallback, FALLBACK_EVERY_MS);
   }
 
   function build(plan) {
@@ -108,9 +97,7 @@ globalThis.STFramegenWorkerMain = function (self) {
       } catch (error) {
         report(error);
       } finally {
-        // Closed right away: the copy into the ring is already submitted. Holding frames until the
-        // graphics card was done (tried on 17-nov) starved the decoder and froze Twitch.
-        frame.close();
+        frame.close(); // the copy into the ring is already submitted
       }
     }
   }
@@ -138,27 +125,8 @@ globalThis.STFramegenWorkerMain = function (self) {
   function loop(now) {
     if (stopped) return;
     raf = self.requestAnimationFrame(loop);
-    // No animation frames for a while: the window was in the background or covered. Start the
-    // timing afresh from the frames arriving now.
-    if (lastLoop && now - lastLoop > RESUME_GAP_MS) timer.forgetLateness();
     if (lastLoop && now - lastLoop > 20) gaps20++;
     lastLoop = now;
-    paint(now);
-  }
-
-  // Chromium stops giving the worker animation frames while the window is not the active one or is
-  // partly covered, although it is still on screen. Painting then stopped, and the last picture
-  // stayed frozen over the video. This clock paints instead while animation frames are missing
-  // (and the page is visible: a minimized window is not painted for nobody).
-  function fallback() {
-    fallbackTimer = 0;
-    if (stopped) return;
-    const now = performance.now();
-    if (pageVisible && lastLoop && now - lastLoop > FALLBACK_AFTER_MS) paint(now);
-    fallbackTimer = self.setTimeout(fallback, FALLBACK_EVERY_MS);
-  }
-
-  function paint(now) {
     while (paints.length && paints[0] <= now - 1000) paints.shift();
     if (!gen) return;
     if (now - lastFrameAt > IDLE_MS) {
@@ -170,9 +138,6 @@ globalThis.STFramegenWorkerMain = function (self) {
     try {
       if (gen.present(position, now)) {
         paints.push(now);
-        // After a long while without painting the page may have hidden the canvas: say it again.
-        if (lastPaintAt && now - lastPaintAt > 300) visible = false;
-        lastPaintAt = now;
         setVisible(true);
       }
     } catch (error) {
@@ -185,7 +150,6 @@ globalThis.STFramegenWorkerMain = function (self) {
     post({
       type: "status",
       fps: paints.length,
-      sincePaintMs: lastPaintAt ? Math.round(performance.now() - lastPaintAt) : null,
       sourceHz: timer.hz,
       delayMs: Math.round(timer.delay * 1000),
       gaps20,
@@ -200,7 +164,6 @@ globalThis.STFramegenWorkerMain = function (self) {
     stopped = true;
     self.cancelAnimationFrame(raf);
     self.clearInterval(statusTimer);
-    self.clearTimeout(fallbackTimer);
     if (reader) reader.cancel().catch(() => {});
     if (gen) gen.destroy();
     gen = null;
@@ -218,11 +181,6 @@ globalThis.STFramegenWorkerMain = function (self) {
       } catch (error) {
         report(error);
       }
-    } else if (message.type === "resume") {
-      pageVisible = true;
-      timer.forgetLateness();
-    } else if (message.type === "hidden") {
-      pageVisible = false;
     } else if (message.type === "target") {
       target = Number(message.target) || 0;
       if (gen) {
