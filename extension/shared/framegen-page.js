@@ -73,11 +73,58 @@
   // The sharpening choices of the popup, as the strength PRESENT_SHADER takes.
   const SHARPEN = { off: 0, soft: 0.35, medium: 0.6, strong: 0.9 };
 
+  // The work never goes past what the player shows. YouTube serves a 4K video to a big player on a
+  // 4K screen even when it takes half the screen; at "Original" everything then ran at 4K (capture,
+  // motion and 144 paintings a second) and the graphics card fell behind: stutter and green bars.
+  // The height on screen, in device pixels, is taken to the nearest of these steps not far below it,
+  // so dragging a window does not rebuild at every pixel, and the output follows when it changes.
+  const DISPLAY_STEPS = [720, 1080, 1440, 2160];
+  const DISPLAY_STEP_SLACK = 0.85;
+  const RESIZE_SETTLE_MS = 500;
+
+  function shownHeight(video) {
+    const dpr = devicePixelRatio || 1;
+    const screenHeight = Math.round(screen.height * dpr);
+    let shown = video.offsetHeight;
+    if (video.videoWidth && video.videoHeight && video.offsetWidth) {
+      shown = Math.min(shown, (video.offsetWidth * video.videoHeight) / video.videoWidth); // bars around it
+    }
+    const needed = Math.round(shown * dpr);
+    if (!(needed > 0)) return screenHeight;
+    const step = DISPLAY_STEPS.find((h) => h >= needed * DISPLAY_STEP_SLACK) || DISPLAY_STEPS[DISPLAY_STEPS.length - 1];
+    return Math.min(step, screenHeight);
+  }
+
   function planSizes(video, options) {
-    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, options,
-      Math.round(screen.height * devicePixelRatio));
+    const shown = shownHeight(video);
+    // "Original" is the video's own height, "Match the screen" the player's, a number the one chosen:
+    // all three capped at the player's.
+    const chosen = options.resolution === "display" ? shown
+      : options.resolution === "original" ? video.videoHeight || shown
+      : Number(options.resolution) || video.videoHeight || shown;
+    const sized = Object.assign({}, options, { resolution: Math.min(chosen, shown) });
+    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, sized, shown);
     plan.sharpen = SHARPEN[options.sharpen] ?? SHARPEN.medium;
+    plan.shownHeight = shown;
     return plan;
+  }
+
+  // The player changed size (window resized, full screen on or off): new sizes once it holds.
+  function checkShownSize(state, now) {
+    if (!state.plan || shownHeight(state.video) === state.plan.shownHeight) {
+      state.resizeSince = 0;
+      return;
+    }
+    if (!state.resizeSince) { state.resizeSince = now; return; }
+    if (now - state.resizeSince < RESIZE_SETTLE_MS) return;
+    state.resizeSince = 0;
+    if (state.worker) {
+      state.plan = planSizes(state.video, state.options);
+      state.worker.postMessage({ type: "plan", plan: state.plan });
+    } else {
+      build(state);
+    }
+    state.layoutKey = "";
   }
 
   function build(state) {
@@ -289,6 +336,7 @@
       }
       state.layoutKey = "";
     }
+    if (state.ticks % LAYOUT_EVERY_TICKS === 1) checkShownSize(state, now);
     if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
 
     if (state.lastTick) {
