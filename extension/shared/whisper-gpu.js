@@ -466,7 +466,7 @@ fn main(@builtin(local_invocation_index) t: u32) {
     }
     const device = await adapter.requestDevice({ requiredLimits });
     if (device.addEventListener) {
-      device.addEventListener("uncapturederror", (e) => console.error("[stream-transcription] GPU:", e.error && e.error.message));
+      device.addEventListener("uncapturederror", (e) => console.error("[streamremaster] GPU:", e.error && e.error.message));
     }
     return device;
   };

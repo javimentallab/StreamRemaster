@@ -101,7 +101,7 @@ function initUpdates() {
   });
 }
 
-// Only for the Stream Transcription server (a plain WhisperLive one has its own updates).
+// Only for the StreamRemaster server (a plain WhisperLive one has its own updates).
 function renderServerUpdate(latest) {
   if (!info || !info.st) return;
   const state = ST.serverUpdateState(info.version, latest);

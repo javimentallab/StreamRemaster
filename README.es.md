@@ -86,8 +86,8 @@ fiarte. El vídeo protegido (DRM) se ve negro para cualquier extensión y no se 
 Chromium, cuando se decida el sistema de pago y licencias. -->
 - **Firefox** (y Zen, LibreWolf, Floorp…), gratis: [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
 - **Chromium** (Chrome, Brave, Edge, Opera, Vivaldi…): descarga
-  `stream-transcription-chromium-<versión>.zip` de la
-  [última versión](https://github.com/javimentallab/stream-transcription/releases/latest),
+  `streamremaster-chromium-<versión>.zip` de la
+  [última versión](https://github.com/javimentallab/StreamRemaster/releases/latest),
   descomprímelo, abre `chrome://extensions`, activa el **Modo de desarrollador** y pulsa
   **Cargar descomprimida** sobre la carpeta.
 
@@ -114,8 +114,8 @@ cambio de modelo, int8, traductor en el procesador, avisos de VRAM). Con Docker 
 [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
 
 ```sh
-git clone https://github.com/javimentallab/stream-transcription.git
-cd stream-transcription/server
+git clone https://github.com/javimentallab/StreamRemaster.git
+cd StreamRemaster/server
 docker compose up -d --build
 ```
 
@@ -141,7 +141,7 @@ actualizaciones** dice si hay una versión más nueva (los servidores a partir d
 dicen la suya). Para actualizar, ejecuta esto desde la carpeta donde clonaste el repositorio:
 
 ```sh
-cd stream-transcription
+cd StreamRemaster
 git pull
 cd server
 docker compose up -d --build

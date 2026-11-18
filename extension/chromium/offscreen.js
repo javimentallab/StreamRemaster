@@ -87,7 +87,7 @@ async function rebuild() {
     await buildGraph();
     lastAudioAt = Date.now();
   } catch (e) {
-    console.error("[stream-transcription] could not rebuild the audio graph", e);
+    console.error("[streamremaster] could not rebuild the audio graph", e);
     stalled = true;
     session && session.setState("stalled");
   } finally {
@@ -108,7 +108,7 @@ async function start(msg) {
       video: false,
     });
   } catch (e) {
-    console.error("[stream-transcription] tab capture failed", e);
+    console.error("[streamremaster] tab capture failed", e);
     emit({ evt: "state", state: "error", error: "capture" });
     return;
   }
@@ -122,7 +122,7 @@ async function start(msg) {
   try {
     await buildGraph();
   } catch (e) {
-    console.error("[stream-transcription] audio setup failed", e);
+    console.error("[streamremaster] audio setup failed", e);
     emit({ evt: "state", state: "error", error: "capture" });
     return;
   }

@@ -254,7 +254,7 @@ ST.prettyServer = function (url) {
   }
 };
 
-// One-shot request to the Stream Transcription extension of the server.
+// One-shot request to the StreamRemaster extension of the server.
 // Resolves {ok:true, ...} / {ok:false, error}. A plain WhisperLive server does not know
 // the protocol and just closes the socket: that comes back as error "unsupported".
 ST.serverRequest = function (url, payload, timeoutMs = 8000) {
@@ -374,7 +374,7 @@ ST.sortedLanguages = function (codes, uiLang) {
 // The extension never replaces itself: it says there is a new version and opens the page
 // to get it (the add-on's page on AMO in Firefox, the release on GitHub in Chromium).
 
-ST.REPO = "javimentallab/stream-transcription";
+ST.REPO = "javimentallab/StreamRemaster";
 ST.RELEASES_API = "https://api.github.com/repos/" + ST.REPO + "/releases/latest";
 ST.RELEASES_PAGE = "https://github.com/" + ST.REPO + "/releases/latest";
 ST.AMO_PAGE = "https://addons.mozilla.org/firefox/addon/stream-transcription/";
@@ -472,4 +472,4 @@ ST.serverUpdateState = function (serverVersion, latest) {
 };
 
 // What the README says to run, on the computer where the server is.
-ST.SERVER_UPDATE_COMMANDS = "cd stream-transcription\ngit pull\ncd server\ndocker compose up -d --build";
+ST.SERVER_UPDATE_COMMANDS = "cd StreamRemaster\ngit pull\ncd server\ndocker compose up -d --build";

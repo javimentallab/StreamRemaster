@@ -100,7 +100,7 @@ class ServeClientFasterWhisper(ServeClientBase):
         else:
             self.compute_type = "int8"
 
-        # Stream Transcription: the client may ask for int8 (half the memory)
+        # StreamRemaster: the client may ask for int8 (half the memory)
         self.compute_type = st_models.precision_for(device, self.compute_type)
 
         if self.model_size_or_path is None:

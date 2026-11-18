@@ -30,7 +30,7 @@ function github(body, status = 200) {
 }
 const release = (tag) => ({
   tag_name: tag, draft: false, prerelease: false,
-  html_url: `https://github.com/javimentallab/stream-transcription/releases/tag/${tag}`,
+  html_url: `https://github.com/javimentallab/StreamRemaster/releases/tag/${tag}`,
 });
 
 for (const [a, b, r] of [
@@ -67,7 +67,7 @@ test('a newer release: says so and, in Chromium, points to that release', async 
   assert.equal(r.newer, true);
   assert.equal(r.latest, '2.2.0');
   assert.equal(r.current, '2.1.1');
-  assert.equal(r.page, 'https://github.com/javimentallab/stream-transcription/releases/tag/v2.2.0');
+  assert.equal(r.page, 'https://github.com/javimentallab/StreamRemaster/releases/tag/v2.2.0');
 });
 
 test('a newer release in Firefox: points to the add-on on AMO', async () => {
@@ -86,7 +86,7 @@ test('asks the right address, without cookies or referrer', async () => {
   await ST.checkForUpdate({ fetch });
   assert.equal(fetch.llamadas.length, 1);
   const { url, init } = fetch.llamadas[0];
-  assert.equal(url, 'https://api.github.com/repos/javimentallab/stream-transcription/releases/latest');
+  assert.equal(url, 'https://api.github.com/repos/javimentallab/StreamRemaster/releases/latest');
   assert.equal(init.credentials, 'omit');
   assert.equal(init.referrerPolicy, 'no-referrer');
   assert.equal(init.headers.Accept, 'application/vnd.github+json');
@@ -95,7 +95,7 @@ test('asks the right address, without cookies or referrer', async () => {
 
 test('a release link that is not ours is not followed', async () => {
   const r = await ST.checkForUpdate({ fetch: github({ tag_name: 'v9.0.0', html_url: 'https://evil.example/' }) });
-  assert.equal(r.page, 'https://github.com/javimentallab/stream-transcription/releases/latest');
+  assert.equal(r.page, 'https://github.com/javimentallab/StreamRemaster/releases/latest');
 });
 
 for (const [nombre, fetch, error] of [

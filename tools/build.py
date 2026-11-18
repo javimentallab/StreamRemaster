@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Builds the two packages from extension/shared + extension/<browser>:
 
-    dist/chromium/  + dist/stream-transcription-chromium-<version>.zip  (Brave, Chrome, Edge…)
-    dist/firefox/   + dist/stream-transcription-firefox-<version>.zip   (Firefox, Zen, LibreWolf…)
+    dist/chromium/  + dist/streamremaster-chromium-<version>.zip  (Brave, Chrome, Edge…)
+    dist/firefox/   + dist/streamremaster-firefox-<version>.zip   (Firefox, Zen, LibreWolf…)
 
 Before building it regenerates the texts and the icons, and checks that every text key
 used in the code exists in both languages.
@@ -61,7 +61,7 @@ def build(browser):
     shutil.copytree(os.path.join(EXT, browser), out, dirs_exist_ok=True)
     with open(os.path.join(out, "manifest.json"), encoding="utf-8") as fh:
         version = json.load(fh)["version"]
-    zpath = os.path.join(DIST, f"stream-transcription-{browser}-{version}.zip")
+    zpath = os.path.join(DIST, f"streamremaster-{browser}-{version}.zip")
     if os.path.exists(zpath):
         os.remove(zpath)
     with zipfile.ZipFile(zpath, "w", zipfile.ZIP_DEFLATED) as z:

@@ -1,4 +1,4 @@
-# Stream Transcription server = WhisperLive (Collabora) + the Stream Transcription patches:
+# StreamRemaster server = WhisperLive (Collabora) + the StreamRemaster patches:
 #   - the browser extension can list / download / delete Whisper models (whisper_live/st_models.py)
 #   - the model the client picks is really used, and switching frees the previous one
 #   - one shared copy of the translator for every client

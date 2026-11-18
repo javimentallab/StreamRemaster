@@ -4,7 +4,7 @@
 set -e
 
 MODEL="${ST_DEFAULT_MODEL:-Systran/faster-whisper-small}"
-echo "[stream-transcription] default model: $MODEL"
+echo "[streamremaster] default model: $MODEL"
 MODEL_PATH=$(python -c "from huggingface_hub import snapshot_download; print(snapshot_download('$MODEL'))")
 
 exec python run_server.py \

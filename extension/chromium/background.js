@@ -83,7 +83,7 @@ async function start(tabId, streamId) {
       }
     }
   } catch (e) {
-    console.error("[stream-transcription] could not start the offscreen engine", e);
+    console.error("[streamremaster] could not start the offscreen engine", e);
     await Engine.setRun({ state: "error", error: "capture" });
     await toTab(tabId, { op: "stop" });
   }

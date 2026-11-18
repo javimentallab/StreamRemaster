@@ -81,8 +81,8 @@ video shows as black to any extension and cannot be processed.
 the payment and licence mechanism is decided. -->
 - **Firefox** (and Zen, LibreWolf, Floorp…), free: [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
 - **Chromium** (Chrome, Brave, Edge, Opera, Vivaldi…): download
-  `stream-transcription-chromium-<version>.zip` from the
-  [latest release](https://github.com/javimentallab/stream-transcription/releases/latest),
+  `streamremaster-chromium-<version>.zip` from the
+  [latest release](https://github.com/javimentallab/StreamRemaster/releases/latest),
   unzip it, open `chrome://extensions`, turn on **Developer mode** and click
   **Load unpacked** on the unzipped folder.
 
@@ -108,8 +108,8 @@ switching models, int8, translator on the CPU, VRAM warnings). With Docker and t
 [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
 
 ```sh
-git clone https://github.com/javimentallab/stream-transcription.git
-cd stream-transcription/server
+git clone https://github.com/javimentallab/StreamRemaster.git
+cd StreamRemaster/server
 docker compose up -d --build
 ```
 
@@ -136,7 +136,7 @@ says whether a newer release exists (servers from this version on report their o
 To update, run this from the folder where you cloned the repository:
 
 ```sh
-cd stream-transcription
+cd StreamRemaster
 git pull
 cd server
 docker compose up -d --build

@@ -3,7 +3,7 @@
 All notable changes to StreamRemaster, called Stream Transcription up to version 2.2.0. Versions follow [semantic versioning](https://semver.org/).
 
 <!-- TODO: date. -->
-## 1.0.0 — date to be decided
+## 3.0.0 — date to be decided
 
 ### Added
 - **Start automatically**: two separate boxes, one in each tab of the popup and in Settings, turn on the
@@ -29,8 +29,8 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
 - The interface in Catalan, Galician and Basque: 18 languages in all.
 
 ### Changed
-- **New name: StreamRemaster.** Stream Transcription is now called StreamRemaster, and this is its first
-  version under the new name, so the numbering starts again at 1.0.0. The subtitles work as before.
+- **New name: StreamRemaster.** Stream Transcription is now called StreamRemaster. The numbering carries on
+  from 2.2.0, so that Firefox updates the add-on by itself. The subtitles work as before.
 - Licence: from this version on, the code and the models are under the
   [PolyForm Noncommercial License 1.0.0](LICENSE). Versions up to 2.2.0 remain under the MIT licence.
 - `NOTICE` credits the training data of the built-in model.

@@ -318,7 +318,7 @@
     "message": "Gib dann hier seine Adresse ein: die IP des Computers und den Port, z. B. 192.168.1.10:9090. Läuft er auf diesem Computer, localhost:9090."
   },
   "server_help_3": {
-    "message": "Um Modelle von dieser Seite aus herunterzuladen und zu verwalten, füge dem Server das Stream-Transcription-Add-on hinzu."
+    "message": "Um Modelle von dieser Seite aus herunterzuladen und zu verwalten, füge dem Server das StreamRemaster-Add-on hinzu."
   },
   "server_help_guide": {
     "message": "Schritt-für-Schritt-Anleitung"
@@ -432,7 +432,7 @@
     "message": "Erneut versuchen"
   },
   "plain_server_hint": {
-    "message": "Das ist ein Standard-WhisperLive-Server: Gib eine Modellgröße ein (tiny, base, small, medium, large-v3, large-v3-turbo), der Server lädt sie beim ersten Mal herunter. Um beliebige Modelle von hier herunterzuladen, installiere das Stream-Transcription-Add-on auf dem Server."
+    "message": "Das ist ein Standard-WhisperLive-Server: Gib eine Modellgröße ein (tiny, base, small, medium, large-v3, large-v3-turbo), der Server lädt sie beim ersten Mal herunter. Um beliebige Modelle von hier herunterzuladen, installiere das StreamRemaster-Add-on auf dem Server."
   },
   "model_name": {
     "message": "Modellname"
@@ -453,7 +453,7 @@
     "message": "Leistung"
   },
   "performance_hint": {
-    "message": "Wenn der Grafikkarte des Servers der Speicher ausgeht (Untertitel kommen nicht an oder eine Speicherwarnung erscheint), geben diese beiden Optionen viel frei. Sie funktionieren nur mit dem Stream-Transcription-Server."
+    "message": "Wenn der Grafikkarte des Servers der Speicher ausgeht (Untertitel kommen nicht an oder eine Speicherwarnung erscheint), geben diese beiden Optionen viel frei. Sie funktionieren nur mit dem StreamRemaster-Server."
   },
   "precision": {
     "message": "Modellgenauigkeit"

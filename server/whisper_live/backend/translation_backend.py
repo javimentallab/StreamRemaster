@@ -66,7 +66,7 @@ class ServeClientTranslation(ServeClientBase):
         """Load the translation model and tokenizer."""
         try:
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            # Stream Transcription: the client may send the translator to the CPU
+            # StreamRemaster: the client may send the translator to the CPU
             if st_models.translator_on_cpu():
                 self.device = torch.device("cpu")
             logging.info(f"Loading translation model on device: {self.device}")

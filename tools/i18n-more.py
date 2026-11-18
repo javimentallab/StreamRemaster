@@ -555,7 +555,7 @@ server_change|Ändern
 server_help|Wie richte ich einen Server ein?
 server_help_1|Du brauchst einen WhisperLive-Server (frei und kostenlos) auf einem Computer, am besten mit einer NVIDIA-Grafikkarte. Kleine Modelle laufen auch nur auf dem Prozessor.
 server_help_2|Gib dann hier seine Adresse ein: die IP des Computers und den Port, z. B. 192.168.1.10:9090. Läuft er auf diesem Computer, localhost:9090.
-server_help_3|Um Modelle von dieser Seite aus herunterzuladen und zu verwalten, füge dem Server das Stream-Transcription-Add-on hinzu.
+server_help_3|Um Modelle von dieser Seite aus herunterzuladen und zu verwalten, füge dem Server das StreamRemaster-Add-on hinzu.
 server_help_guide|Schritt-für-Schritt-Anleitung
 error_capture|Dieser Tab lässt sich nicht aufnehmen (Browserseiten, Erweiterungsshops und PDFs sind gesperrt).
 error_no_media|Auf dieser Seite gibt es weder Video noch Audio.
@@ -593,14 +593,14 @@ job_extracting|Entpacke…
 job_ready|Installiert
 job_error|Fehlgeschlagen: {0}
 retry|Erneut versuchen
-plain_server_hint|Das ist ein Standard-WhisperLive-Server: Gib eine Modellgröße ein (tiny, base, small, medium, large-v3, large-v3-turbo), der Server lädt sie beim ersten Mal herunter. Um beliebige Modelle von hier herunterzuladen, installiere das Stream-Transcription-Add-on auf dem Server.
+plain_server_hint|Das ist ein Standard-WhisperLive-Server: Gib eine Modellgröße ein (tiny, base, small, medium, large-v3, large-v3-turbo), der Server lädt sie beim ersten Mal herunter. Um beliebige Modelle von hier herunterzuladen, installiere das StreamRemaster-Add-on auf dem Server.
 model_name|Modellname
 save|Speichern
 saved|Gespeichert
 reset_position|Untertitelposition zurücksetzen
 position_reset_done|Erledigt: Sie wandern wieder nach unten.
 section_performance|Leistung
-performance_hint|Wenn der Grafikkarte des Servers der Speicher ausgeht (Untertitel kommen nicht an oder eine Speicherwarnung erscheint), geben diese beiden Optionen viel frei. Sie funktionieren nur mit dem Stream-Transcription-Server.
+performance_hint|Wenn der Grafikkarte des Servers der Speicher ausgeht (Untertitel kommen nicht an oder eine Speicherwarnung erscheint), geben diese beiden Optionen viel frei. Sie funktionieren nur mit dem StreamRemaster-Server.
 precision|Modellgenauigkeit
 precision_auto|Automatisch
 precision_int8|Speicher sparen (int8)

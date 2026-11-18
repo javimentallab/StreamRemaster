@@ -159,7 +159,7 @@
     } catch (e) {
       delete jobs[c.id];
       if (!abort.signal.aborted) {
-        console.error("[stream-transcription] local download", e);
+        console.error("[streamremaster] local download", e);
         const why = e && e.name === "QuotaExceededError" ? e.name : (e && e.message) || String(e);
         setMsg(t("local_download_failed", why), "bad");
       }

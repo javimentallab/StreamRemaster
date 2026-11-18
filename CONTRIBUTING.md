@@ -1,10 +1,10 @@
 # Contributing
 
-Thanks for your interest. stream-transcription has a single maintainer, so replies can take a while.
+Thanks for your interest. StreamRemaster has a single maintainer, so replies can take a while.
 
 ## Bugs and ideas
 
-Open an [issue](https://github.com/javimentallab/stream-transcription/issues). Say what you expected, what happened, and which version and system you use. English or Spanish are both fine.
+Open an [issue](https://github.com/javimentallab/StreamRemaster/issues). Say what you expected, what happened, and which version and system you use. English or Spanish are both fine.
 
 Security problems go through [SECURITY.md](SECURITY.md), not through issues.
 

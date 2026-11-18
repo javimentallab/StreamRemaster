@@ -461,7 +461,7 @@ globalThis.Whisper = Whisper;
       const res = await this.tr.transcribe(mel, duration, { language: this.language, task: this.task });
       if (this.closed) return;
       if (Whisper.debug) {
-        console.info("[stream-transcription] pass", duration.toFixed(1) + " s", "mel", t1 - t0, "ms, model", Date.now() - t1, "ms,",
+        console.info("[streamremaster] pass", duration.toFixed(1) + " s", "mel", t1 - t0, "ms, model", Date.now() - t1, "ms,",
           res.tokens, "tokens,", res.language, res.langProb.toFixed(2), res.silent ? "silent" : "", res.segments.map((x) => x.text).join(" | "));
       }
       // The language is settled once the model is sure, or has said the same thing on
@@ -594,13 +594,13 @@ globalThis.Whisper = Whisper;
       // twice at most. Anything else ends the session with its real cause in the popup.
       fail(e) {
         if (this.closed) return;
-        console.error("[stream-transcription] local engine:", e);
+        console.error("[streamremaster] local engine:", e);
         const gpu = this.model && this.model.gpu;
         const message = String((e && e.message) || e || "");
         const lost = (gpu && gpu.lost) || /\blost\b|destroyed/i.test(message);
         if (lost && this.reloads < 2) {
           this.reloads++;
-          console.warn("[stream-transcription] GPU device lost, loading the model again:", (gpu && gpu.lostReason) || message);
+          console.warn("[streamremaster] GPU device lost, loading the model again:", (gpu && gpu.lostReason) || message);
           if (this.stream) this.stream.close();
           this.stream = null;
           this.model = null;

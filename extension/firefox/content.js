@@ -43,7 +43,7 @@
     } catch (e) {
       // Already owned by an earlier engine (the extension was reloaded with the page
       // open). Only a page reload frees it.
-      console.warn("[stream-transcription] can't capture this element:", e);
+      console.warn("[streamremaster] can't capture this element:", e);
       return;
     }
     hooked.add(el);
@@ -105,7 +105,7 @@
       await ensureGraph();
       els.forEach(hook);
     } catch (e) {
-      console.error("[stream-transcription] audio setup failed", e);
+      console.error("[streamremaster] audio setup failed", e);
       emit({ evt: "state", state: "error", error: "capture" });
       return;
     }

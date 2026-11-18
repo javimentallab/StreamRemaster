@@ -66,7 +66,7 @@ Engine.wsOptions = function (s) {
     // Without this, music or noise that never closes a segment makes the buffer (and
     // the delay) grow forever.
     clip_audio: true,
-    // Stream Transcription server options (a plain WhisperLive ignores them)
+    // StreamRemaster server options (a plain WhisperLive ignores them)
     st_precision: s.precision || "auto",
     st_translator_device: s.translatorDevice || "auto",
   };
@@ -190,7 +190,7 @@ Engine.Session = class {
       return;
     }
     if (data.status === "ERROR") {
-      console.error("[stream-transcription] server error:", data.message);
+      console.error("[streamremaster] server error:", data.message);
       // The usual one: the model doesn't fit in the GPU. Say so instead of a bare
       // "connection closed" a moment later.
       if (/load model|out of memory/i.test(String(data.message))) {
