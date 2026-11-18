@@ -2,8 +2,7 @@
 
 All notable changes to StreamRemaster, called Stream Transcription up to version 2.2.0. Versions follow [semantic versioning](https://semver.org/).
 
-<!-- TODO: date. -->
-## 3.0.0 — date to be decided
+## 3.0.0 — 2026-11-18
 
 ### Added
 - **Start automatically**: two separate boxes, one in each tab of the popup and in Settings, turn on the
@@ -18,7 +17,9 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   Zen and Chromium browsers (tested in Brave).
 - The tab's controls: a large on/off button; **Target frame rate** (Match the screen, or 60, 75, 90, 100,
   120, 144, 165, 180 or 240); **AI model**; and **Upscaling target resolution** (Original (no upscaling),
-  Match the screen, 1080p, 1440p or 4K). While it is on, a meter on the page shows the frame rate.
+  Match the screen, 1080p, 1440p or 4K). **Match the screen** follows the size the picture takes on
+  screen, so a video in a small player is not upscaled to 4K. While it is on, a meter on the page shows
+  the frame rate.
 - A built-in model, **StreamRemaster**: two small networks, one for upscaling and one for motion, trained
   from scratch by the author, with no third-party weights. How it was made and on what data:
   [docs/MODEL.md](docs/MODEL.md).
@@ -26,6 +27,12 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   `.fimodel`) and pick one. The built-in model is marked **Built-in** and cannot be deleted. **None** in
   the **AI model** list uses a plain cross-fade and plain scaling instead. Model files contain weights
   only, and the extension reads and checks them strictly before using them.
+- **Transcribe on this computer**, with no server. Whisper runs in the browser, on your graphics card,
+  through WebGPU. In Settings → **Transcription models**, download a model once (tiny, base, small,
+  medium or large-v3-turbo, from Hugging Face); it stays in the browser and can be deleted there. The
+  audio never leaves your computer. On this computer the subtitles can only be translated into English.
+- Smooth video models can also be kept on your StreamRemaster server: the chosen model is downloaded from
+  it and runs on this computer's graphics card.
 - The interface in Catalan, Galician and Basque: 18 languages in all.
 
 ### Changed
@@ -33,7 +40,10 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   from 2.2.0, so that Firefox updates the add-on by itself. The subtitles work as before.
 - Licence: from this version on, the code and the models are under the
   [PolyForm Noncommercial License 1.0.0](LICENSE). Versions up to 2.2.0 remain under the MIT licence.
-- `NOTICE` credits the training data of the built-in model.
+- `NOTICE` credits the training data of the built-in model, RIFE (used as a teacher during training) and
+  the Whisper models the extension can download.
+- The privacy policy is rewritten, in English ([PRIVACY.md](PRIVACY.md)) and Spanish
+  ([PRIVACY.es.md](PRIVACY.es.md)), and covers transcription on this computer and the smooth video.
 
 ### Fixed
 - Chromium browsers: fullscreen while the subtitles were capturing the tab stayed inside the tab. Now the
@@ -42,7 +52,7 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
 ### Security
 - No new required permissions. Chromium browsers get one optional permission, to read all
   websites, only asked for when you tick the box that starts the smooth video automatically.
-  <!-- TODO: say whether any vulnerability was fixed, as in 2.2.0 ("No vulnerabilities fixed in this release."). -->
+- No vulnerabilities fixed in this release.
 
 ## 2.2.0 — 2026-11-07
 

@@ -1,12 +1,12 @@
 # Privacy policy — StreamRemaster
 
-*Last updated: <DATE>*
+*Last updated: 18 November 2026*
 
 *Versión en español: [PRIVACY.es.md](PRIVACY.es.md)*
 
 ## 1. Data controller
 
-The StreamRemaster browser extension, formerly called Stream Transcription (the "Extension"), is published on addons.mozilla.org and at https://github.com/javimentallab/StreamRemaster by <NOMBRE>, with address at <DIRECCIÓN> (the "Provider"), under the developer name javimentallab. The Provider is the controller of the personal data referred to in this policy, and the User may contact the Provider at <CORREO>.
+The StreamRemaster browser extension, formerly called Stream Transcription (the "Extension"), is published on addons.mozilla.org and at https://github.com/javimentallab/StreamRemaster by Javier Comyn Pérez, with address at calle Olivos, número 36, 28670 Villaviciosa de Odón, Madrid, España (the "Provider"), under the developer name javimentallab. The Provider is the controller of the personal data referred to in this policy, and the User may contact the Provider at jotacomyn@gmail.com.
 
 ## 2. No processing of personal data by the Provider
 
@@ -42,7 +42,7 @@ The Extension keeps in the User's browser storage its settings (server address, 
 
 ## 7. Rights of the User
 
-As the Provider does not process personal data of the User, the Provider holds no data in respect of which the rights of access, rectification, erasure, restriction of processing, objection and portability under articles 15 to 22 of the General Data Protection Regulation could be exercised. Nevertheless, the User may contact the Provider at <CORREO> about any matter relating to them, and may lodge a complaint with the Spanish Data Protection Agency (www.aepd.es).
+As the Provider does not process personal data of the User, the Provider holds no data in respect of which the rights of access, rectification, erasure, restriction of processing, objection and portability under articles 15 to 22 of the General Data Protection Regulation could be exercised. Nevertheless, the User may contact the Provider at jotacomyn@gmail.com about any matter relating to them, and may lodge a complaint with the Spanish Data Protection Agency (www.aepd.es).
 
 ## 8. Amendments
 
@@ -50,4 +50,4 @@ The Provider may amend this policy; the date of the latest update will appear at
 
 ## 9. Contact
 
-Questions about this policy may be addressed to the Provider at <CORREO> or by opening an issue at https://github.com/javimentallab/StreamRemaster/issues.
+Questions about this policy may be addressed to the Provider at jotacomyn@gmail.com or by opening an issue at https://github.com/javimentallab/StreamRemaster/issues.

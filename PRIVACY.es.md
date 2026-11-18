@@ -1,12 +1,12 @@
 # Política de privacidad — StreamRemaster
 
-*Última actualización: <FECHA>*
+*Última actualización: 18 de noviembre de 2026*
 
 *English version: [PRIVACY.md](PRIVACY.md)*
 
 ## 1. Responsable del tratamiento
 
-La extensión de navegador StreamRemaster, antes llamada Stream Transcription (en adelante, «la Extensión»), se publica en addons.mozilla.org y en https://github.com/javimentallab/StreamRemaster por <NOMBRE>, con domicilio en <DIRECCIÓN> (en adelante, «el Titular»), con el nombre de desarrollador javimentallab. El Titular es el responsable del tratamiento de los datos personales a que se refiere esta política, y el Usuario puede dirigirse a él en <CORREO>.
+La extensión de navegador StreamRemaster, antes llamada Stream Transcription (en adelante, «la Extensión»), se publica en addons.mozilla.org y en https://github.com/javimentallab/StreamRemaster por Javier Comyn Pérez, con domicilio en calle Olivos, número 36, 28670 Villaviciosa de Odón, Madrid, España (en adelante, «el Titular»), con el nombre de desarrollador javimentallab. El Titular es el responsable del tratamiento de los datos personales a que se refiere esta política, y el Usuario puede dirigirse a él en jotacomyn@gmail.com.
 
 ## 2. Ausencia de tratamiento de datos personales por el Titular
 
@@ -42,7 +42,7 @@ La Extensión guarda en el almacenamiento del navegador del Usuario sus ajustes 
 
 ## 7. Derechos del Usuario
 
-Dado que el Titular no trata datos personales del Usuario, no conserva datos sobre los que puedan ejercerse los derechos de acceso, rectificación, supresión, limitación del tratamiento, oposición y portabilidad de los artículos 15 a 22 del Reglamento General de Protección de Datos. No obstante, el Usuario puede dirigirse al Titular en <CORREO> para cualquier cuestión relativa a ellos, y presentar una reclamación ante la Agencia Española de Protección de Datos (www.aepd.es).
+Dado que el Titular no trata datos personales del Usuario, no conserva datos sobre los que puedan ejercerse los derechos de acceso, rectificación, supresión, limitación del tratamiento, oposición y portabilidad de los artículos 15 a 22 del Reglamento General de Protección de Datos. No obstante, el Usuario puede dirigirse al Titular en jotacomyn@gmail.com para cualquier cuestión relativa a ellos, y presentar una reclamación ante la Agencia Española de Protección de Datos (www.aepd.es).
 
 ## 8. Modificaciones
 
@@ -50,4 +50,4 @@ El Titular podrá modificar esta política; la fecha de la última actualizació
 
 ## 9. Contacto
 
-Las consultas relativas a esta política podrán dirigirse al Titular en <CORREO> o mediante una incidencia en https://github.com/javimentallab/StreamRemaster/issues.
+Las consultas relativas a esta política podrán dirigirse al Titular en jotacomyn@gmail.com o mediante una incidencia en https://github.com/javimentallab/StreamRemaster/issues.

@@ -4,7 +4,8 @@
 
 Watch a Twitch stream, a YouTube video or a call in a language you don't speak, and read it
 in yours, in real time. The audio never leaves your network: it goes only to the
-[WhisperLive](https://github.com/collabora/WhisperLive) server you run. The **Smooth video** tab raises
+[WhisperLive](https://github.com/collabora/WhisperLive) server you run, or it is transcribed on your own
+graphics card and never leaves your computer. The **Smooth video** tab raises
 the frame rate of the video and upscales it with AI, on your own graphics card.
 
 StreamRemaster was called Stream Transcription up to version 2.2.0. The subtitles work as before.
@@ -27,6 +28,10 @@ StreamRemaster was called Stream Transcription up to version 2.2.0. The subtitle
   text, the translator can run on the CPU, and if the model doesn't fit you get a clear
   **VRAM warning** instead of subtitles that silently freeze.
 - **Save the subtitles** as an `.srt` file when you stop.
+- **Transcribe on this computer**, with no server: Whisper runs in the browser on your graphics card
+  (WebGPU). Download a model once in Settings (tiny, base, small, medium or large-v3-turbo, from
+  Hugging Face) and the audio never leaves your computer. On this computer the subtitles can only be
+  translated into English.
 - **Smooth video**: in-between frames generated with AI raise the video's frame rate up to your
   screen's, and AI upscaling doubles its resolution. On your own graphics card, with no server.
   [More below](#smooth-video).
@@ -53,7 +58,6 @@ It all runs in the browser, on your own graphics card, through WebGPU. This tab 
 without the WhisperLive server, and the video never leaves your computer. It works in Firefox, Zen and
 Chromium browsers (tested in Brave).
 
-<!-- TODO: captura de la pestaña Vídeo fluido -->
 
 The controls:
 
@@ -77,8 +81,6 @@ video shows as black to any extension and cannot be processed.
 
 ## Install the extension
 
-<!-- TODO: the AMO link, if StreamRemaster gets a new listing or ID; and how to buy it on Chromium, once
-the payment and licence mechanism is decided. -->
 - **Firefox** (and Zen, LibreWolf, Floorp…), free: [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
 - **Chromium** (Chrome, Brave, Edge, Opera, Vivaldi…): download
   `streamremaster-chromium-<version>.zip` from the
@@ -164,9 +166,12 @@ The translator adds ~0.7 GB on the GPU (or nothing, set to run on the CPU).
 
 ## Privacy
 
-The extension sends the tab's audio **only** to the server address you enter, and nothing
-else anywhere. **Smooth video** sends nothing: the video is processed on your own graphics card. Only when you press **Check for updates** does it ask GitHub for the number of
-the latest release. It stores its settings in your browser. See [PRIVACY.md](PRIVACY.md).
+The extension sends the tab's audio **only** to the server address you enter, or nowhere when you
+transcribe on this computer. **Smooth video** sends nothing: the video is processed on your own graphics
+card. The extension only connects elsewhere when you ask: to GitHub when you press **Check for
+updates** (it asks for the number of the latest release), to Hugging Face when you download a
+transcription model, and to the address you give when you add a smooth video model. It stores its
+settings and models in your browser. See the [privacy policy](PRIVACY.md).
 
 ## Building
 

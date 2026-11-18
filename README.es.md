@@ -4,7 +4,8 @@
 
 Mira un directo de Twitch, un vídeo de YouTube o una llamada en un idioma que no hablas y
 léelo en el tuyo, en tiempo real. El audio no sale de tu red: solo va al servidor
-[WhisperLive](https://github.com/collabora/WhisperLive) que tú montes. La pestaña **Vídeo fluido** sube
+[WhisperLive](https://github.com/collabora/WhisperLive) que tú montes, o se transcribe en tu propia
+tarjeta gráfica y no sale de tu ordenador. La pestaña **Vídeo fluido** sube
 los fotogramas por segundo del vídeo y lo reescala con IA, en tu propia tarjeta gráfica.
 
 StreamRemaster se llamaba Stream Transcription hasta la versión 2.2.0. Los subtítulos funcionan igual que
@@ -28,6 +29,10 @@ antes.
   texto, el traductor puede ir en el procesador, y si el modelo no cabe sale un **aviso de
   VRAM** en vez de unos subtítulos que se congelan sin decir nada.
 - **Guarda los subtítulos** en un `.srt` al parar.
+- **Transcribe en este ordenador**, sin servidor: Whisper funciona en el navegador con tu tarjeta
+  gráfica (WebGPU). Descarga una vez un modelo en Ajustes (tiny, base, small, medium o large-v3-turbo,
+  de Hugging Face) y el audio no sale de tu ordenador. En este ordenador los subtítulos solo se pueden
+  traducir al inglés.
 - **Vídeo fluido**: fotogramas intermedios generados con IA suben los fotogramas por segundo del vídeo
   hasta los de tu pantalla, y el reescalado con IA duplica su resolución. En tu propia tarjeta gráfica y
   sin servidor. [Más abajo](#vídeo-fluido).
@@ -55,7 +60,6 @@ Todo funciona en el navegador, en tu propia tarjeta gráfica, mediante WebGPU. E
 servidor: funciona sin el servidor WhisperLive, y el vídeo no sale de tu ordenador. Va en Firefox, Zen y
 los navegadores Chromium (probado en Brave).
 
-<!-- TODO: captura de la pestaña Vídeo fluido -->
 
 Los controles:
 
@@ -82,8 +86,6 @@ fiarte. El vídeo protegido (DRM) se ve negro para cualquier extensión y no se 
 
 ## Instalar la extensión
 
-<!-- TODO: el enlace de AMO, si StreamRemaster tiene una ficha o un ID nuevos; y cómo comprarla en
-Chromium, cuando se decida el sistema de pago y licencias. -->
 - **Firefox** (y Zen, LibreWolf, Floorp…), gratis: [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/stream-transcription/)
 - **Chromium** (Chrome, Brave, Edge, Opera, Vivaldi…): descarga
   `streamremaster-chromium-<versión>.zip` de la
@@ -169,10 +171,12 @@ El traductor suma ~0,7 GB en la gráfica (o nada, si lo pones en el procesador).
 
 ## Privacidad
 
-La extensión envía el audio de la pestaña **solo** a la dirección de servidor que escribas, y
-nada a ningún otro sitio. **Vídeo fluido** no envía nada: el vídeo se procesa en tu propia tarjeta
-gráfica. Solo cuando pulsas **Buscar actualizaciones** pregunta a GitHub el
-número de la última versión. Guarda sus ajustes en tu navegador. Ver [PRIVACY.md](PRIVACY.md).
+La extensión envía el audio de la pestaña **solo** a la dirección de servidor que escribas, o a ningún
+sitio cuando transcribes en este ordenador. **Vídeo fluido** no envía nada: el vídeo se procesa en tu
+propia tarjeta gráfica. La extensión solo se conecta a otros sitios cuando tú lo pides: a GitHub al
+pulsar **Buscar actualizaciones** (pregunta el número de la última versión), a Hugging Face al
+descargar un modelo de transcripción y a la dirección que des al añadir un modelo de vídeo fluido.
+Guarda sus ajustes y sus modelos en tu navegador. Ver la [política de privacidad](PRIVACY.es.md).
 
 ## Compilar
 
