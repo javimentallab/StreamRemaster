@@ -101,9 +101,13 @@
     return Math.min(step, screenHeight);
   }
 
+  // A fixed resolution (1080p, 1440p, 4K) is a maximum: never more than the player shows. 4K in a
+  // half-screen player upscaled to 4K and shrank it again, and the card fell behind.
   function planSizes(video, options) {
     const shownHeight = displayHeight(video);
-    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, options, shownHeight);
+    const fixed = Number(options.resolution);
+    const sized = fixed > 0 ? Object.assign({}, options, { resolution: Math.min(fixed, shownHeight) }) : options;
+    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, sized, shownHeight);
     plan.sharpen = SHARPEN[options.sharpen] ?? SHARPEN.medium;
     plan.displayHeight = shownHeight;
     return plan;
@@ -122,10 +126,10 @@
     state.layoutKey = "";
   }
 
-  // The player changed size (window resized, full screen on or off): with "display" resolution the
-  // output follows, once the new size has held for RESIZE_SETTLE_MS.
+  // The player changed size (window resized, full screen on or off): unless the resolution is
+  // "original", the output follows, once the new size has held for RESIZE_SETTLE_MS.
   function checkDisplaySize(state, now) {
-    if (state.options.resolution !== "display" || !state.plan) return;
+    if (state.options.resolution === "original" || !state.plan) return;
     if (displayHeight(state.video) === state.plan.displayHeight) {
       state.resizeSince = 0;
     } else if (!state.resizeSince) {
