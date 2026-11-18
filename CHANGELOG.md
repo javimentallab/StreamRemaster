@@ -20,12 +20,8 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   Match the screen, 1080p, 1440p or 4K). **Match the screen** follows the size the picture takes on
   screen, so a video in a small player is not upscaled to 4K. While it is on, a meter on the page shows
   the frame rate.
-- The smooth video looks after the graphics card. When the card takes longer over a frame than the
-  video takes to bring the next one (a game, an animated wallpaper or other tabs keep it busy), the work
-  is done on a smaller picture, a step at a time (1440p, 1080p, 720p), and last of all at half the
-  screen's frame rate. When the card has room again it goes back up by itself. The meter shows the
-  height in use, for example `↓720p`. Changing the size of the player (full screen, another window size)
-  no longer stops the smooth video for two seconds.
+- Changing the size of the player (full screen, another window size) no longer stops the smooth video
+  for two seconds: it goes on from the timing it already had.
 - Videos that carry fewer pictures than frames (24, 25 or 30 pictures a second sent as 60 frames, as in
   much game footage and film) are now smooth too. Shown as they come, the motion went in bursts: one
   frame's time moving, one or two still. The smooth video now tells the copies from the new pictures
