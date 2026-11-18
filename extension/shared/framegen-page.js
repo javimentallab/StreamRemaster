@@ -1,10 +1,11 @@
 // Runs frame generation on the page's main video: finds the video, lays a canvas over it and
 // answers the popup. Nothing touches the GPU until the user turns it on.
 //
-// Two ways to run it. In Chromium the work goes to a dedicated worker (framegen-worker.js): the
-// canvas is handed over as an OffscreenCanvas and the frames as a stream, so the page's own scripts
-// can no longer hold the picture back. Where that is not available (Firefox, or anything in the
-// chain failing) it runs here, on the page's main thread, as it always did.
+// Two ways to run it. By default it runs here, on the page's main thread, in every browser. In
+// Chromium the work can also go to a dedicated worker (framegen-worker.js, only when asked with
+// options.worker): the canvas is handed over as an OffscreenCanvas and the frames as a stream, so the
+// page's own scripts can no longer hold the picture back. It is off because on Twitch it froze at
+// 0 fps when the window lost the focus or was resized (a quality change rebuilds the whole worker).
 "use strict";
 
 (function () {
@@ -330,7 +331,7 @@
     return canvas;
   }
 
-  // options.mainThread: skip the worker (the test bench uses it to compare both paths).
+  // options.worker: use the worker where possible (off by default, see the top of this file).
   async function start(targetFps, options = {}) {
     stop();
     lastError = null;
@@ -369,7 +370,7 @@
       },
     };
 
-    if (!options.mainThread && workerPossible(video)) {
+    if (options.worker && workerPossible(video)) {
       try {
         await startWorker(state);
       } catch (error) {
