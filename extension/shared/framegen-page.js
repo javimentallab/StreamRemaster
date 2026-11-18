@@ -14,6 +14,9 @@
   const LAYOUT_EVERY_TICKS = 8;
   // With nothing painted for this long (paused, seeking, buffering) the real video shows through.
   const HIDE_AFTER_MS = 200;
+  // Without animation frames for this long, a clock of its own drives the page (see start()).
+  const FALLBACK_AFTER_MS = 50;
+  const FALLBACK_EVERY_MS = 4;
   const METER_EVERY_MS = 250;
   // How long the worker may take to set up its GPU before the main thread takes over.
   const WORKER_START_TIMEOUT_MS = 8000;
@@ -401,9 +404,7 @@
     document.addEventListener("webkitfullscreenchange", state.onFullscreen);
     placeMeter(state);
     run = state;
-    const loop = (now) => {
-      if (run !== state) return;
-      state.raf = requestAnimationFrame(loop);
+    const tick = (now) => {
       try {
         step(state, now);
       } catch (error) {
@@ -411,7 +412,22 @@
         stop(errorCode(error));
       }
     };
+    const loop = (now) => {
+      if (run !== state) return;
+      state.raf = requestAnimationFrame(loop);
+      state.lastLoopAt = now;
+      tick(now);
+    };
     state.raf = requestAnimationFrame(loop);
+    // The browser can stop giving the page animation frames while the window is not the active one
+    // or is partly covered, although it is still on screen: the smooth video then stopped and its
+    // last picture stayed frozen over the video. This clock carries on while animation frames are
+    // missing (only with the page visible: a minimized window is not painted for nobody).
+    state.fallback = setInterval(() => {
+      if (run !== state) return;
+      const now = performance.now();
+      if (document.visibilityState === "visible" && state.lastLoopAt && now - state.lastLoopAt > FALLBACK_AFTER_MS) tick(now);
+    }, FALLBACK_EVERY_MS);
     return status();
   }
 
@@ -427,6 +443,7 @@
     if (!state) return status();
     run = null;
     cancelAnimationFrame(state.raf);
+    clearInterval(state.fallback);
     state.video.removeEventListener("emptied", state.onSource);
     state.video.removeEventListener("loadedmetadata", state.onSource);
     document.removeEventListener("fullscreenchange", state.onFullscreen);
