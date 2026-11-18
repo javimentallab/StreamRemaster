@@ -14,9 +14,6 @@
   const LAYOUT_EVERY_TICKS = 8;
   // With nothing painted for this long (paused, seeking, buffering) the real video shows through.
   const HIDE_AFTER_MS = 200;
-  // Without animation frames for this long, a clock of its own drives the page (see start()).
-  const FALLBACK_AFTER_MS = 50;
-  const FALLBACK_EVERY_MS = 4;
   const METER_EVERY_MS = 250;
   // How long the worker may take to set up its GPU before the main thread takes over.
   const WORKER_START_TIMEOUT_MS = 8000;
@@ -76,68 +73,11 @@
   // The sharpening choices of the popup, as the strength PRESENT_SHADER takes.
   const SHARPEN = { off: 0, soft: 0.35, medium: 0.6, strong: 0.9 };
 
-  // "Display" resolution: the height the picture takes on screen, in device pixels, rounded up to
-  // one of these steps (so a window being dragged does not rebuild everything at each pixel) and
-  // never above the screen. It used to be the whole screen's height: a 1080p video in a player a
-  // quarter of the screen wide was upscaled to 4K and shrunk again, and the card fell behind
-  // (measured on YouTube in Brave: about 10 frames a second went without upscaling or motion).
-  const DISPLAY_STEPS = [720, 1080, 1440, 2160];
-  const DISPLAY_STEP_SLACK = 0.85;
-  // A new player size has to hold this long before the output is rebuilt for it.
-  const RESIZE_SETTLE_MS = 500;
-
-  function displayHeight(video) {
-    const dpr = devicePixelRatio || 1;
-    const screenHeight = Math.round(screen.height * dpr);
-    let shown = video.offsetHeight;
-    if (video.videoWidth && video.videoHeight && video.offsetWidth) {
-      shown = Math.min(shown, (video.offsetWidth * video.videoHeight) / video.videoWidth); // bars around it
-    }
-    const needed = Math.round(shown * dpr);
-    if (!(needed > 0)) return screenHeight;
-    // the nearest step that is not far below it: 1620 rows on screen take 1440, not 2160 (half again
-    // the pixels for a picture the browser then shrinks)
-    const step = DISPLAY_STEPS.find((h) => h >= needed * DISPLAY_STEP_SLACK) || DISPLAY_STEPS[DISPLAY_STEPS.length - 1];
-    return Math.min(step, screenHeight);
-  }
-
-  // A fixed resolution (1080p, 1440p, 4K) is a maximum: never more than the player shows. 4K in a
-  // half-screen player upscaled to 4K and shrank it again, and the card fell behind.
   function planSizes(video, options) {
-    const shownHeight = displayHeight(video);
-    const fixed = Number(options.resolution);
-    const sized = fixed > 0 ? Object.assign({}, options, { resolution: Math.min(fixed, shownHeight) }) : options;
-    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, sized, shownHeight);
+    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, options,
+      Math.round(screen.height * devicePixelRatio));
     plan.sharpen = SHARPEN[options.sharpen] ?? SHARPEN.medium;
-    plan.displayHeight = shownHeight;
     return plan;
-  }
-
-  // New sizes: on the worker path the worker rebuilds, here the generator is built again.
-  function replan(state) {
-    if (state.worker) {
-      state.plan = planSizes(state.video, state.options);
-      state.sourceWidth = state.video.videoWidth;
-      state.sourceHeight = state.video.videoHeight;
-      state.worker.postMessage({ type: "plan", plan: state.plan });
-    } else {
-      build(state);
-    }
-    state.layoutKey = "";
-  }
-
-  // The player changed size (window resized, full screen on or off): unless the resolution is
-  // "original", the output follows, once the new size has held for RESIZE_SETTLE_MS.
-  function checkDisplaySize(state, now) {
-    if (state.options.resolution === "original" || !state.plan) return;
-    if (displayHeight(state.video) === state.plan.displayHeight) {
-      state.resizeSince = 0;
-    } else if (!state.resizeSince) {
-      state.resizeSince = now;
-    } else if (now - state.resizeSince > RESIZE_SETTLE_MS) {
-      state.resizeSince = 0;
-      replan(state);
-    }
   }
 
   function build(state) {
@@ -339,9 +279,16 @@
     // so it takes its canvas away instead of staying over the video for good.
     if (!ext.runtime || !ext.runtime.id) { stop(); return; }
     if (video.videoWidth && (video.videoWidth !== state.sourceWidth || video.videoHeight !== state.sourceHeight)) {
-      replan(state);
+      if (state.worker) {
+        state.plan = planSizes(video, state.options);
+        state.sourceWidth = video.videoWidth;
+        state.sourceHeight = video.videoHeight;
+        state.worker.postMessage({ type: "plan", plan: state.plan });
+      } else {
+        build(state);
+      }
+      state.layoutKey = "";
     }
-    if (state.ticks % LAYOUT_EVERY_TICKS === 1) checkDisplaySize(state, now);
     if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
 
     if (state.lastTick) {
@@ -454,7 +401,9 @@
     document.addEventListener("webkitfullscreenchange", state.onFullscreen);
     placeMeter(state);
     run = state;
-    const tick = (now) => {
+    const loop = (now) => {
+      if (run !== state) return;
+      state.raf = requestAnimationFrame(loop);
       try {
         step(state, now);
       } catch (error) {
@@ -462,22 +411,7 @@
         stop(errorCode(error));
       }
     };
-    const loop = (now) => {
-      if (run !== state) return;
-      state.raf = requestAnimationFrame(loop);
-      state.lastLoopAt = now;
-      tick(now);
-    };
     state.raf = requestAnimationFrame(loop);
-    // The browser can stop giving the page animation frames while the window is not the active one
-    // or is partly covered, although it is still on screen: the smooth video then stopped and its
-    // last picture stayed frozen over the video. This clock carries on while animation frames are
-    // missing (only with the page visible: a minimized window is not painted for nobody).
-    state.fallback = setInterval(() => {
-      if (run !== state) return;
-      const now = performance.now();
-      if (document.visibilityState === "visible" && state.lastLoopAt && now - state.lastLoopAt > FALLBACK_AFTER_MS) tick(now);
-    }, FALLBACK_EVERY_MS);
     return status();
   }
 
@@ -493,7 +427,6 @@
     if (!state) return status();
     run = null;
     cancelAnimationFrame(state.raf);
-    clearInterval(state.fallback);
     state.video.removeEventListener("emptied", state.onSource);
     state.video.removeEventListener("loadedmetadata", state.onSource);
     document.removeEventListener("fullscreenchange", state.onFullscreen);
