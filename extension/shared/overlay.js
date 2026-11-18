@@ -31,7 +31,9 @@
     .clip { overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
     .para { margin: 0; }
     .line {
-      background: rgba(0, 0, 0, .74); padding: .08em .45em; border-radius: .25em;
+      /* No vertical padding: the background must not grow past the line, or the bottom of the line
+         above, the one the box cuts off, shows as a black bar over the subtitles (seen at 4K). */
+      background: rgba(0, 0, 0, .74); padding: 0 .45em; border-radius: .25em;
       -webkit-box-decoration-break: clone; box-decoration-break: clone;
       text-shadow: 0 1px 2px rgba(0, 0, 0, .9);
     }
