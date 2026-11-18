@@ -1,0 +1,659 @@
+{
+  "extName": {
+    "message": "StreamRemaster"
+  },
+  "extDescription": {
+    "message": "Subtítulos en directo para calquera lapela, transcritos e traducidos polo teu propio servidor Whisper."
+  },
+  "start": {
+    "message": "Activar subtítulos"
+  },
+  "stop": {
+    "message": "Quitar subtítulos"
+  },
+  "status_idle": {
+    "message": "Listo"
+  },
+  "status_connecting": {
+    "message": "Conectando…"
+  },
+  "status_loading": {
+    "message": "Cargando o modelo…"
+  },
+  "status_listening": {
+    "message": "Escoitando…"
+  },
+  "status_live": {
+    "message": "En directo"
+  },
+  "status_stalled": {
+    "message": "Audio parado"
+  },
+  "status_error": {
+    "message": "Erro"
+  },
+  "status_noresponse": {
+    "message": "Sen resposta"
+  },
+  "model": {
+    "message": "Modelo de transcrición"
+  },
+  "model_server_default": {
+    "message": "O do servidor"
+  },
+  "model_default_tag": {
+    "message": "{0} · predeterminado"
+  },
+  "manage_models": {
+    "message": "Xestionar modelos"
+  },
+  "spoken_lang": {
+    "message": "Idioma do audio"
+  },
+  "auto_detect": {
+    "message": "Automático"
+  },
+  "detected": {
+    "message": "Detectado: {0}"
+  },
+  "subs_lang": {
+    "message": "Subtítulos en"
+  },
+  "original_lang": {
+    "message": "Sen traducir"
+  },
+  "lines": {
+    "message": "Liñas"
+  },
+  "text_size": {
+    "message": "Tamaño do texto"
+  },
+  "save_srt": {
+    "message": "Gardar os subtítulos (.srt) ao parar"
+  },
+  "advanced": {
+    "message": "Avanzado"
+  },
+  "use_vad": {
+    "message": "Saltar silencios (detección de voz)"
+  },
+  "settings": {
+    "message": "Axustes"
+  },
+  "first_load_hint": {
+    "message": "A primeira vez que se carga un modelo pode tardar ata un minuto."
+  },
+  "options_locked": {
+    "message": "Quita os subtítulos para cambiar estas opcións."
+  },
+  "server_setup_title": {
+    "message": "Conecta o teu servidor"
+  },
+  "server_setup_hint": {
+    "message": "StreamRemaster transcribe cun servidor WhisperLive no teu ordenador ou na túa rede, ou coa tarxeta gráfica deste ordenador."
+  },
+  "server_address": {
+    "message": "Enderezo do servidor"
+  },
+  "server_placeholder": {
+    "message": "p. ex. localhost:9090 ou 192.168.1.10:9090"
+  },
+  "connect": {
+    "message": "Conectar"
+  },
+  "server_ok_models": {
+    "message": "Conectado · {0} modelos"
+  },
+  "server_ok_one_model": {
+    "message": "Conectado · 1 modelo"
+  },
+  "server_plain": {
+    "message": "Conectado · WhisperLive estándar (sen xestión de modelos)"
+  },
+  "server_checking": {
+    "message": "Comprobando…"
+  },
+  "server_unreachable": {
+    "message": "Non se pode conectar co servidor. Está aceso? Revisa o enderezo e a devasa."
+  },
+  "server_timeout": {
+    "message": "O servidor non respondeu a tempo."
+  },
+  "server_bad_url": {
+    "message": "Ese enderezo non é válido."
+  },
+  "server_change": {
+    "message": "Cambiar"
+  },
+  "server_help": {
+    "message": "Como monto un servidor?"
+  },
+  "server_help_1": {
+    "message": "Necesitas un servidor WhisperLive (libre e gratuíto) nun ordenador, mellor se ten unha tarxeta gráfica NVIDIA. Os modelos pequenos tamén funcionan só co procesador."
+  },
+  "server_help_2": {
+    "message": "Despois escribe aquí o seu enderezo: a IP do ordenador e o porto, p. ex. 192.168.1.10:9090. Se está neste mesmo ordenador, localhost:9090."
+  },
+  "server_help_3": {
+    "message": "Para descargar e xestionar modelos desde esta páxina, engade ao servidor o complemento de StreamRemaster."
+  },
+  "server_help_guide": {
+    "message": "Guía paso a paso"
+  },
+  "error_capture": {
+    "message": "Non se pode capturar esta lapela (as páxinas do navegador, as tendas de extensións e os PDF non o permiten)."
+  },
+  "error_no_media": {
+    "message": "Non hai vídeo nin audio nesta páxina."
+  },
+  "error_server_full": {
+    "message": "O servidor está ocupado. Espera estimada: {0} min."
+  },
+  "error_disconnected": {
+    "message": "O servidor pechou a conexión."
+  },
+  "error_model_load": {
+    "message": "⚠ Non hai memoria gráfica (VRAM) abonda no servidor para este modelo. Escolle un modelo máis pequeno ou activa «Aforrar memoria (int8)» en Avanzado."
+  },
+  "warn_no_response": {
+    "message": "⚠ Deixaron de chegar subtítulos aínda que hai son. Seguramente o modelo non cabe na memoria gráfica (VRAM) do servidor: escolle un modelo máis pequeno ou activa «Aforrar memoria (int8)» en Avanzado."
+  },
+  "warn_slow_load": {
+    "message": "⚠ O modelo está a tardar demasiado en cargar. Pode que non caiba na memoria gráfica (VRAM) do servidor: escolle un modelo máis pequeno ou activa «Aforrar memoria (int8)» en Avanzado."
+  },
+  "error_reload": {
+    "message": "Recarga a páxina (F5) e volve empezar."
+  },
+  "error_no_server": {
+    "message": "Primeiro configura o servidor."
+  },
+  "settings_title": {
+    "message": "StreamRemaster · Axustes"
+  },
+  "section_subtitles": {
+    "message": "Subtítulos"
+  },
+  "section_interface": {
+    "message": "Interface"
+  },
+  "section_about": {
+    "message": "Acerca de"
+  },
+  "installed_models": {
+    "message": "Instalados no servidor"
+  },
+  "no_models": {
+    "message": "Aínda non hai modelos instalados."
+  },
+  "badge_default": {
+    "message": "Predeterminado"
+  },
+  "badge_loaded": {
+    "message": "En memoria"
+  },
+  "badge_selected": {
+    "message": "Escollido"
+  },
+  "use_model": {
+    "message": "Usar"
+  },
+  "delete_model": {
+    "message": "Borrar"
+  },
+  "confirm_delete": {
+    "message": "Borrar {0} do servidor? Libera {1}."
+  },
+  "add_model": {
+    "message": "Engadir un modelo"
+  },
+  "add_model_hint": {
+    "message": "Pega o nome ou a ligazón dun modelo de Hugging Face. Serve calquera modelo Whisper: os de faster-whisper (CTranslate2) úsanse tal cal e os normais (transformers) convértense sós. Tamén serve unha ligazón directa a un .zip ou .tar.gz cun modelo."
+  },
+  "add_model_placeholder": {
+    "message": "p. ex. Systran/faster-whisper-large-v3"
+  },
+  "download": {
+    "message": "Descargar"
+  },
+  "suggestions": {
+    "message": "Suxestións:"
+  },
+  "browse_hf": {
+    "message": "Ver modelos Whisper en Hugging Face"
+  },
+  "vram_hint": {
+    "message": "Os modelos grandes acertan máis pero piden máis memoria da tarxeta gráfica: small ≈ 1 GB, medium ≈ 2 GB, large ≈ 4 GB."
+  },
+  "keep_open": {
+    "message": "Deixa esta páxina aberta ata que remate a descarga."
+  },
+  "job_downloading": {
+    "message": "Descargando… {0} de {1}"
+  },
+  "job_downloading_nosize": {
+    "message": "Descargando… {0}"
+  },
+  "job_converting": {
+    "message": "Convertendo ao formato de faster-whisper…"
+  },
+  "job_extracting": {
+    "message": "Descomprimindo…"
+  },
+  "job_ready": {
+    "message": "Instalado"
+  },
+  "job_error": {
+    "message": "Fallou: {0}"
+  },
+  "retry": {
+    "message": "Tentar de novo"
+  },
+  "plain_server_hint": {
+    "message": "É un servidor WhisperLive estándar: escribe un tamaño de modelo (tiny, base, small, medium, large-v3, large-v3-turbo) e o servidor descárgao a primeira vez. Para descargar calquera modelo desde aquí, instala o complemento de StreamRemaster no servidor."
+  },
+  "model_name": {
+    "message": "Nome do modelo"
+  },
+  "save": {
+    "message": "Gardar"
+  },
+  "saved": {
+    "message": "Gardado"
+  },
+  "reset_position": {
+    "message": "Recolocar os subtítulos"
+  },
+  "position_reset_done": {
+    "message": "Feito: volverán abaixo."
+  },
+  "section_performance": {
+    "message": "Rendemento"
+  },
+  "performance_hint": {
+    "message": "Se a tarxeta gráfica do servidor se queda sen memoria (os subtítulos non chegan ou sae un aviso de memoria), estas dúas opcións liberan bastante. Só funcionan co servidor de StreamRemaster."
+  },
+  "precision": {
+    "message": "Precisión do modelo"
+  },
+  "precision_auto": {
+    "message": "Automática"
+  },
+  "precision_int8": {
+    "message": "Aforrar memoria (int8)"
+  },
+  "precision_hint": {
+    "message": "int8 gasta máis ou menos a metade de memoria gráfica e, na práctica, escribe o mesmo texto."
+  },
+  "translator_device": {
+    "message": "O tradutor vai en"
+  },
+  "device_gpu": {
+    "message": "A tarxeta gráfica"
+  },
+  "device_cpu": {
+    "message": "O procesador (CPU)"
+  },
+  "translator_device_hint": {
+    "message": "No procesador libera memoria gráfica, pero os subtítulos traducidos chegan algo máis tarde."
+  },
+  "interface_lang": {
+    "message": "Idioma da interface"
+  },
+  "lang_auto": {
+    "message": "O do navegador"
+  },
+  "about_text": {
+    "message": "Código fonte dispoñible (licenza PolyForm Noncommercial). O audio só vai ao servidor que configures aquí; non se envía nada a ningún outro sitio."
+  },
+  "about_based": {
+    "message": "Baseado en WhisperLive, de Collabora."
+  },
+  "source_code": {
+    "message": "Código fonte"
+  },
+  "subtitle_preview": {
+    "message": "Así se verán os teus subtítulos."
+  },
+  "updates": {
+    "message": "Actualizacións"
+  },
+  "check_updates": {
+    "message": "Buscar actualizacións"
+  },
+  "check_again": {
+    "message": "Volver buscar"
+  },
+  "update_now": {
+    "message": "Actualizar"
+  },
+  "update_available": {
+    "message": "Xa está a versión {0} (tes a {1})."
+  },
+  "update_latest": {
+    "message": "Tes a última versión ({0})."
+  },
+  "update_rate_limited": {
+    "message": "GitHub está a limitar as consultas durante un tempo. Volve tentalo máis tarde."
+  },
+  "update_failed": {
+    "message": "Non se puideron buscar actualizacións. Revisa a conexión e volve tentalo."
+  },
+  "update_how_firefox": {
+    "message": "Firefox instala as versións novas el só. Para tela xa, abre about:addons, preme a icona da roda dentada e escolle «Buscar actualizacións». Unha versión recén saída pode tardar uns días en chegar á web de complementos."
+  },
+  "update_how_chromium": {
+    "message": "Para actualizar, descarga o zip de Chromium da páxina da versión, descomprímeo enriba do cartafol antigo e preme a icona de recargar na tarxeta de StreamRemaster de chrome://extensions. Os axustes consérvanse."
+  },
+  "update_privacy": {
+    "message": "Ao buscar, só se lle pregunta a GitHub o número da última versión; non se envía nada máis."
+  },
+  "server_update_available": {
+    "message": "O teu servidor ten a versión {0} e xa está a {1}. Para actualizalo, executa isto no ordenador onde está:"
+  },
+  "server_version_unknown": {
+    "message": "O teu servidor non di que versión ten, así que é anterior a esta comprobación. Para actualizalo, executa isto no ordenador onde está:"
+  },
+  "server_update_latest": {
+    "message": "O teu servidor está ao día ({0})."
+  },
+  "server_update_note": {
+    "message": "Os modelos quédanse no volume de Docker e non se volven descargar. Se cambiaches docker-compose.yml e git pull se queixa, executa git stash antes e git stash pop despois."
+  },
+  "err_invalid_source": {
+    "message": "Iso non é un nome de modelo de Hugging Face nin unha ligazón."
+  },
+  "err_unsupported_url": {
+    "message": "Só ligazóns de Hugging Face ou ligazóns directas a ficheiros .zip / .tar.gz."
+  },
+  "err_repo_not_found": {
+    "message": "Ese modelo non existe en Hugging Face (revisa o nome)."
+  },
+  "err_gated_repo": {
+    "message": "Ese modelo pide aceptar as súas condicións en Hugging Face; o servidor necesita un HF_TOKEN."
+  },
+  "err_not_whisper": {
+    "message": "Iso non é un modelo Whisper."
+  },
+  "err_no_weights": {
+    "message": "Ese repositorio non ten os pesos do modelo."
+  },
+  "err_network_error": {
+    "message": "Erro de rede. Volve tentalo: segue por onde ía."
+  },
+  "err_download_failed": {
+    "message": "A descarga fallou."
+  },
+  "err_convert_failed": {
+    "message": "Non se puido converter o modelo."
+  },
+  "err_bad_archive": {
+    "message": "O ficheiro comprimido está danado ou non é seguro."
+  },
+  "err_already_downloading": {
+    "message": "Xa se está a descargar."
+  },
+  "err_already_installed": {
+    "message": "Xa está instalado."
+  },
+  "err_management_disabled": {
+    "message": "A xestión de modelos está desactivada neste servidor."
+  },
+  "err_is_default": {
+    "message": "É o modelo predeterminado do servidor; non se pode borrar desde aquí."
+  },
+  "err_in_use": {
+    "message": "Estao a usar unha transcrición en marcha."
+  },
+  "err_not_found": {
+    "message": "Ese modelo xa non está no servidor."
+  },
+  "err_server_error": {
+    "message": "Erro do servidor."
+  },
+  "err_unreachable": {
+    "message": "Non se pode conectar co servidor."
+  },
+  "err_timeout": {
+    "message": "O servidor non respondeu a tempo."
+  },
+  "err_unknown": {
+    "message": "Erro inesperado ({0})."
+  },
+  "fg_sharpen": {
+    "message": "Nitidez"
+  },
+  "fg_sharpen_off": {
+    "message": "Desactivada"
+  },
+  "fg_sharpen_soft": {
+    "message": "Suave"
+  },
+  "fg_sharpen_medium": {
+    "message": "Media"
+  },
+  "fg_sharpen_strong": {
+    "message": "Forte"
+  },
+  "auto_start_hint": {
+    "message": "Neste navegador só funciona nas lapelas nas que premiches o botón da extensión, ata que pasen a outro sitio web."
+  },
+  "fg_add_model": {
+    "message": "Engadir un ficheiro de modelo"
+  },
+  "fg_allow_all_sites": {
+    "message": "Permitir en todos os sitios web"
+  },
+  "fg_auto_start": {
+    "message": "Activar o vídeo fluído ao reproducirse un vídeo"
+  },
+  "fg_builtin": {
+    "message": "Incluído"
+  },
+  "fg_cannot_read": {
+    "message": "Este vídeo non se pode ler: está protexido ou vén doutro sitio."
+  },
+  "fg_kind_fi": {
+    "message": "Fotogramas intermedios"
+  },
+  "fg_kind_sr": {
+    "message": "Ampliación"
+  },
+  "fg_model": {
+    "message": "Modelo de IA"
+  },
+  "fg_model_bad": {
+    "message": "Ese ficheiro non é un modelo válido."
+  },
+  "fg_model_none": {
+    "message": "Ningún (sen IA)"
+  },
+  "fg_models_hint": {
+    "message": "Descarga un ficheiro de modelo (.stmodel, .srmodel, .fimodel) e engádeo aquí. Funciona na túa propia tarxeta gráfica."
+  },
+  "fg_no_models": {
+    "message": "Aínda non engadiches ningún modelo."
+  },
+  "fg_no_video": {
+    "message": "Non se está a reproducir ningún vídeo nesta páxina."
+  },
+  "fg_no_webgpu": {
+    "message": "Este navegador non pode usar a GPU para isto (non ten WebGPU)."
+  },
+  "fg_res_original": {
+    "message": "Orixinal (sen ampliar)"
+  },
+  "fg_resolution": {
+    "message": "Resolución final da ampliación"
+  },
+  "fg_start": {
+    "message": "Activar vídeo fluído"
+  },
+  "fg_state_measuring": {
+    "message": "Medindo o vídeo…"
+  },
+  "fg_state_off": {
+    "message": "Apagado"
+  },
+  "fg_state_on": {
+    "message": "{0} fps (vídeo a {1} fps)"
+  },
+  "fg_stop": {
+    "message": "Quitar vídeo fluído"
+  },
+  "fg_target": {
+    "message": "FPS desexados"
+  },
+  "fg_target_display": {
+    "message": "Igual que a pantalla"
+  },
+  "fg_unavailable": {
+    "message": "Esta páxina non admite extensións."
+  },
+  "section_fgmodels": {
+    "message": "Modelos de vídeo fluído"
+  },
+  "subs_auto_start": {
+    "message": "Iniciar os subtítulos ao reproducirse un vídeo"
+  },
+  "tab_fg": {
+    "message": "Vídeo fluído"
+  },
+  "tab_subs": {
+    "message": "Subtítulos"
+  },
+  "badge_downloaded": {
+    "message": "Descargado"
+  },
+  "badge_in_use": {
+    "message": "En uso"
+  },
+  "engine_local": {
+    "message": "Neste ordenador"
+  },
+  "engine_server": {
+    "message": "No servidor"
+  },
+  "error_local_failed": {
+    "message": "A transcrición neste ordenador detívose por un erro."
+  },
+  "error_local_lost": {
+    "message": "A tarxeta gráfica detivo o modelo de transcrición varias veces seguidas."
+  },
+  "error_local_missing": {
+    "message": "Primeiro descarga un modelo, en Axustes → Modelos neste ordenador."
+  },
+  "error_local_vram": {
+    "message": "⚠ Non hai memoria gráfica dabondo neste ordenador para este modelo. Escolle un máis pequeno."
+  },
+  "error_no_webgpu": {
+    "message": "Este navegador non pode usar a tarxeta gráfica (WebGPU), así que non pode transcribir neste ordenador."
+  },
+  "fg_add_server_title": {
+    "message": "Engadir ao servidor"
+  },
+  "fg_add_title": {
+    "message": "Engadir un modelo"
+  },
+  "fg_add_url_placeholder": {
+    "message": "Enderezo dun ficheiro de modelo (.stmodel)"
+  },
+  "fg_download_failed": {
+    "message": "Non se puido descargar ({0}). Descarga o ficheiro co navegador e escólleo desde este ordenador."
+  },
+  "fg_downloaded_title": {
+    "message": "Descargados"
+  },
+  "fg_file_size": {
+    "message": "Ficheiro: {0}"
+  },
+  "fg_hq_badge": {
+    "message": "Para tarxetas gráficas potentes"
+  },
+  "fg_local_title": {
+    "message": "Modelos de vídeo fluído neste ordenador"
+  },
+  "fg_memory": {
+    "message": "Memoria gráfica: uns {0} cun vídeo de 1080p"
+  },
+  "fg_memory_4k": {
+    "message": "uns {0} ampliando de 1080p a 4K"
+  },
+  "fg_memory_now": {
+    "message": "Memoria gráfica en uso: uns {0}"
+  },
+  "fg_options": {
+    "message": "Opcións"
+  },
+  "fg_server_intro": {
+    "message": "O servidor só os garda: o modelo escollido báixase del e funciona na tarxeta gráfica deste ordenador."
+  },
+  "fg_server_loading": {
+    "message": "Baixando o modelo do servidor…"
+  },
+  "fg_server_none": {
+    "message": "O servidor aínda non ten modelos de vídeo fluído."
+  },
+  "fg_server_old": {
+    "message": "Este servidor non garda modelos de vídeo fluído: actualízao á última versión."
+  },
+  "fg_server_title": {
+    "message": "Modelos de vídeo fluído no servidor"
+  },
+  "local_cancel": {
+    "message": "Cancelar"
+  },
+  "local_confirm_delete": {
+    "message": "Borrar o modelo {0} deste ordenador? Libera {1}."
+  },
+  "local_download_failed": {
+    "message": "A descarga fallou ({0})."
+  },
+  "local_footer": {
+    "message": "Este ordenador"
+  },
+  "local_gpu": {
+    "message": "Tarxeta gráfica: {0}"
+  },
+  "local_intro": {
+    "message": "Whisper funciona no navegador, coa túa tarxeta gráfica (WebGPU). Cada modelo descárgase unha vez de Hugging Face e queda no navegador. Os máis grandes escriben mellor e precisan máis memoria gráfica."
+  },
+  "local_none": {
+    "message": "Ningún modelo: descarga un"
+  },
+  "local_only_english": {
+    "message": "Neste ordenador os subtítulos só se poden traducir ao inglés."
+  },
+  "local_progress": {
+    "message": "Descargando… {0} de {1}"
+  },
+  "local_sizes": {
+    "message": "Descarga {0} · ocupa {1} · uns {2} de memoria gráfica"
+  },
+  "section_transcription": {
+    "message": "Modelos de transcrición"
+  },
+  "setup_or": {
+    "message": "ou"
+  },
+  "trans_local_title": {
+    "message": "Modelos de transcrición neste ordenador"
+  },
+  "trans_server_title": {
+    "message": "Modelos de transcrición no servidor"
+  },
+  "transcription_intro": {
+    "message": "Escolle onde se pasa a voz a texto: nun servidor WhisperLive ou na tarxeta gráfica deste ordenador."
+  },
+  "use_local": {
+    "message": "Usar este ordenador"
+  },
+  "use_local_hint": {
+    "message": "Whisper funciona coa tarxeta gráfica deste ordenador, sen servidor. O modelo descárgase unha vez, en Axustes."
+  },
+  "where_fg_models": {
+    "message": "Onde están os modelos"
+  },
+  "where_transcribe": {
+    "message": "Onde transcribir"
+  }
+}
