@@ -8,7 +8,7 @@
 // blocks as the upscaler (framegen-sr.js).
 "use strict";
 
-(function (root) {
+(globalThis.STFramegenFIInstall = function (root) {
   const MAGIC = 0x314d4946; // "FIM1"
   const IN_CHANNELS = 32;   // luma of both frames, unpacked 4x4
   const OUT_CHANNELS = 8;   // motion 0->1, motion 1->0, mask logit, spare
@@ -334,5 +334,14 @@ ${copies}}`;
     }
   }
 
-  root.STFramegenFI = { parseModel, buildShaders, buildPlan, weightCount, kindOf, Interpolator, ALIGN, MAX_MODEL_BYTES };
+  // The graphics memory the Interpolator's buffers and motion textures take (rgba16float, 8 bytes
+  // a texel) for captured frames of width x height and a ring of that many slots.
+  function memoryBytes(model, width, height, slots) {
+    const { c1, c2 } = model.shape;
+    const n4 = (width / 4) * (height / 4);
+    const floats = n4 * (IN_CHANNELS + 4 * c1 + OUT_CHANNELS) + (n4 / 4) * (4 * c1 + 4 * c2) + (n4 / 16) * (4 * c2 + 3 * c2);
+    return 4 * floats + slots * 2 * n4 * 8;
+  }
+
+  root.STFramegenFI = { parseModel, buildShaders, buildPlan, weightCount, memoryBytes, kindOf, Interpolator, ALIGN, MAX_MODEL_BYTES };
 })(globalThis);
