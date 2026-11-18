@@ -354,6 +354,8 @@
     const gen = state.gen;
     return {
       hz: gen ? gen.sourceHz() : 0,
+      // the pictures a second the video really carries, when many of its frames are copies
+      pictures: gen && gen.cadence.active ? gen.contentHz() : 0,
       fps: state.paints.length,
       sr: !!(gen && gen.upscaler && gen.upscaler.ready),
       fi: !!(gen && gen.interpolator && gen.interpolator.ready),
@@ -363,9 +365,11 @@
   function updateMeter(state, now) {
     if (now - state.meterAt < METER_EVERY_MS) return;
     state.meterAt = now;
-    const { hz, fps, sr, fi } = liveInfo(state);
+    const { hz, fps, sr, fi, pictures } = liveInfo(state);
     // two decimals when the rate is not a whole number (59.94, 29.97, 23.98), so it can be told apart
-    const source = Math.abs(hz - Math.round(hz)) < 0.005 ? String(Math.round(hz)) : hz.toFixed(2);
+    let source = Math.abs(hz - Math.round(hz)) < 0.005 ? String(Math.round(hz)) : hz.toFixed(2);
+    // "24/60": a 60 fps video that carries 24 pictures a second, the rest being copies
+    if (pictures && pictures < hz * 0.95) source = `${Math.round(pictures)}/${source}`;
     // "↓1080p": the work was lowered to that height because the graphics card was not keeping up
     const lowered = !state.worker && state.plan && state.plan.lowered ? ` · ↓${state.plan.outputHeight}p` : "";
     state.meter.label.textContent = hz ? `${source} → ${fps} fps${sr ? " · SR" : ""}${fi ? " · FI" : ""}${lowered}` : "… fps";
@@ -616,6 +620,10 @@
       size: run.plan ? [run.plan.outputWidth, run.plan.outputHeight] : null,
       input: run.plan ? [run.plan.width, run.plan.height] : null,
       memory: run.plan ? globalThis.STFramegen.memoryBytes(run.plan) : null,
+      cadence: run.worker || !run.gen ? null : {
+        on: run.gen.cadence.on, active: run.gen.cadence.active, extra: +run.gen.cadence.extra.toFixed(2),
+        maxRun: run.gen.cadence.maxRun, pictures: +run.gen.contentHz().toFixed(2), steady: !!run.gen.cadence.fit,
+      },
       load: run.worker ? null : {
         cap: Number.isFinite(run.governor.cap) ? run.governor.cap : null, slow: run.governor.slow,
         workMs: Number.isFinite(run.governor.median) ? +run.governor.median.toFixed(1) : null,

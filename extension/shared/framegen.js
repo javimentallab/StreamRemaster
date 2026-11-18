@@ -325,6 +325,136 @@
     }
   }
 
+  // ---- copies among the frames ------------------------------------------------------------------
+  //
+  // Many 60 fps videos carry fewer pictures than frames: 24, 25 or 30 a second, each sent two or
+  // three times (game footage, films, phone clips; measured on a YouTube video at 60 fps: 24
+  // pictures a second in the pattern 2-3-2-3). Painted as it comes, the motion goes in bursts,
+  // one frame's time moving and one or two still: a fast stutter the plain video does not show.
+  // So every captured frame is compared on the card with the one before, and when copies keep
+  // coming they leave the ring: the motion is then drawn from one picture to the next real one,
+  // over the two or three frames' time it really took. The output runs that much further behind.
+  const DUP_GRID = [64, 36];  // the comparison's result: the worst difference in each block of picture
+  // Two frames are one picture when they differ this little, in levels out of 255: on average over
+  // the picture, and in the block that differs most (a copy is seldom exact: the video's
+  // compression leaves a little noise on it).
+  const DUP_MEAN_LEVELS = 0.1;
+  const DUP_BLOCK_LEVELS = 3;
+  const sameFrame = (diff) => diff.mean <= DUP_MEAN_LEVELS && diff.block <= DUP_BLOCK_LEVELS;
+  const DUP_LOG = 120;        // results remembered
+  const DUP_MIN_RESULTS = 30;
+  // Copies among the last results that turn it on (a 50 fps video at 60 has one in six) and off.
+  const DUP_ON_SHARE = 0.1;
+  const DUP_OFF_SHARE = 0.04;
+  // Copies in a row that may leave; the next one stays, so a still picture keeps being refreshed.
+  const DUP_MAX_RUN = 2;
+  // Frames of delay gained or given back per second: the picture runs 2.5 % slower or faster
+  // for a moment, which is not seen, where a jump would be.
+  const DUP_SLEW_PER_S = 1.5;
+  // With the real pictures coming at a steady pace (24 in 60 is 2, 3, 2, 3 frames apart) they are
+  // shown evenly spaced, on the line fitted through the last few. Half a frame of delay covers it.
+  const CADENCE_UNIQUES = 12;
+  const CADENCE_MIN_UNIQUES = 6;
+  const CADENCE_MAX_RESIDUAL = 0.6;
+  const CADENCE_MARGIN = 0.5;
+
+  class Cadence {
+    constructor() {
+      this.log = [];          // per result: 0 for a new picture, else how many copies in a row
+      this.runs = new Map();  // frame index -> copies in a row up to it
+      this.base = new Map();  // a copy's index -> the frame it copies
+      this.uniques = [];      // indices of the last new pictures
+      this.fit = null;        // { a, slope }: new picture k of uniques sits at a + slope * k
+      this.on = false;        // copies keep coming
+      this.active = false;    // on, and the delay has grown enough for copies to leave
+      this.maxRun = 0;
+      this.extra = 0;         // frames of delay added
+      this.slewAt = 0;
+    }
+
+    // The video jumped: the frame numbers start again.
+    forget() {
+      this.runs.clear();
+      this.base.clear();
+      this.uniques = [];
+      this.fit = null;
+    }
+
+    // Frame `index` compared with `previous`, the frame captured before it. Returns the frame it
+    // copies when it is a copy that may leave the ring, else null.
+    result(index, previous, same) {
+      const run = same ? (this.runs.get(previous) || 0) + 1 : 0;
+      const copy = same && run <= DUP_MAX_RUN;
+      this.runs.set(index, copy ? run : 0);
+      for (const key of this.runs.keys()) {
+        if (key >= index - 32) break;
+        this.runs.delete(key);
+        this.base.delete(key);
+      }
+      this.log.push(run);
+      if (this.log.length > DUP_LOG) this.log.shift();
+      const recent = this.log.slice(-DUP_LOG / 2);
+      if (this.log.length >= DUP_MIN_RESULTS) {
+        const share = (list) => list.filter((r) => r > 0).length / list.length;
+        if (!this.on && share(recent) >= DUP_ON_SHARE) this.on = true;
+        else if (this.on && share(this.log) < DUP_OFF_SHARE) this.on = false;
+      }
+      this.maxRun = Math.min(DUP_MAX_RUN, Math.max(0, ...recent));
+      if (copy) {
+        const base = this.base.has(previous) ? this.base.get(previous) : previous;
+        this.base.set(index, base);
+        return base;
+      }
+      this.uniques.push(index);
+      if (this.uniques.length > CADENCE_UNIQUES) this.uniques.shift();
+      this.refit();
+      return null;
+    }
+
+    refit() {
+      this.fit = null;
+      const u = this.uniques;
+      const n = u.length;
+      if (!this.on || n < CADENCE_MIN_UNIQUES) return;
+      const meanK = (n - 1) / 2;
+      const meanY = u.reduce((sum, v) => sum + v, 0) / n;
+      let num = 0;
+      let den = 0;
+      for (let k = 0; k < n; k++) {
+        num += (k - meanK) * (u[k] - meanY);
+        den += (k - meanK) ** 2;
+      }
+      const slope = num / den;
+      const a = meanY - slope * meanK;
+      for (let k = 0; k < n; k++) {
+        if (Math.abs(u[k] - (a + slope * k)) > CADENCE_MAX_RESIDUAL) return;
+      }
+      this.fit = { a, slope };
+    }
+
+    // Where a frame is shown, in source frames: its own index, or its place on the steady pace.
+    at(index) {
+      const k = this.fit ? this.uniques.indexOf(index) : -1;
+      return k < 0 ? index : this.fit.a + this.fit.slope * k;
+    }
+
+    // New pictures per frame: 0.4 for 24 pictures a second in a 60 fps video.
+    share() {
+      return this.fit ? 1 / this.fit.slope : 1;
+    }
+
+    // The delay to add now, moving gently towards what the copies need. Sets active.
+    delay(now) {
+      const target = this.on ? this.maxRun + CADENCE_MARGIN : 0;
+      const dt = this.slewAt ? Math.min(0.1, Math.max(0, (now - this.slewAt) / 1000)) : 0;
+      this.slewAt = now;
+      const step = DUP_SLEW_PER_S * dt;
+      this.extra += Math.max(-step, Math.min(step, target - this.extra));
+      this.active = this.on && this.extra >= target - 0.05;
+      return this.extra;
+    }
+  }
+
   // ---- how much work the graphics card can take --------------------------------------------------
   //
   // A card that is full (a game, an animated wallpaper, other tabs) still takes the work, only late:
@@ -439,6 +569,31 @@
     @group(0) @binding(2) var<uniform> scale: vec4f;
     @fragment fn fs(in: Out) -> @location(0) vec4f {
       return vec4f(textureSampleBaseClampToEdge(frame, smp, min(in.uv * scale.xy, scale.zw)).rgb, 1.0);
+    }`;
+
+  // The difference between two frames in each block of the picture, on sixteen points of the block:
+  // the worst of them and their mean (see Cadence). size.xy: the picture in texels, without the edge
+  // band; size.zw: the result.
+  const DIFF_SHADER = FULLSCREEN + `
+    @group(0) @binding(0) var a: texture_2d<f32>;
+    @group(0) @binding(1) var b: texture_2d<f32>;
+    @group(0) @binding(2) var<uniform> size: vec4f;
+    @fragment fn fs(in: Out) -> @location(0) vec4f {
+      let block = size.xy / size.zw;
+      let origin = floor(in.pos.xy) * block;
+      var worst = 0.0;
+      var sum = 0.0;
+      for (var j = 0; j < 4; j++) {
+        for (var i = 0; i < 4; i++) {
+          let p = vec2i(origin + (vec2f(f32(i), f32(j)) + 0.5) * block / 4.0);
+          let d = abs(textureLoad(a, p, 0).rgb - textureLoad(b, p, 0).rgb);
+          let m = max(d.r, max(d.g, d.b));
+          worst = max(worst, m);
+          sum += m;
+        }
+      }
+      // the mean times sixteen: a copy differs by a fraction of a level, which would round to nothing
+      return vec4f(worst, min(1.0, sum), 0.0, 1.0);
     }`;
 
   // The frame at instant t between a and b. With the interpolator's motion (in quarter-grid pixels,
@@ -558,6 +713,13 @@
       // When the last frame was captured from requestVideoFrameCallback (see captureOnFrame).
       this.frameCapturedAt = carry ? carry.frameCapturedAt : -Infinity;
       this.frameCaptureOff = carry ? carry.frameCaptureOff : FIREFOX;
+      // Copies among the frames (see Cadence). Only with a <video>: the worker times its own frames.
+      this.cadence = carry && carry.cadence ? carry.cadence : new Cadence();
+      this.dedupe = !!video;
+      this.lastCapturedIndex = -1;
+      this.diffPending = 0;
+      this.diffBuffers = [];
+      this.diffGroups = new Map();
       if (video && typeof video.requestVideoFrameCallback === "function") {
         const onFrame = (_, metadata) => {
           if (this.destroyed) return;
@@ -574,7 +736,7 @@
       this.nextSlot = 0;
       this.lastIndex = carry ? carry.lastIndex : -1;
       this.nextPresentAt = 0;
-      this.stats = { captures: 0, presents: 0, holds: 0, upscaled: 0, upscaleSkipped: 0, interpolated: 0, interpolateSkipped: 0, synthesized: 0 };
+      this.stats = { captures: 0, presents: 0, holds: 0, upscaled: 0, upscaleSkipped: 0, interpolated: 0, interpolateSkipped: 0, synthesized: 0, checks: 0, copies: 0 };
 
       canvas.width = outputWidth;
       canvas.height = outputHeight;
@@ -599,6 +761,14 @@
         1 - 1 / contentWidth, 1 - 1 / contentHeight]));
       this.capturePipeline = this.pipeline(CAPTURE_SHADER, "rgba8unorm");
       this.presentPipeline = this.pipeline(PRESENT_SHADER, format);
+      this.diffPipeline = null;
+      if (this.dedupe) {
+        this.diffPipeline = this.pipeline(DIFF_SHADER, "rg8unorm");
+        this.diffTexture = device.createTexture({ size: DUP_GRID, format: "rg8unorm", usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+        this.diffView = this.diffTexture.createView();
+        this.diffSize = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+        device.queue.writeBuffer(this.diffSize, 0, new Float32Array([contentWidth, contentHeight, DUP_GRID[0], DUP_GRID[1]]));
+      }
 
       this.slots = [];
       for (let i = 0; i < RING_SIZE; i++) {
@@ -642,6 +812,8 @@
       this.lastIndex = -1;
       this.nextPresentAt = 0;
       this.lastSlot = -1;
+      this.lastCapturedIndex = -1;
+      this.cadence.forget();
       if (this.upscaler) this.upscaler.resetState();
     }
 
@@ -650,7 +822,7 @@
       if (!FIREFOX || this.nudging) return;
       this.nudging = true;
       const again = () => {
-        if (this.inFlight <= 0 || this.destroyed) { this.nudging = false; return; }
+        if ((this.inFlight <= 0 && this.diffPending <= 0) || this.destroyed) { this.nudging = false; return; }
         this.device.queue.submit([]);
         setTimeout(again, 1);
       };
@@ -661,6 +833,7 @@
     resetSource() {
       this.rate.reset();
       this.timeline.reset();
+      this.cadence = new Cadence();
       this.reset();
     }
 
@@ -668,8 +841,13 @@
     handover() {
       return {
         clock: this.clock, rate: this.rate, timeline: this.timeline, lastIndex: this.lastIndex,
-        frameCapturedAt: this.frameCapturedAt, frameCaptureOff: this.frameCaptureOff,
+        frameCapturedAt: this.frameCapturedAt, frameCaptureOff: this.frameCaptureOff, cadence: this.cadence,
       };
+    }
+
+    // The pictures a second the video really carries: under its frame rate when frames are copies.
+    contentHz() {
+      return this.sourceHz() * this.cadence.share();
     }
 
     // The source frame rate: the fitted one once there is a fit, else the measured one.
@@ -699,7 +877,13 @@
       // Captured on the video's frame callback, a frame comes in when the video shows it, which can
       // be a little after the clock expects it: running a bit further behind keeps the next frame
       // in hand (at 1.5 there were ~3 repeated pictures a second on Twitch).
-      return this.present(position - (this.frameCaptureOff ? DELAY_FRAMES : FRAME_CAPTURE_DELAY_FRAMES), now);
+      // With copies among the frames it runs further behind still, as far as the copies reach.
+      const wasActive = this.cadence.active;
+      const extra = this.cadence.delay(now);
+      if (this.cadence.active && !wasActive) {
+        for (const entry of this.ring.slice()) if (entry.copyOf !== null) this.dropCopy(entry.index, entry.copyOf);
+      }
+      return this.present(position - (this.frameCaptureOff ? DELAY_FRAMES : FRAME_CAPTURE_DELAY_FRAMES) - extra, now);
     }
 
     // Chromium calls requestVideoFrameCallback for every frame, right when the video shows it, and
@@ -764,12 +948,115 @@
       device.queue.copyExternalImageToTexture({ source: this.frameCanvas }, { texture }, [texture.width, texture.height]);
     }
 
+    // The slot for a new frame: one that no frame in the ring holds (copies that left give theirs
+    // back), else the oldest frame's. With no copies this is the plain turn-taking it always was.
+    // The frame before keeps its slot: the comparison and the upscaler still read it.
+    takeSlot() {
+      const held = new Set(this.ring.map((entry) => entry.slot));
+      for (let i = 0; i < RING_SIZE; i++) {
+        const slot = (this.nextSlot + i) % RING_SIZE;
+        if (!held.has(slot) && slot !== this.lastSlot) {
+          this.nextSlot = (slot + 1) % RING_SIZE;
+          return slot;
+        }
+      }
+      let oldest = null;
+      for (const entry of this.ring) {
+        if (entry.slot !== this.lastSlot && (!oldest || entry.index < oldest.index)) oldest = entry;
+      }
+      this.ring = this.ring.filter((entry) => entry !== oldest);
+      this.nextSlot = (oldest.slot + 1) % RING_SIZE;
+      return oldest.slot;
+    }
+
+    // Compares the frame just read into `slot` with the one before, into a buffer to be read back.
+    encodeDiff(encoder, slot, previous) {
+      const device = this.device;
+      let buffer = this.diffBuffers.pop();
+      if (!buffer) {
+        if (this.diffPending >= 16) return null; // the card is far behind: this frame goes unchecked
+        buffer = device.createBuffer({ size: 256 * DUP_GRID[1], usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+      }
+      const key = `${slot}:${previous}`;
+      let group = this.diffGroups.get(key);
+      if (!group) {
+        group = device.createBindGroup({
+          layout: this.diffPipeline.getBindGroupLayout(0),
+          entries: [{ binding: 0, resource: this.slots[slot].view }, { binding: 1, resource: this.slots[previous].view },
+            { binding: 2, resource: { buffer: this.diffSize } }],
+        });
+        this.diffGroups.set(key, group);
+      }
+      const pass = encoder.beginRenderPass({
+        colorAttachments: [{ view: this.diffView, loadOp: "clear", storeOp: "store", clearValue: [1, 0, 0, 1] }],
+      });
+      pass.setPipeline(this.diffPipeline);
+      pass.setBindGroup(0, group);
+      pass.draw(3);
+      pass.end();
+      encoder.copyTextureToBuffer({ texture: this.diffTexture }, { buffer, bytesPerRow: 256 }, DUP_GRID);
+      return buffer;
+    }
+
+    readDiff(buffer, index, previous) {
+      this.diffPending++;
+      this.nudge();
+      buffer.mapAsync(GPUMapMode.READ).then(() => {
+        const data = new Uint8Array(buffer.getMappedRange());
+        // In levels out of 255: the mean difference over the picture, the block that differs most
+        // on average, and the single point that differs most.
+        let sum = 0;
+        let block = 0;
+        let point = 0;
+        for (let y = 0; y < DUP_GRID[1]; y++) {
+          for (let x = 0; x < DUP_GRID[0]; x++) {
+            const at = y * 256 + x * 2;
+            point = Math.max(point, data[at]);
+            block = Math.max(block, data[at + 1]);
+            sum += data[at + 1];
+          }
+        }
+        buffer.unmap();
+        if (this.destroyed) { buffer.destroy(); return; }
+        this.diffBuffers.push(buffer);
+        this.lastDiff = { mean: sum / (16 * DUP_GRID[0] * DUP_GRID[1]), block: block / 16, point };
+        this.checked(index, previous, sameFrame(this.lastDiff));
+      }, () => { /* the device went away */ }).finally(() => { this.diffPending--; });
+    }
+
+    // The comparison of frame `index` with `previous` came back.
+    checked(index, previous, same) {
+      const cadence = this.cadence;
+      const base = cadence.result(index, previous, same);
+      this.stats.checks++;
+      if (base !== null) {
+        const entry = this.ring.find((e) => e.index === index);
+        if (entry) entry.copyOf = base;
+        if (cadence.active) this.dropCopy(index, base);
+      }
+      for (const entry of this.ring) entry.at = cadence.at(entry.index);
+    }
+
+    // A copy leaves the ring. The motion worked out from it is the motion from the frame it copies.
+    dropCopy(index, base) {
+      const before = this.ring.length;
+      this.ring = this.ring.filter((entry) => entry.index !== index);
+      if (this.ring.length === before) return;
+      for (const entry of this.ring) {
+        if (entry.motionFrom === index) entry.motionFrom = base;
+      }
+      this.stats.copies++;
+    }
+
     capture(index, source = this.video) {
       const device = this.device;
-      const slot = this.nextSlot;
-      this.nextSlot = (slot + 1) % RING_SIZE;
+      const previousSlot = this.lastSlot;
+      const previousIndex = this.lastCapturedIndex;
+      const slot = this.takeSlot();
       const encoder = device.createCommandEncoder();
       this.readFrame(slot, encoder, source);
+      const diff = this.dedupe && previousSlot >= 0 && previousIndex >= 0 && previousIndex < index
+        ? this.encodeDiff(encoder, slot, previousSlot) : null;
       // The motion from the frame before. It goes first: an aligned upscaler uses it to move the
       // previous upscaled frame onto this one. The frame before may be a few frames back when some
       // were never captured (the page stalled): the motion across the gap still fills it in
@@ -810,6 +1097,8 @@
         }
       }
       device.queue.submit([encoder.finish()]);
+      if (diff) this.readDiff(diff, index, previousIndex);
+      this.lastCapturedIndex = index;
       if (upscaled || motion) {
         this.inFlight++;
         const submitted = performance.now();
@@ -821,7 +1110,7 @@
       }
       this.lastSlot = slot;
       this.ring = this.ring.filter((entry) => entry.slot !== slot);
-      this.ring.push({ index, slot, upscaled, motion, motionFrom: motion ? before.index : null });
+      this.ring.push({ index, slot, upscaled, motion, motionFrom: motion ? before.index : null, at: this.cadence.at(index), copyOf: null });
       this.stats.captures++;
       if (this.onCapture) this.onCapture(this.slots[slot].texture, index);
     }
@@ -831,12 +1120,12 @@
       let before = null;
       let after = null;
       for (const entry of this.ring) {
-        if (entry.index <= position && (!before || entry.index > before.index)) before = entry;
-        if (entry.index > position && (!after || entry.index < after.index)) after = entry;
+        if (entry.at <= position && (!before || entry.at > before.at)) before = entry;
+        if (entry.at > position && (!after || entry.at < after.at)) after = entry;
       }
       if (!before) return null;
       if (!after) return { a: before, b: before, t: 0, hold: true };
-      return { a: before, b: after, t: (position - before.index) / (after.index - before.index), hold: false };
+      return { a: before, b: after, t: (position - before.at) / (after.at - before.at), hold: false };
     }
 
     // A pair is shown from the same kind of frames: an upscaled one next to one that missed its turn
@@ -911,6 +1200,13 @@
       for (const texture of this.still) texture.destroy();
       this.params.destroy();
       this.captureScale.destroy();
+      if (this.diffPipeline) {
+        this.diffTexture.destroy();
+        this.diffSize.destroy();
+        for (const buffer of this.diffBuffers) buffer.destroy();
+        this.diffBuffers = [];
+        this.diffGroups.clear();
+      }
       this.slots = [];
       this.upscaledSlots = [];
       this.presentGroups.clear();
@@ -961,5 +1257,5 @@
     return bytes;
   }
 
-  root.STFramegen = { FrameGenerator, MediaClock, RateMeter, FrameTimeline, StreamTimer, LoadGovernor, PRESENT_SHADER, planSizes, memoryBytes, BASE_DELAY_FRAMES };
+  root.STFramegen = { FrameGenerator, MediaClock, RateMeter, FrameTimeline, StreamTimer, LoadGovernor, Cadence, PRESENT_SHADER, planSizes, memoryBytes, BASE_DELAY_FRAMES };
 })(globalThis);

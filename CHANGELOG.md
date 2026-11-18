@@ -26,6 +26,11 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   screen's frame rate. When the card has room again it goes back up by itself. The meter shows the
   height in use, for example `↓720p`. Changing the size of the player (full screen, another window size)
   no longer stops the smooth video for two seconds.
+- Videos that carry fewer pictures than frames (24, 25 or 30 pictures a second sent as 60 frames, as in
+  much game footage and film) are now smooth too. Shown as they come, the motion went in bursts: one
+  frame's time moving, one or two still. The smooth video now tells the copies from the new pictures
+  and draws the motion from one real picture to the next. On those videos the picture runs about 40 ms
+  further behind the sound, and the meter shows the real rate, for example `24/60`.
 - A built-in model, **StreamRemaster**: two small networks, one for upscaling and one for motion, trained
   from scratch by the author, with no third-party weights. How it was made and on what data:
   [docs/MODEL.md](docs/MODEL.md).
