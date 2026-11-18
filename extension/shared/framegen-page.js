@@ -76,11 +76,64 @@
   // The sharpening choices of the popup, as the strength PRESENT_SHADER takes.
   const SHARPEN = { off: 0, soft: 0.35, medium: 0.6, strong: 0.9 };
 
+  // "Display" resolution: the height the picture takes on screen, in device pixels, rounded up to
+  // one of these steps (so a window being dragged does not rebuild everything at each pixel) and
+  // never above the screen. It used to be the whole screen's height: a 1080p video in a player a
+  // quarter of the screen wide was upscaled to 4K and shrunk again, and the card fell behind
+  // (measured on YouTube in Brave: about 10 frames a second went without upscaling or motion).
+  const DISPLAY_STEPS = [720, 1080, 1440, 2160];
+  const DISPLAY_STEP_SLACK = 0.85;
+  // A new player size has to hold this long before the output is rebuilt for it.
+  const RESIZE_SETTLE_MS = 500;
+
+  function displayHeight(video) {
+    const dpr = devicePixelRatio || 1;
+    const screenHeight = Math.round(screen.height * dpr);
+    let shown = video.offsetHeight;
+    if (video.videoWidth && video.videoHeight && video.offsetWidth) {
+      shown = Math.min(shown, (video.offsetWidth * video.videoHeight) / video.videoWidth); // bars around it
+    }
+    const needed = Math.round(shown * dpr);
+    if (!(needed > 0)) return screenHeight;
+    // the nearest step that is not far below it: 1620 rows on screen take 1440, not 2160 (half again
+    // the pixels for a picture the browser then shrinks)
+    const step = DISPLAY_STEPS.find((h) => h >= needed * DISPLAY_STEP_SLACK) || DISPLAY_STEPS[DISPLAY_STEPS.length - 1];
+    return Math.min(step, screenHeight);
+  }
+
   function planSizes(video, options) {
-    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, options,
-      Math.round(screen.height * devicePixelRatio));
+    const shownHeight = displayHeight(video);
+    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, options, shownHeight);
     plan.sharpen = SHARPEN[options.sharpen] ?? SHARPEN.medium;
+    plan.displayHeight = shownHeight;
     return plan;
+  }
+
+  // New sizes: on the worker path the worker rebuilds, here the generator is built again.
+  function replan(state) {
+    if (state.worker) {
+      state.plan = planSizes(state.video, state.options);
+      state.sourceWidth = state.video.videoWidth;
+      state.sourceHeight = state.video.videoHeight;
+      state.worker.postMessage({ type: "plan", plan: state.plan });
+    } else {
+      build(state);
+    }
+    state.layoutKey = "";
+  }
+
+  // The player changed size (window resized, full screen on or off): with "display" resolution the
+  // output follows, once the new size has held for RESIZE_SETTLE_MS.
+  function checkDisplaySize(state, now) {
+    if (state.options.resolution !== "display" || !state.plan) return;
+    if (displayHeight(state.video) === state.plan.displayHeight) {
+      state.resizeSince = 0;
+    } else if (!state.resizeSince) {
+      state.resizeSince = now;
+    } else if (now - state.resizeSince > RESIZE_SETTLE_MS) {
+      state.resizeSince = 0;
+      replan(state);
+    }
   }
 
   function build(state) {
@@ -282,16 +335,9 @@
     // so it takes its canvas away instead of staying over the video for good.
     if (!ext.runtime || !ext.runtime.id) { stop(); return; }
     if (video.videoWidth && (video.videoWidth !== state.sourceWidth || video.videoHeight !== state.sourceHeight)) {
-      if (state.worker) {
-        state.plan = planSizes(video, state.options);
-        state.sourceWidth = video.videoWidth;
-        state.sourceHeight = video.videoHeight;
-        state.worker.postMessage({ type: "plan", plan: state.plan });
-      } else {
-        build(state);
-      }
-      state.layoutKey = "";
+      replan(state);
     }
+    if (state.ticks % LAYOUT_EVERY_TICKS === 1) checkDisplaySize(state, now);
     if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
 
     if (state.lastTick) {
