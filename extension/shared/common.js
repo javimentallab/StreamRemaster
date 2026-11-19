@@ -28,6 +28,7 @@ ST.DEFAULTS = {
   fgModel: "builtin-st",  // id of the smooth video model ("" = none: plain cross-fade and scaling)
   fgSource: "local",      // local | server: where the smooth video models come from (they always run here)
   fgAutoStart: false,     // turn smooth video on by itself when the page plays a video
+  fgMeter: true,          // show the frame rate over the video while smooth video runs
   subsAutoStart: false,   // start the subtitles by themselves when the page plays a video
 };
 
@@ -36,7 +37,7 @@ ST.DEFAULTS = {
 // if the user ticked those options. The rules live here so they can be tested without a browser.
 
 // What the page side of smooth video needs, and the watcher after it.
-ST.FG_FILES = ["common.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-worker.js", "framegen-page.js"];
+ST.FG_FILES = ["common.js", "framegen.js", "framegen-sr.js", "framegen-fi.js", "framegen-model.js", "framegen-page.js"];
 ST.AUTO_FILES = ST.FG_FILES.concat("autostart.js");
 // The watcher alone, for the subtitles (they start from the background).
 ST.WATCHER_FILES = ["common.js", "autostart.js"];

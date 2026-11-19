@@ -170,6 +170,9 @@
   "fg_unavailable": {
     "message": "此页面不允许使用扩展程序。"
   },
+  "fg_meter": {
+    "message": "在视频上显示帧率"
+  },
   "fg_auto_start": {
     "message": "播放视频时自动开启流畅视频"
   },

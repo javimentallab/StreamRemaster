@@ -336,6 +336,10 @@ function schedulePoll(active) {
 // from a file; they stay in the browser's own storage. All of them run on this computer's card.
 
 function initFgModels() {
+  $("fgMeter").checked = settings.fgMeter !== false;
+  $("fgMeter").addEventListener("change", async (e) => {
+    settings = await ST.setSettings({ fgMeter: e.target.checked });
+  });
   $("fgAutoStart").checked = !!settings.fgAutoStart;
   // Ticking it asks Chromium for every site, straight from the click. Said no: it stays ticked and
   // works where the user clicked the extension's button, as the note says.

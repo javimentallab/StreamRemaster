@@ -62,6 +62,7 @@ fg_no_video|Não há nenhum vídeo em reprodução nesta página.
 fg_no_webgpu|Este navegador não pode usar a GPU para isto (WebGPU não está disponível).
 fg_cannot_read|Este vídeo não pode ser lido: está protegido ou vem de outro site.
 fg_unavailable|Esta página não permite extensões.
+fg_meter|Mostrar os fps sobre o vídeo
 fg_auto_start|Ativar o vídeo fluido ao reproduzir um vídeo
 subs_auto_start|Iniciar as legendas ao reproduzir um vídeo
 auto_start_hint|Neste navegador, só funciona nas abas em que você clicou no botão da extensão, até que mudem para outro site.
@@ -284,6 +285,7 @@ fg_no_video|Aucune vidéo n'est en cours de lecture sur cette page.
 fg_no_webgpu|Ce navigateur ne peut pas utiliser la carte graphique pour cela (WebGPU n'est pas disponible).
 fg_cannot_read|Cette vidéo ne peut pas être lue : elle est protégée ou provient d'un autre site.
 fg_unavailable|Cette page n'autorise pas les extensions.
+fg_meter|Afficher les images par seconde sur la vidéo
 fg_auto_start|Activer la vidéo fluide à la lecture d'une vidéo
 subs_auto_start|Lancer les sous-titres à la lecture d'une vidéo
 auto_start_hint|Dans ce navigateur, cela ne fonctionne que dans les onglets où vous avez cliqué sur le bouton de l'extension, jusqu'à ce qu'ils changent de site.
@@ -506,6 +508,7 @@ fg_no_video|Auf dieser Seite wird kein Video abgespielt.
 fg_no_webgpu|Dieser Browser kann die GPU dafür nicht nutzen (WebGPU ist nicht verfügbar).
 fg_cannot_read|Dieses Video kann nicht gelesen werden: Es ist geschützt oder stammt von einer anderen Website.
 fg_unavailable|Diese Seite lässt keine Erweiterungen zu.
+fg_meter|Bilder pro Sekunde über dem Video anzeigen
 fg_auto_start|Flüssiges Video beim Abspielen eines Videos einschalten
 subs_auto_start|Untertitel beim Abspielen eines Videos starten
 auto_start_hint|In diesem Browser funktioniert das nur in Tabs, in denen du auf die Schaltfläche der Erweiterung geklickt hast, bis sie zu einer anderen Website wechseln.
@@ -728,6 +731,7 @@ fg_no_video|In questa pagina non è in riproduzione alcun video.
 fg_no_webgpu|Questo browser non può usare la GPU per questo (WebGPU non è disponibile).
 fg_cannot_read|Questo video non può essere letto: è protetto o proviene da un altro sito.
 fg_unavailable|Questa pagina non consente le estensioni.
+fg_meter|Mostra gli fps sopra il video
 fg_auto_start|Attiva il video fluido quando parte un video
 subs_auto_start|Avvia i sottotitoli quando parte un video
 auto_start_hint|In questo browser funziona solo nelle schede in cui hai fatto clic sul pulsante dell'estensione, finché non passano a un altro sito.
@@ -950,6 +954,7 @@ fg_no_video|Er wordt geen video afgespeeld op deze pagina.
 fg_no_webgpu|Deze browser kan de GPU hiervoor niet gebruiken (WebGPU is niet beschikbaar).
 fg_cannot_read|Deze video kan niet worden gelezen: hij is beveiligd of komt van een andere site.
 fg_unavailable|Deze pagina staat geen extensies toe.
+fg_meter|Beelden per seconde over de video tonen
 fg_auto_start|Vloeiende video inschakelen zodra een video speelt
 subs_auto_start|Ondertiteling starten zodra een video speelt
 auto_start_hint|In deze browser werkt het alleen in tabbladen waarin je op de knop van de extensie hebt geklikt, totdat ze naar een andere site gaan.
@@ -1172,6 +1177,7 @@ fg_no_video|Na tej stronie nie jest odtwarzane żadne wideo.
 fg_no_webgpu|Ta przeglądarka nie może użyć do tego GPU (WebGPU jest niedostępne).
 fg_cannot_read|Nie można odczytać tego wideo: jest chronione lub pochodzi z innej witryny.
 fg_unavailable|Ta strona nie zezwala na rozszerzenia.
+fg_meter|Pokazuj liczbę klatek na sekundę na filmie
 fg_auto_start|Włączaj płynne wideo, gdy odtwarzany jest film
 subs_auto_start|Uruchamiaj napisy, gdy odtwarzany jest film
 auto_start_hint|W tej przeglądarce działa to tylko na kartach, na których kliknięto przycisk rozszerzenia, dopóki nie przejdą na inną stronę.
@@ -1394,6 +1400,7 @@ fg_no_video|На этой странице не воспроизводится �
 fg_no_webgpu|Этот браузер не может использовать для этого видеокарту (WebGPU недоступен).
 fg_cannot_read|Это видео нельзя прочитать: оно защищено или загружено с другого сайта.
 fg_unavailable|Эта страница не разрешает расширения.
+fg_meter|Показывать частоту кадров поверх видео
 fg_auto_start|Включать плавное видео при воспроизведении видео
 subs_auto_start|Запускать субтитры при воспроизведении видео
 auto_start_hint|В этом браузере это работает только во вкладках, где вы нажали кнопку расширения, пока они не перейдут на другой сайт.
@@ -1616,6 +1623,7 @@ fg_no_video|На цій сторінці не відтворюється від�
 fg_no_webgpu|Цей браузер не може використовувати для цього відеокарту (WebGPU недоступний).
 fg_cannot_read|Це відео неможливо прочитати: воно захищене або завантажене з іншого сайту.
 fg_unavailable|Ця сторінка не дозволяє розширення.
+fg_meter|Показувати частоту кадрів поверх відео
 fg_auto_start|Вмикати плавне відео під час відтворення відео
 subs_auto_start|Запускати субтитри під час відтворення відео
 auto_start_hint|У цьому браузері це працює лише у вкладках, де ви натиснули кнопку розширення, доки вони не перейдуть на інший сайт.
@@ -1838,6 +1846,7 @@ fg_no_video|此页面上没有正在播放的视频。
 fg_no_webgpu|此浏览器无法为此使用 GPU（WebGPU 不可用）。
 fg_cannot_read|无法读取此视频：它受保护或来自其他网站。
 fg_unavailable|此页面不允许使用扩展程序。
+fg_meter|在视频上显示帧率
 fg_auto_start|播放视频时自动开启流畅视频
 subs_auto_start|播放视频时自动开始字幕
 auto_start_hint|在此浏览器中，仅在您点击过扩展按钮的标签页中有效，直到该标签页转到其他网站。
@@ -2060,6 +2069,7 @@ fg_no_video|このページで再生中の動画はありません。
 fg_no_webgpu|このブラウザーではこの機能に GPU を使用できません（WebGPU が利用できません）。
 fg_cannot_read|この動画は読み取れません。保護されているか、別のサイトのものです。
 fg_unavailable|このページでは拡張機能を使用できません。
+fg_meter|動画の上にフレームレートを表示
 fg_auto_start|動画の再生時になめらか動画を自動でオン
 subs_auto_start|動画の再生時に字幕を自動で開始
 auto_start_hint|このブラウザーでは、拡張機能のボタンをクリックしたタブでのみ、別のサイトに移動するまで機能します。
@@ -2282,6 +2292,7 @@ fg_no_video|이 페이지에서 재생 중인 영상이 없습니다.
 fg_no_webgpu|이 브라우저는 이 기능에 GPU를 사용할 수 없습니다(WebGPU를 사용할 수 없음).
 fg_cannot_read|이 영상은 읽을 수 없습니다. 보호되어 있거나 다른 사이트에서 제공됩니다.
 fg_unavailable|이 페이지는 확장 프로그램을 허용하지 않습니다.
+fg_meter|동영상 위에 프레임 속도 표시
 fg_auto_start|동영상이 재생되면 부드러운 영상 자동으로 켜기
 subs_auto_start|동영상이 재생되면 자막 자동으로 시작
 auto_start_hint|이 브라우저에서는 확장 프로그램 버튼을 클릭한 탭에서만, 다른 사이트로 이동하기 전까지 작동합니다.
@@ -2504,6 +2515,7 @@ fg_no_video|ไม่มีวิดีโอที่กำลังเล่�
 fg_no_webgpu|เบราว์เซอร์นี้ใช้ GPU สำหรับงานนี้ไม่ได้ (ไม่มี WebGPU)
 fg_cannot_read|อ่านวิดีโอนี้ไม่ได้: วิดีโอได้รับการป้องกันหรือมาจากเว็บไซต์อื่น
 fg_unavailable|หน้านี้ไม่อนุญาตให้ใช้ส่วนขยาย
+fg_meter|แสดงอัตราเฟรมบนวิดีโอ
 fg_auto_start|เปิดวิดีโอลื่นไหลอัตโนมัติเมื่อเล่นวิดีโอ
 subs_auto_start|เริ่มคำบรรยายอัตโนมัติเมื่อเล่นวิดีโอ
 auto_start_hint|ในเบราว์เซอร์นี้ ใช้ได้เฉพาะในแท็บที่คุณคลิกปุ่มของส่วนขยายแล้ว จนกว่าแท็บนั้นจะไปยังเว็บไซต์อื่น
@@ -2726,6 +2738,7 @@ fg_no_video|इस पेज पर कोई वीडियो नहीं �
 fg_no_webgpu|यह ब्राउज़र इसके लिए GPU का उपयोग नहीं कर सकता (WebGPU उपलब्ध नहीं है)।
 fg_cannot_read|यह वीडियो पढ़ा नहीं जा सकता: यह सुरक्षित है या किसी अन्य साइट से है।
 fg_unavailable|यह पेज एक्सटेंशन की अनुमति नहीं देता।
+fg_meter|वीडियो के ऊपर फ़्रेम दर दिखाएँ
 fg_auto_start|वीडियो चलने पर स्मूद वीडियो अपने आप चालू करें
 subs_auto_start|वीडियो चलने पर उपशीर्षक अपने आप शुरू करें
 auto_start_hint|इस ब्राउज़र में यह केवल उन टैब में काम करता है जिनमें आपने एक्सटेंशन का बटन क्लिक किया है, जब तक वे किसी दूसरी साइट पर नहीं जाते।
@@ -3039,6 +3052,7 @@ fg_sharpen_strong|Forta
 auto_start_hint|En aquest navegador només funciona a les pestanyes on hagis fet clic al botó de l'extensió, fins que passin a un altre lloc web.
 fg_add_model|Afegeix un fitxer de model
 fg_allow_all_sites|Permet-ho a tots els llocs web
+fg_meter|Mostra els fps sobre el vídeo
 fg_auto_start|Activa el vídeo fluid en reproduir-se un vídeo
 fg_builtin|Inclòs
 fg_cannot_read|No es pot llegir aquest vídeo: està protegit o ve d'un altre lloc.
@@ -3261,6 +3275,7 @@ fg_sharpen_strong|Forte
 auto_start_hint|Neste navegador só funciona nas lapelas nas que premiches o botón da extensión, ata que pasen a outro sitio web.
 fg_add_model|Engadir un ficheiro de modelo
 fg_allow_all_sites|Permitir en todos os sitios web
+fg_meter|Mostrar os fps sobre o vídeo
 fg_auto_start|Activar o vídeo fluído ao reproducirse un vídeo
 fg_builtin|Incluído
 fg_cannot_read|Este vídeo non se pode ler: está protexido ou vén doutro sitio.
@@ -3483,6 +3498,7 @@ fg_sharpen_strong|Indartsua
 auto_start_hint|Nabigatzaile honetan, gehigarriaren botoia sakatu duzun fitxetan bakarrik dabil, beste webgune batera joan arte.
 fg_add_model|Gehitu eredu-fitxategi bat
 fg_allow_all_sites|Baimendu webgune guztietan
+fg_meter|Erakutsi fps-ak bideoaren gainean
 fg_auto_start|Aktibatu bideo leuna bideo bat erreproduzitzean
 fg_builtin|Integratua
 fg_cannot_read|Ezin da bideo hau irakurri: babestuta dago edo beste webgune batetik dator.

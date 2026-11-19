@@ -170,6 +170,9 @@
   "fg_unavailable": {
     "message": "This page does not allow extensions."
   },
+  "fg_meter": {
+    "message": "Show the frame rate over the video"
+  },
   "fg_auto_start": {
     "message": "Turn on smooth video when a video plays"
   },

@@ -443,6 +443,9 @@
   "fg_allow_all_sites": {
     "message": "Baimendu webgune guztietan"
   },
+  "fg_meter": {
+    "message": "Erakutsi fps-ak bideoaren gainean"
+  },
   "fg_auto_start": {
     "message": "Aktibatu bideo leuna bideo bat erreproduzitzean"
   },

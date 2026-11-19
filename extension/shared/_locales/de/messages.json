@@ -170,6 +170,9 @@
   "fg_unavailable": {
     "message": "Diese Seite lässt keine Erweiterungen zu."
   },
+  "fg_meter": {
+    "message": "Bilder pro Sekunde über dem Video anzeigen"
+  },
   "fg_auto_start": {
     "message": "Flüssiges Video beim Abspielen eines Videos einschalten"
   },

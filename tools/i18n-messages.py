@@ -68,6 +68,7 @@ M = {
     "fg_no_webgpu": ("This browser cannot use the GPU for this (WebGPU is not available).", "Este navegador no puede usar la GPU para esto (no tiene WebGPU)."),
     "fg_cannot_read": ("This video cannot be read: it is protected or comes from another site.", "Este vídeo no se puede leer: está protegido o viene de otro sitio."),
     "fg_unavailable": ("This page does not allow extensions.", "Esta página no admite extensiones."),
+    "fg_meter": ("Show the frame rate over the video", "Mostrar los fps sobre el vídeo"),
     "fg_auto_start": ("Turn on smooth video when a video plays", "Activar el vídeo fluido al reproducirse un vídeo"),
     "subs_auto_start": ("Start the subtitles when a video plays", "Iniciar los subtítulos al reproducirse un vídeo"),
     "auto_start_hint": ("In this browser it only works on tabs where you have clicked the extension's button, until they go to another site.", "En este navegador solo funciona en las pestañas en las que hayas pulsado el botón de la extensión, hasta que pasen a otro sitio web."),

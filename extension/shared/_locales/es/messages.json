@@ -170,6 +170,9 @@
   "fg_unavailable": {
     "message": "Esta página no admite extensiones."
   },
+  "fg_meter": {
+    "message": "Mostrar los fps sobre el vídeo"
+  },
   "fg_auto_start": {
     "message": "Activar el vídeo fluido al reproducirse un vídeo"
   },

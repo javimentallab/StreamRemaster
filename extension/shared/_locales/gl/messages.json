@@ -443,6 +443,9 @@
   "fg_allow_all_sites": {
     "message": "Permitir en todos os sitios web"
   },
+  "fg_meter": {
+    "message": "Mostrar os fps sobre o vídeo"
+  },
   "fg_auto_start": {
     "message": "Activar o vídeo fluído ao reproducirse un vídeo"
   },

@@ -1,30 +1,29 @@
-// Runs frame generation on the page's main video: finds the video, lays a canvas over it and
-// answers the popup. Nothing touches the GPU until the user turns it on.
+// Smooth video on the page: finds the video being watched, lays a canvas over it, feeds the frames
+// to the graphics card and paints the canvas on every refresh of the screen. It answers the popup
+// and the watcher that starts it by itself. Nothing touches the graphics card until it is turned on.
 //
-// Two ways to run it. By default it runs here, on the page's main thread, in every browser. In
-// Chromium the work can also go to a dedicated worker (framegen-worker.js, only when asked with
-// options.worker): the canvas is handed over as an OffscreenCanvas and the frames as a stream, so the
-// page's own scripts can no longer hold the picture back. It is off because on Twitch it froze at
-// 0 fps when the window lost the focus or was resized (a quality change rebuilds the whole worker).
+// One way of working, on the page's own thread, in every browser. What differs is how frames come in:
+//   - Chromium calls requestVideoFrameCallback for every frame, right when the video shows it and
+//     while the <video> holds that very frame: each frame is taken there, once, with its timestamp.
+//   - Gecko calls it for about 25 frames a second of a 60 fps video. There the frames are taken on
+//     the screen's refresh, when the video's clock says a new one is up (Schedule.due), and those
+//     calls only tell where the frames sit in time.
 "use strict";
 
 (function () {
   if (globalThis.STFramegenPage) return;
 
-  const LAYOUT_EVERY_TICKS = 8;
-  // How often the page is looked at again for parts to put away (see QUIET): about twice a second.
-  const QUIET_EVERY_TICKS = 64;
-  // With nothing painted for this long (paused, seeking, buffering) the real video shows through.
+  const FG = globalThis.STFramegen;
+  const GECKO = /firefox/i.test(navigator.userAgent);
+  // With nothing painted for this long (paused, seeking, buffering) the video itself shows through.
   const HIDE_AFTER_MS = 200;
-  const METER_EVERY_MS = 250;
-  // How long the worker may take to set up its GPU before the main thread takes over.
-  const WORKER_START_TIMEOUT_MS = 8000;
-  // A worker that has not painted for this long has its canvas hidden (see onWorkerMessage).
-  const STALE_PAINT_MS = 400;
-  // Frames waiting for the worker while the page is busy: about half a second at 60 fps.
-  const FRAME_QUEUE = 30;
-  // Same level as the subtitles: a fixed element in its own shadow root, above everything on the
-  // page. It never takes the mouse.
+  const HOUSEKEEPING_MS = 250;
+  // A new size of the player counts once it has held this long (a window being dragged).
+  const RESIZE_SETTLE_MS = 500;
+  // The rate at which paintings are spread when the target is under the screen's: a refresh that
+  // comes this much early still counts (browser clocks round to the millisecond).
+  const TARGET_TOLERANCE_MS = 1.5;
+  const SHARPEN = { off: 0, soft: 0.35, medium: 0.6, strong: 0.9 };
   const METER_CSS = `
     :host { all: initial; }
     .fps {
@@ -36,11 +35,23 @@
     }
   `;
 
+  // In Chromium the video under a shown canvas is hidden. Left in view, the browser keeps handing
+  // it to the screen as a layer of its own beneath ours and, with a large player, stalls when it
+  // presents the two (measured on YouTube: stalls of up to 48 ms several times a second). Its
+  // frames keep coming all the same. Gecko is left alone: it may stop decoding a video nobody sees.
+  const HIDE_VIDEO_BENEATH = !GECKO;
+  // Parts of a page that cost the browser dearly under a picture repainted on every refresh, put
+  // away while the canvas shows. YouTube's ambient mode (the blurred glow around the player).
+  const COSTLY = [{ host: /(^|\.)youtube\.com$/, selector: "#cinematics" }];
+  const costly = COSTLY.find((rule) => rule.host.test(location.hostname)) || null;
+
   let device = null;
-  let run = null;
+  let session = null;
   let target = 0;
   let lastError = null;
   let lastDetail = null;
+
+  // ---- the video and what to do with it -----------------------------------------------------------
 
   function mainVideo() {
     let best = null;
@@ -58,271 +69,150 @@
     if (device) return device;
     const adapter = await navigator.gpu.requestAdapter({ powerPreference: "high-performance" });
     if (!adapter) throw Object.assign(new Error("no adapter"), { code: "no_webgpu" });
-    device = await adapter.requestDevice({
+    const created = await adapter.requestDevice({
       requiredLimits: {
         maxStorageBufferBindingSize: adapter.limits.maxStorageBufferBindingSize,
         maxBufferSize: adapter.limits.maxBufferSize,
       },
     });
-    const created = device;
+    device = created;
     created.lost.then(() => {
       if (device === created) device = null;
-      if (run && run.device === created) stop("no_webgpu");
+      if (session && session.device === created) stop("no_webgpu");
     });
     return device;
-  }
-
-  // The sharpening choices of the popup, as the strength PRESENT_SHADER takes.
-  const SHARPEN = { off: 0, soft: 0.35, medium: 0.6, strong: 0.9 };
-
-  // The work never goes past what the player shows. YouTube serves a 4K video to a big player on a
-  // 4K screen even when it takes half the screen; at "Original" everything then ran at 4K (capture,
-  // motion and 144 paintings a second) and the graphics card fell behind: stutter and green bars.
-  // The height on screen, in device pixels, is taken to the nearest of these steps not far below it,
-  // so dragging a window does not rebuild at every pixel, and the output follows when it changes.
-  const DISPLAY_STEPS = [720, 1080, 1440, 2160];
-  const DISPLAY_STEP_SLACK = 0.85;
-  const RESIZE_SETTLE_MS = 500;
-  function shownHeight(video) {
-    const dpr = devicePixelRatio || 1;
-    const screenHeight = Math.round(screen.height * dpr);
-    let shown = video.offsetHeight;
-    if (video.videoWidth && video.videoHeight && video.offsetWidth) {
-      shown = Math.min(shown, (video.offsetWidth * video.videoHeight) / video.videoWidth); // bars around it
-    }
-    const needed = Math.round(shown * dpr);
-    if (!(needed > 0)) return screenHeight;
-    const step = DISPLAY_STEPS.find((h) => h >= needed * DISPLAY_STEP_SLACK) || DISPLAY_STEPS[DISPLAY_STEPS.length - 1];
-    return Math.min(step, screenHeight);
-  }
-
-  function planSizes(video, options) {
-    const shown = shownHeight(video);
-    // "Original" is the video's own height, "Match the screen" the player's, a number the one chosen:
-    // all three capped at the player's.
-    const chosen = options.resolution === "display" ? shown
-      : options.resolution === "original" ? video.videoHeight || shown
-      : Number(options.resolution) || video.videoHeight || shown;
-    const sized = Object.assign({}, options, { resolution: Math.min(chosen, shown) });
-    const plan = globalThis.STFramegen.planSizes(video.videoWidth, video.videoHeight, sized, shown);
-    plan.sharpen = SHARPEN[options.sharpen] ?? SHARPEN.medium;
-    plan.shownHeight = shown;
-    return plan;
-  }
-
-  // The same buffers and the same networks: nothing to build again.
-  function samePlan(a, b) {
-    return a.width === b.width && a.height === b.height && a.contentWidth === b.contentWidth && a.contentHeight === b.contentHeight
-      && a.outputWidth === b.outputWidth && a.outputHeight === b.outputHeight && a.sharpen === b.sharpen
-      && a.model === b.model && a.interpolator === b.interpolator;
-  }
-
-  // The player changed size (window resized, full screen on or off): new sizes once it holds.
-  function checkShownSize(state, now) {
-    if (!state.plan || shownHeight(state.video) === state.plan.shownHeight) {
-      state.resizeSince = 0;
-      return;
-    }
-    if (!state.resizeSince) { state.resizeSince = now; return; }
-    if (now - state.resizeSince < RESIZE_SETTLE_MS) return;
-    state.resizeSince = 0;
-    if (state.worker) {
-      state.plan = planSizes(state.video, state.options);
-      state.worker.postMessage({ type: "plan", plan: state.plan });
-    } else {
-      // A size of the player that leaves the work's sizes as they were builds nothing.
-      const plan = planSizes(state.video, state.options);
-      if (samePlan(plan, state.plan)) state.plan = plan;
-      else build(state);
-    }
-    state.layoutKey = "";
-  }
-
-  // A new generator for the sizes of this moment. It goes on from the timing of the one before, so
-  // a change of size costs a couple of frames and not two seconds; the canvas, emptied by its new
-  // size, stays hidden until the first frame is painted on it (the video itself shows meanwhile).
-  function build(state) {
-    let carry = null;
-    if (state.gen) {
-      carry = state.gen.handover();
-      state.gen.destroy();
-    }
-    const video = state.video;
-    state.plan = planSizes(video, state.options);
-    state.sourceWidth = video.videoWidth;
-    state.sourceHeight = video.videoHeight;
-    showCanvas(state, false);
-    state.gen = new globalThis.STFramegen.FrameGenerator({
-      device: state.device, video, canvas: state.canvas, ...state.plan, carry,
-      onCapture: (texture, index) => { if (api.onCapture) api.onCapture(texture, index); },
-    });
-    state.gen.targetFps = target;
   }
 
   async function readOptions() {
     const settings = await ST.getSettings();
     const { fgModels } = await ext.storage.local.get("fgModels");
-    let parsed = null;
     const entry = fgModels && fgModels[settings.fgModel];
+    let model = null;
     if (entry) {
       try {
-        parsed = globalThis.STFramegenModel.parse(ST.base64ToBuffer(entry.data));
-      } catch (e) {
-        console.warn("[streamremaster] the selected model cannot be read:", e);
+        model = globalThis.STFramegenModel.parse(ST.base64ToBuffer(entry.data));
+      } catch (error) {
+        console.warn("[streamremaster] the selected model cannot be read:", error);
       }
     }
     return {
       resolution: settings.fgResolution,
-      sharpen: settings.fgSharpen,
-      model: parsed && parsed.sr,
-      interpolator: parsed && parsed.fi,
+      sharpen: SHARPEN[settings.fgSharpen] ?? SHARPEN.medium,
+      meter: settings.fgMeter !== false,
+      model: model && model.sr,
+      interpolator: model && model.fi,
     };
   }
 
-  // ---- the worker path -------------------------------------------------------------------------
-
-  // The worker's script: the installers of the frame generation files, which leave their code in
-  // globals when they run here, and the worker's main function, written out as source.
-  function workerSource() {
-    const parts = [globalThis.STFramegenInstall, globalThis.STFramegenSRInstall, globalThis.STFramegenFIInstall];
-    const main = globalThis.STFramegenWorkerMain;
-    if (parts.some((part) => typeof part !== "function") || typeof main !== "function") return null;
-    return `"use strict";\n${parts.map((part) => `(${part})(self);`).join("\n")}\n(${main})(self);\n`;
+  // The height the player takes on screen, in device pixels and in steps (see FG.shownStep): the
+  // picture inside the video's box, without the bars around it.
+  function shownHeight(video) {
+    const ratio = devicePixelRatio || 1;
+    let height = video.offsetHeight;
+    if (video.videoWidth && video.videoHeight && video.offsetWidth) {
+      height = Math.min(height, (video.offsetWidth * video.videoHeight) / video.videoWidth);
+    }
+    return FG.shownStep(Math.round(height * ratio), Math.round(screen.height * ratio));
   }
 
-  function workerPossible(video) {
-    return typeof Worker === "function" && typeof MediaStreamTrackProcessor === "function"
-      && typeof HTMLCanvasElement.prototype.transferControlToOffscreen === "function"
-      && typeof video.captureStream === "function" && !!workerSource();
+  function makePlan(video, options) {
+    const shown = shownHeight(video);
+    const plan = FG.planSizes(video.videoWidth, video.videoHeight, options, shown);
+    plan.sharpen = options.sharpen;
+    plan.shown = shown;
+    plan.source = [video.videoWidth, video.videoHeight];
+    return plan;
   }
 
-  // Sets the worker up and waits until it has a GPU device; throws if anything on the way fails,
-  // and then leaves nothing running (the canvas, once handed over, cannot be used here any more).
-  async function startWorker(state) {
-    const { video } = state;
-    const stream = video.captureStream();
-    for (const track of stream.getAudioTracks()) track.stop();
-    const track = stream.getVideoTracks()[0];
-    if (!track) throw new Error("the video gives no track to capture");
-    state.track = track;
-    const processor = new MediaStreamTrackProcessor({ track, maxBufferSize: FRAME_QUEUE });
-    const url = URL.createObjectURL(new Blob([workerSource()], { type: "text/javascript" }));
+  const WORK_KEYS = ["width", "height", "contentWidth", "contentHeight", "outputWidth", "outputHeight", "sharpen", "model", "interpolator"];
+  const sameWork = (a, b) => WORK_KEYS.every((key) => a[key] === b[key]);
+
+  // New buffers and networks for the sizes of this moment. The timing carries on: only the frames
+  // in hand are lost, and the canvas, emptied by its new size, stays hidden until it is painted
+  // again (the video itself shows meanwhile), which is a few frames.
+  function build(s) {
+    const plan = makePlan(s.video, s.options);
+    if (s.renderer && sameWork(plan, s.plan)) {
+      s.plan = plan;
+      return;
+    }
+    if (s.renderer) s.renderer.destroy();
+    s.plan = plan;
+    s.schedule.forget();
+    showCanvas(s, false);
+    s.renderer = new FG.Renderer({ device: s.device, canvas: s.canvas, plan });
+  }
+
+  // ---- frames in ----------------------------------------------------------------------------------
+
+  const playing = (video) => !video.paused && !video.seeking && video.readyState >= 2 && !!video.videoWidth;
+
+  // The frame the video shows right now, stamped with the media time it is shown from.
+  function take(s, media, wall) {
+    s.schedule.seen(media);
+    if (s.renderer.busy()) return;
+    const { frame, previous, bridge } = s.schedule.take(media, wall);
+    s.renderer.take(s.video, frame, previous, bridge);
+    if (api.onFrame) api.onFrame(s.renderer.frames[frame.slot].texture, media, s);
+  }
+
+  // The video's frame callback: the exact media time of a frame and the moment it reaches the screen
+  // (expectedDisplayTime), which is what the clock is set by in every browser. Gecko's currentTime
+  // is no use for it: it moves in steps of 40 ms and runs 10-25 ms behind the picture on screen
+  // (measured in Firefox 160). Chromium calls it for every frame, and the frame is taken here;
+  // Gecko for about 25 a second, and there the frames are taken on the refresh (takeOnTick).
+  function onVideoFrame(s, wall, metadata) {
+    if (session !== s) return;
+    s.frameCall = s.video.requestVideoFrameCallback((w, m) => onVideoFrame(s, w, m));
+    if (!metadata || typeof metadata.mediaTime !== "number") return;
+    const video = s.video;
+    if (!playing(video) || !s.renderer) return;
+    s.frameCalls++;
+    const shownAt = metadata.expectedDisplayTime > 0 ? metadata.expectedDisplayTime : wall;
     try {
-      state.worker = new Worker(url);
-      state.plan = planSizes(video, state.options);
-      state.sourceWidth = video.videoWidth;
-      state.sourceHeight = video.videoHeight;
-      const offscreen = state.canvas.transferControlToOffscreen();
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error("the worker did not start")), WORKER_START_TIMEOUT_MS);
-        state.worker.onerror = (event) => { clearTimeout(timeout); reject(new Error(event.message || "worker error")); };
-        state.worker.onmessage = (event) => {
-          const message = event.data || {};
-          if (message.type === "ready") { clearTimeout(timeout); resolve(); }
-          else if (message.type === "error") { clearTimeout(timeout); reject(Object.assign(new Error(message.detail), { code: message.code })); }
-        };
-        state.worker.postMessage({ type: "init", canvas: offscreen, readable: processor.readable, plan: state.plan, target },
-          [offscreen, processor.readable]);
-      });
+      s.schedule.clock(metadata.mediaTime, shownAt, video.playbackRate || 1);
+      if (GECKO) {
+        s.schedule.grid.sample(metadata.mediaTime, s.counter.hz);
+        return;
+      }
+      if (Number.isFinite(s.schedule.lastSeen) && metadata.mediaTime <= s.schedule.lastSeen) return;
+      take(s, metadata.mediaTime, wall);
     } catch (error) {
-      endWorker(state);
-      throw error;
-    } finally {
-      URL.revokeObjectURL(url);
-    }
-    state.worker.onerror = (event) => { if (run === state) stop("cannot_read", event.message); };
-    state.worker.onmessage = (event) => onWorkerMessage(state, event.data || {});
-  }
-
-  function onWorkerMessage(state, message) {
-    if (run !== state) return;
-    if (message.type === "status") {
-      state.remote = message;
-      // The worker shows its canvas but has painted nothing for a while: take the canvas away so the
-      // video itself shows, never a frozen picture over it. The worker shows it again when it paints.
-      if (message.sincePaintMs > STALE_PAINT_MS) showCanvas(state, false);
-    }
-    else if (message.type === "visible") showCanvas(state, !!message.visible);
-    else if (message.type === "ended") restart(state); // the video changed source: a new track
-    else if (message.type === "error") stop(message.code || "cannot_read", message.detail);
-  }
-
-  function endWorker(state) {
-    if (state.worker) {
-      try { state.worker.postMessage({ type: "stop" }); } catch { /* already gone */ }
-      state.worker.terminate();
-      state.worker = null;
-    }
-    if (state.track) {
-      state.track.stop();
-      state.track = null;
+      console.warn("[streamremaster] smooth video stopped:", error);
+      stop(errorCode(error));
     }
   }
 
-  // The video started playing something else: on the worker path the captured track goes with the
-  // old source, so it all starts again on the new one.
-  function restart(state) {
-    if (state.restarting) return;
-    state.restarting = true;
-    setTimeout(() => { if (run === state) start(target); }, 300);
-  }
-
-  // ---- what both paths share --------------------------------------------------------------------
-
-  function createMeter() {
-    const host = document.createElement("stream-remaster-fps");
-    const root = host.attachShadow({ mode: "open" });
-    const style = document.createElement("style");
-    style.textContent = METER_CSS;
-    const label = document.createElement("div");
-    label.className = "fps";
-    label.textContent = "… fps";
-    root.append(style, label);
-    return { host, label };
-  }
-
-  // In fullscreen the browser only paints the fullscreen element and its descendants.
-  function placeMeter(state) {
-    let parent = document.fullscreenElement || document.webkitFullscreenElement || null;
-    if (parent && /^(VIDEO|AUDIO|IMG|CANVAS)$/.test(parent.tagName)) parent = parent.parentElement;
-    parent = parent || document.documentElement;
-    if (state.meter.host.parentNode !== parent) parent.appendChild(state.meter.host);
-  }
-
-  // Source rate, frames painted in the last second, and whether each network is running.
-  function liveInfo(state) {
-    if (state.worker) {
-      const r = state.remote || {};
-      return { hz: r.sourceHz || 0, fps: r.fps || 0, sr: !!r.modelReady, fi: !!r.interpolatorReady };
+  // Gecko: on the screen's refresh, by the clock the frame callbacks set (currentTime only where
+  // there are no frame callbacks, before Firefox 132).
+  function takeOnTick(s, wall) {
+    const video = s.video;
+    const rate = video.playbackRate || 1;
+    const reading = video.currentTime;
+    if (!s.frameCalls && reading !== s.lastReading) {
+      s.lastReading = reading;
+      s.schedule.clock(reading, wall, rate);
     }
-    const gen = state.gen;
-    return {
-      hz: gen ? gen.sourceHz() : 0,
-      // the pictures a second the video really carries, when many of its frames are copies
-      pictures: gen && gen.cadence.active ? gen.contentHz() : 0,
-      fps: state.paints.length,
-      sr: !!(gen && gen.upscaler && gen.upscaler.ready),
-      fi: !!(gen && gen.interpolator && gen.interpolator.ready),
-    };
+    const rough = video.getVideoPlaybackQuality ? s.counter.add(video.getVideoPlaybackQuality().totalVideoFrames, wall, rate) : 0;
+    const media = s.schedule.due(wall, rough);
+    if (media !== null) take(s, media, wall);
   }
 
-  function updateMeter(state, now) {
-    if (now - state.meterAt < METER_EVERY_MS) return;
-    state.meterAt = now;
-    const { hz, fps, sr, fi, pictures } = liveInfo(state);
-    // two decimals when the rate is not a whole number (59.94, 29.97, 23.98), so it can be told apart
-    let source = Math.abs(hz - Math.round(hz)) < 0.005 ? String(Math.round(hz)) : hz.toFixed(2);
-    // "24/60": a 60 fps video that carries 24 pictures a second, the rest being copies
-    if (pictures && pictures < hz * 0.95) source = `${Math.round(pictures)}/${source}`;
-    state.meter.label.textContent = hz ? `${source} → ${fps} fps${sr ? " · SR" : ""}${fi ? " · FI" : ""}` : "… fps";
+  // ---- the canvas ---------------------------------------------------------------------------------
+
+  function makeCanvas(video) {
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "position:absolute;pointer-events:none;margin:0;padding:0;border:0;visibility:hidden;";
+    video.insertAdjacentElement("afterend", canvas);
+    return canvas;
   }
 
-  // Same box as the video, inside the same positioned parent, so the page's own layout moves both.
-  function layout(state) {
-    const { video, canvas } = state;
+  // The same box as the video, in the same parent, so the page's own layout moves both.
+  function layout(s) {
+    const { video, canvas } = s;
     const key = [video.offsetLeft, video.offsetTop, video.offsetWidth, video.offsetHeight].join();
-    if (key === state.layoutKey) return;
-    state.layoutKey = key;
+    if (key === s.layoutKey) return;
+    s.layoutKey = key;
     const computed = getComputedStyle(video);
     Object.assign(canvas.style, {
       left: video.offsetLeft + "px",
@@ -334,128 +224,170 @@
     });
   }
 
+  // Sets a style on an element, remembering what it had, or puts back what it had.
+  function override(s, element, property, value) {
+    const style = element.style;
+    const kept = s.overrides.find((entry) => entry[0] === element && entry[1] === property);
+    if (value !== null) {
+      if (kept) return;
+      s.overrides.push([element, property, style.getPropertyValue(property), style.getPropertyPriority(property)]);
+      style.setProperty(property, value, "important");
+    } else if (kept) {
+      s.overrides.splice(s.overrides.indexOf(kept), 1);
+      style.removeProperty(property);
+      if (kept[2]) style.setProperty(property, kept[2], kept[3]);
+    }
+  }
+
+  function putAwayCostly(s) {
+    if (!costly) return;
+    for (const element of document.querySelectorAll(costly.selector)) override(s, element, "display", "none");
+  }
+
+  // Shows the canvas, or takes it away so the video itself shows.
+  function showCanvas(s, visible) {
+    const wanted = visible ? "visible" : "hidden";
+    if (s.canvas.style.visibility !== wanted) s.canvas.style.visibility = wanted;
+    if (s.shown === visible) return;
+    s.shown = visible;
+    if (visible) {
+      if (HIDE_VIDEO_BENEATH) override(s, s.video, "visibility", "hidden");
+      putAwayCostly(s);
+    } else {
+      for (const [element, property] of s.overrides.slice()) override(s, element, property, null);
+    }
+  }
+
+  // ---- the frame rate label -----------------------------------------------------------------------
+
+  function createMeter() {
+    const host = document.createElement("stream-remaster-fps");
+    const shadow = host.attachShadow({ mode: "open" });
+    const style = document.createElement("style");
+    style.textContent = METER_CSS;
+    const label = document.createElement("div");
+    label.className = "fps";
+    label.textContent = "… fps";
+    shadow.append(style, label);
+    return { host, label };
+  }
+
+  // In full screen the browser only paints the full-screen element and what is inside it.
+  // The label is a choice of the user's: without it, it is not on the page at all.
+  function placeMeter(s) {
+    if (!s.options.meter) {
+      s.meter.host.remove();
+      return;
+    }
+    let parent = document.fullscreenElement || document.webkitFullscreenElement || null;
+    if (parent && /^(VIDEO|AUDIO|IMG|CANVAS)$/.test(parent.tagName)) parent = parent.parentElement;
+    parent = parent || document.documentElement;
+    if (s.meter.host.parentNode !== parent) parent.appendChild(s.meter.host);
+  }
+
+  const USUAL_RATES = [23.976, 24, 25, 29.97, 30, 48, 50, 59.94, 60, 120];
+  const sourceHz = (s) => (s.schedule.period ? 1 / s.schedule.period : 0);
+
+  function updateMeter(s) {
+    // The usual rate it is nearest to, when it is within the error of the timestamps; two decimals
+    // when it is not a whole number (59.94, 29.97, 23.98), to tell them apart.
+    let hz = sourceHz(s);
+    const usual = USUAL_RATES.reduce((a, b) => (Math.abs(b - hz) < Math.abs(a - hz) ? b : a));
+    if (Math.abs(usual - hz) < usual * 0.004) hz = usual;
+    const source = Math.abs(hz - Math.round(hz)) < 0.005 ? String(Math.round(hz)) : hz.toFixed(2);
+    const renderer = s.renderer;
+    s.meter.label.textContent = hz
+      ? `${source} → ${s.paints.length} fps${renderer.upscalerReady ? " · SR" : ""}${renderer.motionReady ? " · FI" : ""}`
+      : "… fps";
+  }
+
+  // ---- the loop -----------------------------------------------------------------------------------
+
+  // The paintings are spread evenly at the target rate; with no target, or one above the screen's,
+  // every refresh paints.
+  function dueToPaint(s, now) {
+    if (!target) return true;
+    if (now + TARGET_TOLERANCE_MS < s.nextPaint) return false;
+    s.nextPaint = Math.max(s.nextPaint + 1000 / target, now);
+    return true;
+  }
+
+  function housekeeping(s, now) {
+    const video = s.video;
+    layout(s);
+    if (s.shown) putAwayCostly(s);
+    // The player changed size (the window, full screen): new sizes once it holds.
+    if (shownHeight(video) === s.plan.shown) {
+      s.resizedAt = 0;
+    } else if (!s.resizedAt) {
+      s.resizedAt = now;
+    } else if (now - s.resizedAt >= RESIZE_SETTLE_MS) {
+      s.resizedAt = 0;
+      build(s);
+    }
+    updateMeter(s);
+    // For measuring on a real page: with localStorage["st-fg-debug"] = "1" on that site, the status
+    // is written to <html data-st-fg-status> where the page's own console can read it.
+    let debug = false;
+    try { debug = localStorage.getItem("st-fg-debug") === "1"; } catch { /* storage blocked */ }
+    if (debug) document.documentElement.setAttribute("data-st-fg-status", JSON.stringify(status()));
+  }
+
+  function tick(s, now) {
+    const video = s.video;
+    if (!video.isConnected) { stop("no_video"); return; }
+    // The extension was reloaded or removed: the popup can no longer reach this copy, so it takes
+    // its canvas away instead of staying over the video for good.
+    if (!ext.runtime || !ext.runtime.id) { stop(); return; }
+    if (video.videoWidth && (video.videoWidth !== s.plan.source[0] || video.videoHeight !== s.plan.source[1])) build(s);
+    if (now - s.housekeptAt >= HOUSEKEEPING_MS) {
+      s.housekeptAt = now;
+      housekeeping(s, now);
+    }
+    if (s.lastTick) {
+      const gap = now - s.lastTick;
+      if (gap > 20) s.gaps20++;
+      if (gap > 50) s.gaps50++;
+    }
+    s.lastTick = now;
+
+    let painted = false;
+    if (playing(video)) {
+      // Gecko stamps the refresh with when it was due, which under load can be tens of
+      // milliseconds before this code runs: the frame the video holds is the one of this moment.
+      if (GECKO) takeOnTick(s, performance.now());
+      const view = dueToPaint(s, now) ? s.schedule.view(now) : null;
+      if (view) {
+        s.renderer.paint(view.a, view.b, view.t, view.moving);
+        painted = true;
+      }
+    } else {
+      s.counter.reset();
+    }
+    if (painted) {
+      s.lastPaint = now;
+      s.paints.push(now);
+      showCanvas(s, true);
+    } else if (now - s.lastPaint > HIDE_AFTER_MS) {
+      showCanvas(s, false);
+    }
+    while (s.paints.length && s.paints[0] <= now - 1000) s.paints.shift();
+  }
+
+  // ---- on and off ---------------------------------------------------------------------------------
+
   function errorCode(error) {
     lastDetail = String((error && error.message) || error).slice(0, 300);
     if (error && typeof error.code === "string") return error.code; // a DOMException's code is a number
     return error && error.name === "NotSupportedError" ? "no_webgpu" : "cannot_read";
   }
 
-  function step(state, now) {
-    const video = state.video;
-    if (!video.isConnected) { stop("no_video"); return; }
-    // The extension was reloaded or removed: this copy can no longer be reached from the popup,
-    // so it takes its canvas away instead of staying over the video for good.
-    if (!ext.runtime || !ext.runtime.id) { stop(); return; }
-    if (video.videoWidth && (video.videoWidth !== state.sourceWidth || video.videoHeight !== state.sourceHeight)) {
-      if (state.worker) {
-        state.plan = planSizes(video, state.options);
-        state.sourceWidth = video.videoWidth;
-        state.sourceHeight = video.videoHeight;
-        state.worker.postMessage({ type: "plan", plan: state.plan });
-      } else {
-        build(state);
-      }
-      state.layoutKey = "";
-    }
-    if (state.ticks % LAYOUT_EVERY_TICKS === 1) checkShownSize(state, now);
-    if (state.shown && state.ticks % QUIET_EVERY_TICKS === 2) quiet(state, true);
-    if (state.ticks++ % LAYOUT_EVERY_TICKS === 0) layout(state);
-
-    if (state.lastTick) {
-      const gap = now - state.lastTick;
-      if (gap > 20) state.gaps20++;
-      if (gap > 50) state.gaps50++;
-    }
-    state.lastTick = now;
-
-    // On the worker path the worker paints and says when to show or hide the canvas.
-    if (!state.worker) {
-      if (state.gen.tick(now)) {
-        state.lastPaint = now;
-        showCanvas(state, true);
-        state.paints.push(now);
-      } else if (now - state.lastPaint > HIDE_AFTER_MS) {
-        showCanvas(state, false);
-      }
-      while (state.paints.length && state.paints[0] <= now - 1000) state.paints.shift();
-    }
-    updateMeter(state, now);
-    debugStatus(state, now);
+  function fail(code) {
+    lastError = code;
+    return status();
   }
 
-  // A hidden switch for measuring on a real page: with localStorage["st-fg-debug"] = "1" on that
-  // site the status is written to <html data-st-fg-status> once a second, where the page's own
-  // console can read it (the extension's context is hard to pick out among many in DevTools).
-  function debugStatus(state, now) {
-    if (now - (state.debugAt || 0) < 1000) return;
-    state.debugAt = now;
-    let on = false;
-    try { on = localStorage.getItem("st-fg-debug") === "1"; } catch { /* storage blocked */ }
-    if (on) document.documentElement.setAttribute("data-st-fg-status", JSON.stringify(status()));
-  }
-
-  // Shows the canvas, or takes it away so the video itself shows through. In Chromium the video
-  // beneath a shown canvas is hidden: left visible it keeps being handed to the screen as a layer
-  // of its own under ours, and with a large player the browser then stalls when it presents the
-  // two (measured on YouTube, a 3091 x 1739 player in a window, no networks, the card at 8 %: the
-  // swap in the GPU process blocked for up to 48 ms, 11-19 stalls over 20 ms every 8 s; 1-8 with
-  // the video hidden). Its frames keep coming: reading a hidden video updates it. Gecko is left
-  // alone: nothing was measured there, and it may stop decoding a video nobody sees.
-  const HIDE_VIDEO_BENEATH = !/firefox/i.test(navigator.userAgent);
-
-  // Parts of a page that are costly to show under a picture repainted on every refresh, put away
-  // while the canvas shows. YouTube's ambient mode, the blurred glow of the video around the
-  // player: with it the browser stalled when presenting (3-10 stalls over 20 ms every 8 s, frames
-  // stepped over; none in six runs without it, same page, same video). It is why YouTube stuttered
-  // and Twitch did not. In full screen YouTube turns it off by itself.
-  const QUIET = [{ host: /(^|\.)youtube\.com$/, selector: "#cinematics" }];
-  const quietRule = QUIET.find((rule) => rule.host.test(location.hostname)) || null;
-
-  // Hides the page's costly parts, or gives them back as they were. Called again while the canvas
-  // shows, it takes in the ones the page has added since.
-  function quiet(state, on) {
-    if (!quietRule) return;
-    if (on) {
-      for (const element of document.querySelectorAll(quietRule.selector)) {
-        if (state.quieted.some((entry) => entry[0] === element)) continue;
-        state.quieted.push([element, element.style.getPropertyValue("display"), element.style.getPropertyPriority("display")]);
-        element.style.setProperty("display", "none", "important");
-      }
-    } else {
-      for (const [element, value, priority] of state.quieted) {
-        element.style.removeProperty("display");
-        if (value) element.style.setProperty("display", value, priority);
-      }
-      state.quieted = [];
-    }
-  }
-
-  function showCanvas(state, visible) {
-    const wanted = visible ? "visible" : "hidden";
-    if (state.canvas.style.visibility !== wanted) state.canvas.style.visibility = wanted;
-    if (state.shown === visible) return;
-    state.shown = visible;
-    quiet(state, visible);
-    if (!HIDE_VIDEO_BENEATH) return;
-    const style = state.video.style;
-    if (visible) {
-      state.videoVisibility = [style.getPropertyValue("visibility"), style.getPropertyPriority("visibility")];
-      style.setProperty("visibility", "hidden", "important");
-    } else {
-      style.removeProperty("visibility");
-      if (state.videoVisibility && state.videoVisibility[0]) style.setProperty("visibility", ...state.videoVisibility);
-    }
-  }
-
-  function makeCanvas(video) {
-    const canvas = document.createElement("canvas");
-    canvas.style.cssText = "position:absolute;pointer-events:none;margin:0;padding:0;border:0;visibility:hidden;";
-    video.insertAdjacentElement("afterend", canvas);
-    return canvas;
-  }
-
-  // options.worker: use the worker where possible (off by default, see the top of this file).
-  async function start(targetFps, options = {}) {
+  async function start(targetFps) {
     stop();
     lastError = null;
     lastDetail = null;
@@ -465,168 +397,129 @@
     if (!video) return fail("no_video");
     if (video.mediaKeys) return fail("cannot_read"); // protected video decodes to black here
 
-    let settings;
+    const starting = {};
+    start.latest = starting;
+    let options;
+    let gpu;
     try {
-      settings = await readOptions();
+      options = await readOptions();
+      gpu = await getDevice();
     } catch (error) {
-      return fail(error.code || "no_webgpu");
+      return fail(errorCode(error));
     }
+    if (start.latest !== starting || session) return status(); // started again meanwhile
 
-    const state = {
-      device: null, video, canvas: makeCanvas(video), options: settings, plan: null, gen: null,
-      worker: null, track: null, remote: null, restarting: false, shown: false, videoVisibility: null, quieted: [],
-      ticks: 0, lastPaint: 0, lastTick: 0, paints: [],
-      gaps20: 0, gaps50: 0, raf: 0, layoutKey: "", sourceWidth: 0, sourceHeight: 0,
-      sourceResets: 0,
-      onSource: () => {
-        state.sourceResets++;
-        if (state.worker) restart(state);
-        else if (state.gen) state.gen.resetSource();
-      },
-      meter: createMeter(),
-      meterAt: 0,
-      onFullscreen: () => placeMeter(state),
-      // Back from the background: the worker starts its timing afresh (see forgetLateness).
-      onVisibility: () => {
-        if (!state.worker) return;
-        state.worker.postMessage({ type: document.visibilityState === "visible" ? "resume" : "hidden" });
-      },
+    const s = {
+      video, device: gpu, options, canvas: makeCanvas(video), meter: createMeter(),
+      schedule: new FG.Schedule(), counter: new FG.Counter(), renderer: null, plan: null,
+      shown: false, overrides: [], layoutKey: "", paints: [],
+      lastPaint: 0, lastTick: 0, nextPaint: 0, housekeptAt: 0, resizedAt: 0, lastReading: NaN,
+      gaps20: 0, gaps50: 0, jumps: 0, frame: 0, frameCall: 0, frameCalls: 0,
     };
-
-    if (options.worker && workerPossible(video)) {
-      try {
-        await startWorker(state);
-      } catch (error) {
-        console.warn("[streamremaster] smooth video on its own thread unavailable, using the page's:", error);
-        showCanvas(state, false);
-        state.canvas.remove(); // handed over to the worker: it cannot be drawn on from here
-        state.canvas = makeCanvas(video);
-      }
+    try {
+      build(s);
+    } catch (error) {
+      s.canvas.remove();
+      return fail(errorCode(error));
     }
-    if (!state.worker) {
-      try {
-        state.device = await getDevice();
-        build(state);
-      } catch (error) {
-        state.canvas.remove();
-        return fail(errorCode(error));
-      }
+    // The element plays something else, or another part of the same: start the timing afresh.
+    s.onJump = () => {
+      s.jumps++;
+      s.schedule.reset();
+      s.counter.reset();
+      s.lastReading = NaN;
+      s.frameCalls = 0;
+      s.renderer.forget();
+    };
+    s.onFullscreen = () => placeMeter(s);
+    for (const event of ["emptied", "loadedmetadata", "seeking"]) video.addEventListener(event, s.onJump);
+    document.addEventListener("fullscreenchange", s.onFullscreen);
+    document.addEventListener("webkitfullscreenchange", s.onFullscreen);
+    placeMeter(s);
+    session = s;
+    if (typeof video.requestVideoFrameCallback === "function") {
+      s.frameCall = video.requestVideoFrameCallback((w, m) => onVideoFrame(s, w, m));
     }
-    if (run) { // started again meanwhile
-      endWorker(state);
-      if (state.gen) state.gen.destroy();
-      showCanvas(state, false);
-      state.canvas.remove();
-      return status();
-    }
-    video.addEventListener("emptied", state.onSource);
-    video.addEventListener("loadedmetadata", state.onSource);
-    document.addEventListener("fullscreenchange", state.onFullscreen);
-    document.addEventListener("visibilitychange", state.onVisibility);
-    document.addEventListener("webkitfullscreenchange", state.onFullscreen);
-    placeMeter(state);
-    run = state;
     const loop = (now) => {
-      if (run !== state) return;
-      state.raf = requestAnimationFrame(loop);
+      if (session !== s) return;
+      s.frame = requestAnimationFrame(loop);
       try {
-        step(state, now);
+        tick(s, now);
       } catch (error) {
-        console.warn("[streamremaster] frame generation stopped:", error);
+        console.warn("[streamremaster] smooth video stopped:", error);
         stop(errorCode(error));
       }
     };
-    state.raf = requestAnimationFrame(loop);
-    return status();
-  }
-
-  function fail(code) {
-    lastError = code;
+    s.frame = requestAnimationFrame(loop);
     return status();
   }
 
   function stop(error, detail) {
     if (error) lastError = error;
     if (detail) lastDetail = String(detail).slice(0, 300);
-    const state = run;
-    if (!state) return status();
-    run = null;
-    cancelAnimationFrame(state.raf);
-    state.video.removeEventListener("emptied", state.onSource);
-    state.video.removeEventListener("loadedmetadata", state.onSource);
-    document.removeEventListener("fullscreenchange", state.onFullscreen);
-    document.removeEventListener("visibilitychange", state.onVisibility);
-    document.removeEventListener("webkitfullscreenchange", state.onFullscreen);
-    state.meter.host.remove();
-    endWorker(state);
-    if (state.gen) state.gen.destroy();
-    showCanvas(state, false);
-    state.canvas.remove();
+    const s = session;
+    if (!s) return status();
+    session = null;
+    cancelAnimationFrame(s.frame);
+    if (s.frameCall && typeof s.video.cancelVideoFrameCallback === "function") s.video.cancelVideoFrameCallback(s.frameCall);
+    for (const event of ["emptied", "loadedmetadata", "seeking"]) s.video.removeEventListener(event, s.onJump);
+    document.removeEventListener("fullscreenchange", s.onFullscreen);
+    document.removeEventListener("webkitfullscreenchange", s.onFullscreen);
+    s.meter.host.remove();
+    showCanvas(s, false);
+    s.canvas.remove();
+    if (s.renderer) s.renderer.destroy();
     return status();
   }
 
   function setTarget(targetFps) {
     target = Number(targetFps) || 0;
-    if (run && run.worker) run.worker.postMessage({ type: "target", target });
-    if (run && run.gen) {
-      run.gen.targetFps = target;
-      run.gen.nextPresentAt = 0;
-    }
+    if (session) session.nextPaint = 0;
     return status();
   }
 
-  // The resolution or the model changed in the popup.
+  // The resolution, the sharpening or the model changed in the popup.
   async function reconfigure() {
-    if (!run) return status();
-    const state = run;
+    const s = session;
+    if (!s) return status();
     const options = await readOptions();
-    if (run !== state) return status();
-    state.options = options;
-    if (state.worker) {
-      state.plan = planSizes(state.video, options);
-      state.worker.postMessage({ type: "plan", plan: state.plan });
-    } else {
-      build(state);
-    }
-    state.layoutKey = "";
+    if (session !== s) return status();
+    s.options = options;
+    placeMeter(s);
+    build(s);
+    s.layoutKey = "";
     return status();
   }
 
   function status() {
-    if (!run) return { running: false, state: "off", error: lastError, detail: lastDetail, target };
-    const info = liveInfo(run);
-    const remote = run.remote || {};
+    const s = session;
+    if (!s) return { running: false, state: "off", error: lastError, detail: lastDetail, target };
+    const hz = sourceHz(s);
+    const { plan, renderer } = s;
     return {
       running: true,
-      state: info.hz ? "on" : "measuring",
-      thread: run.worker ? "worker" : "page",
-      fps: info.fps,
-      sourceHz: info.hz,
-      delayMs: run.worker ? remote.delayMs || 0 : null,
-      workerGaps20: run.worker ? remote.gaps20 || 0 : null,
-      workerSkipped: run.worker ? remote.skipped || 0 : null,
+      state: hz ? "on" : "measuring",
+      fps: s.paints.length,
+      sourceHz: hz,
       target,
       error: null,
-      gaps20: run.gaps20,
-      gaps50: run.gaps50,
-      ticks: run.ticks,
-      sourceResets: run.sourceResets,
-      stats: run.worker ? remote.stats || null : run.gen ? { ...run.gen.stats } : null,
-      size: run.plan ? [run.plan.outputWidth, run.plan.outputHeight] : null,
-      input: run.plan ? [run.plan.width, run.plan.height] : null,
-      memory: run.plan ? globalThis.STFramegen.memoryBytes(run.plan) : null,
-      cadence: run.worker || !run.gen ? null : {
-        on: run.gen.cadence.on, active: run.gen.cadence.active, extra: +run.gen.cadence.extra.toFixed(2),
-        maxRun: run.gen.cadence.maxRun, pictures: +run.gen.contentHz().toFixed(2), steady: !!run.gen.cadence.fit,
-      },
-      model: run.plan && run.plan.model ? run.plan.model.name : null,
-      modelReady: info.sr,
-      interpolator: run.plan && run.plan.interpolator ? run.plan.interpolator.name : null,
-      interpolatorReady: info.fi,
+      delayMs: Math.round(s.schedule.delayMs * 10) / 10,
+      gaps20: s.gaps20,
+      gaps50: s.gaps50,
+      jumps: s.jumps,
+      stats: { ...renderer.stats },
+      size: [plan.outputWidth, plan.outputHeight],
+      input: [plan.width, plan.height],
+      memory: FG.memoryBytes(plan),
+      model: plan.model ? plan.model.name : null,
+      modelReady: renderer.upscalerReady,
+      interpolator: plan.interpolator ? plan.interpolator.name : null,
+      interpolatorReady: renderer.motionReady,
     };
   }
 
-  const api = { start, stop, setTarget, reconfigure, status, onCapture: null, device: () => device };
+  // onFrame(texture, media, session): called for every frame taken, for the test benches.
+  const api = { start, stop, setTarget, reconfigure, status, onFrame: null, device: () => device };
   globalThis.STFramegenPage = api;
 
   // sendResponse rather than a returned promise: Chromium's content scripts do not take promises.

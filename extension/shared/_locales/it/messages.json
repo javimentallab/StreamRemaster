@@ -170,6 +170,9 @@
   "fg_unavailable": {
     "message": "Questa pagina non consente le estensioni."
   },
+  "fg_meter": {
+    "message": "Mostra gli fps sopra il video"
+  },
   "fg_auto_start": {
     "message": "Attiva il video fluido quando parte un video"
   },

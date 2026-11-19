@@ -36,6 +36,8 @@ async function initTabs() {
   });
   $("fgToggle").addEventListener("click", onFgToggle);
   $("fgTarget").addEventListener("change", onFgTarget);
+  $("fgMeter").checked = fgSettings.fgMeter !== false;
+  $("fgMeter").addEventListener("change", () => fgReconfigure({ fgMeter: $("fgMeter").checked }));
   $("fgAutoStart").checked = !!fgSettings.fgAutoStart;
   $("fgAutoStart").addEventListener("change", onFgAutoStart);
   $("fgAllowAll").addEventListener("click", onFgAllowAll);

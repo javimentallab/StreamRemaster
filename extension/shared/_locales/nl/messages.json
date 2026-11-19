@@ -170,6 +170,9 @@
   "fg_unavailable": {
     "message": "Deze pagina staat geen extensies toe."
   },
+  "fg_meter": {
+    "message": "Beelden per seconde over de video tonen"
+  },
   "fg_auto_start": {
     "message": "Vloeiende video inschakelen zodra een video speelt"
   },
