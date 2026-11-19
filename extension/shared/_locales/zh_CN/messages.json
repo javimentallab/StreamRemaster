@@ -189,7 +189,7 @@
     "message": "StreamRemaster"
   },
   "extDescription": {
-    "message": "为任意标签页提供实时字幕，由你自己的 Whisper 服务器转写和翻译。"
+    "message": "为任意标签页提供实时字幕，并用 AI 让视频更流畅、更清晰，全部在你自己的电脑上运行。"
   },
   "start": {
     "message": "开启字幕"

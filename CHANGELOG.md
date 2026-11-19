@@ -2,7 +2,7 @@
 
 All notable changes to StreamRemaster, called Stream Transcription up to version 2.2.0. Versions follow [semantic versioning](https://semver.org/).
 
-## 3.0.0 — 2026-11-18
+## 3.0.0 — 2026-11-19
 
 ### Added
 - **Start automatically**: two separate boxes, one in each tab of the popup and in Settings, turn on the
@@ -20,17 +20,17 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   Match the screen, 1080p, 1440p or 4K). **Match the screen** follows the size the picture takes on
   screen, so a video in a small player is not upscaled to 4K. While it is on, a meter on the page shows
   the frame rate.
-- Changing the size of the player (full screen, another window size) no longer stops the smooth video
-  for two seconds: it goes on from the timing it already had.
-- No more stutter on YouTube with a large player in a window. While the smooth video paints, the
-  page's own picture beneath it is hidden (Chromium browsers) and YouTube's ambient mode, the glow
-  around the player, is put away; both come back when the smooth video pauses or stops. With them
-  the browser stalled several times a second when it handed the picture to the screen.
-- Videos that carry fewer pictures than frames (24, 25 or 30 pictures a second sent as 60 frames, as in
-  much game footage and film) are now smooth too. Shown as they come, the motion went in bursts: one
-  frame's time moving, one or two still. The smooth video now tells the copies from the new pictures
-  and draws the motion from one real picture to the next. On those videos the picture runs about 40 ms
-  further behind the sound, and the meter shows the real rate, for example `24/60`.
+- The smooth video takes each frame of the video once, at the moment it is shown, and paints the
+  in-between frames evenly at the target rate. It never lowers the resolution or the frame rate by
+  itself: when the graphics card falls behind, it skips a frame and the motion covers the gap.
+- Changing the size of the player (full screen, another window size) does not stop the smooth video:
+  the rate drops for about a second and comes back.
+- No stutter on YouTube with a large player in a window. While the smooth video paints, the page's own
+  picture beneath it is hidden (Chromium browsers) and YouTube's ambient mode, the glow around the
+  player, is put away; both come back when the smooth video pauses or stops.
+- **Show the frame rate over the video**, on by default: the meter shows the video's frame rate, the
+  rate painted and whether the AI upscaling (SR) and the AI in-between frames (FI) are at work, for
+  example `24 → 144 fps · SR · FI`.
 - A built-in model, **StreamRemaster**: two small networks, one for upscaling and one for motion, trained
   from scratch by the author, with no third-party weights. How it was made and on what data:
   [docs/MODEL.md](docs/MODEL.md).
@@ -53,8 +53,12 @@ All notable changes to StreamRemaster, called Stream Transcription up to version
   [PolyForm Noncommercial License 1.0.0](LICENSE). Versions up to 2.2.0 remain under the MIT licence.
 - `NOTICE` credits the training data of the built-in model, RIFE (used as a teacher during training) and
   the Whisper models the extension can download.
-- The privacy policy is rewritten, in English ([PRIVACY.md](PRIVACY.md)) and Spanish
-  ([PRIVACY.es.md](PRIVACY.es.md)), and covers transcription on this computer and the smooth video.
+- The privacy policy is rewritten ([PRIVACY.md](PRIVACY.md)) and now comes in the 18 languages of the
+  interface. It covers transcription on this computer, the smooth video, every permission the
+  extension asks for, and what happens to the data when you write to the developer.
+- The server takes the new name too: the container in `server/docker-compose.yml` is called
+  `streamremaster`, and new models go to `~/.cache/streamremaster`. A server that already has models in
+  `~/.cache/stream-transcription` keeps using that folder, so nothing is downloaded again.
 
 ### Fixed
 - Chromium browsers: fullscreen while the subtitles were capturing the tab stayed inside the tab. Now the

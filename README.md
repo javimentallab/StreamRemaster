@@ -47,6 +47,8 @@ StreamRemaster was called Stream Transcription up to version 2.2.0. The subtitle
 
 ## Smooth video
 
+![The Smooth video tab of the popup](store/screenshot-5-smooth-video.png)
+
 The **Smooth video** tab, next to **Subtitles** in the popup, makes the video on the page play more
 smoothly and look sharper. It does two things with AI:
 
@@ -171,7 +173,7 @@ transcribe on this computer. **Smooth video** sends nothing: the video is proces
 card. The extension only connects elsewhere when you ask: to GitHub when you press **Check for
 updates** (it asks for the number of the latest release), to Hugging Face when you download a
 transcription model, and to the address you give when you add a smooth video model. It stores its
-settings and models in your browser. See the [privacy policy](PRIVACY.md).
+settings and models in your browser. See the [privacy policy](PRIVACY.md), in the 18 languages of the interface.
 
 ## Building
 

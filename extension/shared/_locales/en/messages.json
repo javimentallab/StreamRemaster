@@ -189,7 +189,7 @@
     "message": "StreamRemaster"
   },
   "extDescription": {
-    "message": "Live subtitles for any tab, transcribed and translated by your own Whisper server."
+    "message": "Live subtitles and smoother, sharper video for any tab, made with AI on your own computer."
   },
   "start": {
     "message": "Start subtitles"

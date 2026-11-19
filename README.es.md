@@ -48,6 +48,8 @@ antes.
 
 ## Vídeo fluido
 
+![La pestaña Vídeo fluido de la ventana de la extensión](store/screenshot-5-smooth-video.png)
+
 La pestaña **Vídeo fluido**, junto a **Subtítulos** en la ventana de la extensión, hace que el vídeo de la
 página se vea más fluido y más nítido. Hace dos cosas con IA:
 
@@ -176,7 +178,7 @@ sitio cuando transcribes en este ordenador. **Vídeo fluido** no envía nada: el
 propia tarjeta gráfica. La extensión solo se conecta a otros sitios cuando tú lo pides: a GitHub al
 pulsar **Buscar actualizaciones** (pregunta el número de la última versión), a Hugging Face al
 descargar un modelo de transcripción y a la dirección que des al añadir un modelo de vídeo fluido.
-Guarda sus ajustes y sus modelos en tu navegador. Ver la [política de privacidad](PRIVACY.es.md).
+Guarda sus ajustes y sus modelos en tu navegador. Ver la [política de privacidad](PRIVACY.es.md), en los 18 idiomas de la interfaz.
 
 ## Compilar
 

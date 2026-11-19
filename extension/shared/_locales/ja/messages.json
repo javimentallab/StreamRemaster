@@ -189,7 +189,7 @@
     "message": "StreamRemaster"
   },
   "extDescription": {
-    "message": "どのタブにもリアルタイム字幕。自分の Whisper サーバーが文字起こしと翻訳をします。"
+    "message": "どのタブにもリアルタイム字幕を。動画も AI でよりなめらかに、くっきりと。すべて自分のパソコンで動きます。"
   },
   "start": {
     "message": "字幕をオン"

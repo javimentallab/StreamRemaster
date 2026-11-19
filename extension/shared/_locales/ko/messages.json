@@ -189,7 +189,7 @@
     "message": "StreamRemaster"
   },
   "extDescription": {
-    "message": "어떤 탭에서든 실시간 자막. 내 Whisper 서버가 받아쓰고 번역합니다."
+    "message": "어떤 탭에서든 실시간 자막과 더 부드럽고 선명한 동영상을. 모두 내 컴퓨터의 AI로 처리합니다."
   },
   "start": {
     "message": "자막 켜기"

@@ -77,8 +77,8 @@ M = {
     # --- manifest --------------------------------------------------------------------
     "extName": ("StreamRemaster", "StreamRemaster"),
     "extDescription": (
-        "Live subtitles for any tab, transcribed and translated by your own Whisper server.",
-        "Subtítulos en directo para cualquier pestaña, transcritos y traducidos por tu propio servidor Whisper."),
+        "Live subtitles and smoother, sharper video for any tab, made with AI on your own computer.",
+        "Subtítulos en directo y vídeo más fluido y nítido en cualquier pestaña, con IA en tu propio ordenador."),
 
     # --- popup -----------------------------------------------------------------------
     "start": ("Start subtitles", "Activar subtítulos"),

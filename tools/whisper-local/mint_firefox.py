@@ -307,7 +307,7 @@ def main():
         status = ""
         while time.time() - start < ARGS.seconds:
             time.sleep(0.5)
-            got = js(m, "const h = document.querySelector('stream-transcription-overlay'); if (!h) return ['', ''];"
+            got = js(m, "const h = document.querySelector('streamremaster-overlay'); if (!h) return ['', ''];"
                        "const r = h.shadowRoot; return [r.querySelector('.line').textContent, r.querySelector('.status').hidden ? '' : r.querySelector('.status').textContent];")
             if got[1] != status:
                 status = got[1]

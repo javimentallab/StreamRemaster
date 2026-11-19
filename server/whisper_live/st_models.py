@@ -1,5 +1,5 @@
 """
-Stream Transcription - model management for a WhisperLive server.
+StreamRemaster (formerly Stream Transcription) - model management for a WhisperLive server.
 
 Lets the browser extension list the Whisper models installed on the server, download new
 ones (from Hugging Face or from a direct .zip/.tar.gz link) and delete them. Models in
@@ -25,7 +25,8 @@ take one from here:
 
 Environment variables:
     ST_MODELS_DIR       where converted / archive models live
-                        (default: ~/.cache/stream-transcription)
+                        (default: ~/.cache/streamremaster, or ~/.cache/stream-transcription
+                        when that one already exists, from a version before 3.0.0)
     ST_VIDEO_MODELS_DIR where the smooth video models live (default: <ST_MODELS_DIR>/video)
     ST_ALLOW_MANAGEMENT "0" disables download/delete (listing still works). Default "1".
     HF_TOKEN            optional, for gated or private Hugging Face repos.
@@ -50,10 +51,16 @@ PROTOCOL_VERSION = 1
 # Version of this server, the same as the release (tests/test_st_models.py checks it against
 # the extension's manifests). Sent with every answer so the extension can say whether a
 # newer release exists; the server itself never checks or updates anything.
-SERVER_VERSION = "2.2.0"
+SERVER_VERSION = "3.0.0"
 
-ST_ROOT = os.path.expanduser(
-    os.environ.get("ST_MODELS_DIR", "~/.cache/stream-transcription"))
+def _default_root():
+    # Up to 2.2.0 the folder was called stream-transcription: a server that already has models
+    # there keeps using it, so nothing has to be downloaded again.
+    old = os.path.expanduser("~/.cache/stream-transcription")
+    return old if os.path.isdir(old) else os.path.expanduser("~/.cache/streamremaster")
+
+
+ST_ROOT = os.path.expanduser(os.environ.get("ST_MODELS_DIR") or _default_root())
 CONVERTED_DIR = os.path.join(ST_ROOT, "converted")
 ARCHIVE_DIR = os.path.join(ST_ROOT, "models")
 VIDEO_DIR = os.path.expanduser(os.environ.get("ST_VIDEO_MODELS_DIR", os.path.join(ST_ROOT, "video")))
@@ -251,7 +258,7 @@ def resolve(requested, default_path):
             return info["path"]
 
     if default_path:
-        logging.info("[stream-transcription] model '%s' is not installed; using the "
+        logging.info("[streamremaster] model '%s' is not installed; using the "
                      "default one", requested)
         return default_path
     # No default model configured: let faster-whisper handle size names itself
@@ -354,7 +361,7 @@ def _convert(src_dir, out_dir, job):
             from transformers import WhisperTokenizerFast
             WhisperTokenizerFast.from_pretrained(src_dir).save_pretrained(src_dir)
         except Exception as e:
-            logging.warning("[stream-transcription] could not build tokenizer.json: %s", e)
+            logging.warning("[streamremaster] could not build tokenizer.json: %s", e)
     copy = [f for f in ("tokenizer.json", "preprocessor_config.json")
             if os.path.isfile(os.path.join(src_dir, f))]
     class _Converter(ctranslate2.converters.TransformersConverter):
@@ -408,7 +415,7 @@ def _run_hf_job(job, repo_id, revision, hub):
             # the original weights are no longer needed and can be several GB
             shutil.rmtree(repo_dir, ignore_errors=True)
         _update(job, state="ready")
-        logging.info("[stream-transcription] model %s installed", repo_id)
+        logging.info("[streamremaster] model %s installed", repo_id)
     except Exception as e:
         _fail(job, e)
         # Leave nothing half-done behind (it would eat disk and never show up in the
@@ -456,7 +463,7 @@ def _run_url_job(job, url, slug):
     tmpdir = tempfile.mkdtemp(prefix="st-dl-", dir=ST_ROOT)
     try:
         archive = os.path.join(tmpdir, "archive")
-        req = urllib.request.Request(url, headers={"User-Agent": "stream-transcription"})
+        req = urllib.request.Request(url, headers={"User-Agent": "streamremaster"})
         with urllib.request.urlopen(req, timeout=60) as resp, open(archive, "wb") as fh:
             total = int(resp.headers.get("Content-Length") or 0)
             _update(job, total=total)
@@ -484,7 +491,7 @@ def _run_url_job(job, url, slug):
         else:
             _convert(root, out, job)
         _update(job, state="ready")
-        logging.info("[stream-transcription] model url:%s installed", slug)
+        logging.info("[streamremaster] model url:%s installed", slug)
     except Exception as e:
         _fail(job, e)
     finally:
@@ -505,7 +512,7 @@ def _fail(job, exc):
             code = "convert_failed"
         else:
             code = "download_failed"
-    logging.error("[stream-transcription] job %s failed: %s", job["id"], exc)
+    logging.error("[streamremaster] job %s failed: %s", job["id"], exc)
     _update(job, state="error", error=code, detail=str(exc)[:300])
 
 
@@ -583,7 +590,7 @@ def delete_model(mid, default_path):
     else:
         target = info["path"]
     shutil.rmtree(target, ignore_errors=True)
-    logging.info("[stream-transcription] model %s deleted", mid)
+    logging.info("[streamremaster] model %s deleted", mid)
     return {"ok": True}
 
 
@@ -677,7 +684,7 @@ def download_video_model(source):
     if not re.match(r"^https?://[^\s/]+/\S*$", url):
         return {"ok": False, "error": "invalid_source"}
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "stream-transcription"})
+        req = urllib.request.Request(url, headers={"User-Agent": "streamremaster"})
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = resp.read(VIDEO_MAX_BYTES + 1)
         if len(data) > VIDEO_MAX_BYTES:
@@ -686,7 +693,7 @@ def download_video_model(source):
     except ValueError as e:
         return {"ok": False, "error": str(e)}
     except Exception as e:
-        logging.error("[stream-transcription] video model download failed: %s", e)
+        logging.error("[streamremaster] video model download failed: %s", e)
         return {"ok": False, "error": "network_error", "detail": str(e)[:300]}
     os.makedirs(VIDEO_DIR, exist_ok=True)
     mid = _video_file_name(url, name)
@@ -694,7 +701,7 @@ def download_video_model(source):
     with open(path + ".part", "wb") as fh:
         fh.write(data)
     os.replace(path + ".part", path)
-    logging.info("[stream-transcription] video model %s installed", mid)
+    logging.info("[streamremaster] video model %s installed", mid)
     return {"ok": True, "id": mid, "name": name, "size": len(data)}
 
 
@@ -706,7 +713,7 @@ def delete_video_model(mid):
     except ValueError as e:
         return {"ok": False, "error": str(e)}
     os.remove(path)
-    logging.info("[stream-transcription] video model %s deleted", mid)
+    logging.info("[streamremaster] video model %s deleted", mid)
     return {"ok": True}
 
 
@@ -783,7 +790,7 @@ def handle_control(websocket, options, default_path):
         else:
             reply = {"ok": False, "error": "unknown_action"}
     except Exception as e:
-        logging.exception("[stream-transcription] %s failed", action)
+        logging.exception("[streamremaster] %s failed", action)
         reply = {"ok": False, "error": "server_error", "detail": str(e)[:300]}
     reply["st"] = PROTOCOL_VERSION
     reply["version"] = SERVER_VERSION

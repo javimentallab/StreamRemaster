@@ -1,7 +1,7 @@
 services:
-  stream-transcription:
+  streamremaster:
     build: .
-    container_name: stream-transcription
+    container_name: streamremaster
     restart: unless-stopped
     ports:
       - "9090:9090"

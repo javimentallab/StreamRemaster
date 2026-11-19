@@ -68,7 +68,7 @@ subs_auto_start|Iniciar as legendas ao reproduzir um vídeo
 auto_start_hint|Neste navegador, só funciona nas abas em que você clicou no botão da extensão, até que mudem para outro site.
 fg_allow_all_sites|Permitir em todos os sites
 extName|StreamRemaster
-extDescription|Legendas ao vivo para qualquer aba, transcritas e traduzidas pelo seu próprio servidor Whisper.
+extDescription|Legendas ao vivo e vídeo mais fluido e nítido em qualquer aba, com IA no seu próprio computador.
 start|Ativar legendas
 stop|Desativar legendas
 status_idle|Pronto
@@ -291,7 +291,7 @@ subs_auto_start|Lancer les sous-titres à la lecture d'une vidéo
 auto_start_hint|Dans ce navigateur, cela ne fonctionne que dans les onglets où vous avez cliqué sur le bouton de l'extension, jusqu'à ce qu'ils changent de site.
 fg_allow_all_sites|Autoriser sur tous les sites
 extName|StreamRemaster
-extDescription|Sous-titres en direct pour n’importe quel onglet, transcrits et traduits par votre propre serveur Whisper.
+extDescription|Sous-titres en direct et vidéo plus fluide et plus nette dans n’importe quel onglet, grâce à l’IA sur votre ordinateur.
 start|Activer les sous-titres
 stop|Arrêter les sous-titres
 status_idle|Prêt
@@ -514,7 +514,7 @@ subs_auto_start|Untertitel beim Abspielen eines Videos starten
 auto_start_hint|In diesem Browser funktioniert das nur in Tabs, in denen du auf die Schaltfläche der Erweiterung geklickt hast, bis sie zu einer anderen Website wechseln.
 fg_allow_all_sites|Auf allen Websites erlauben
 extName|StreamRemaster
-extDescription|Live-Untertitel für jeden Tab, transkribiert und übersetzt von deinem eigenen Whisper-Server.
+extDescription|Live-Untertitel und flüssigeres, schärferes Video in jedem Tab, mit KI auf deinem eigenen Computer.
 start|Untertitel starten
 stop|Untertitel beenden
 status_idle|Bereit
@@ -737,7 +737,7 @@ subs_auto_start|Avvia i sottotitoli quando parte un video
 auto_start_hint|In questo browser funziona solo nelle schede in cui hai fatto clic sul pulsante dell'estensione, finché non passano a un altro sito.
 fg_allow_all_sites|Consenti su tutti i siti
 extName|StreamRemaster
-extDescription|Sottotitoli in diretta per qualsiasi scheda, trascritti e tradotti dal tuo server Whisper.
+extDescription|Sottotitoli in diretta e video più fluido e nitido in qualsiasi scheda, con l’IA sul tuo computer.
 start|Attiva sottotitoli
 stop|Disattiva sottotitoli
 status_idle|Pronto
@@ -960,7 +960,7 @@ subs_auto_start|Ondertiteling starten zodra een video speelt
 auto_start_hint|In deze browser werkt het alleen in tabbladen waarin je op de knop van de extensie hebt geklikt, totdat ze naar een andere site gaan.
 fg_allow_all_sites|Op alle sites toestaan
 extName|StreamRemaster
-extDescription|Live-ondertitels voor elk tabblad, getranscribeerd en vertaald door je eigen Whisper-server.
+extDescription|Live-ondertitels en vloeiendere, scherpere video in elk tabblad, met AI op je eigen computer.
 start|Ondertitels aan
 stop|Ondertitels uit
 status_idle|Klaar
@@ -1183,7 +1183,7 @@ subs_auto_start|Uruchamiaj napisy, gdy odtwarzany jest film
 auto_start_hint|W tej przeglądarce działa to tylko na kartach, na których kliknięto przycisk rozszerzenia, dopóki nie przejdą na inną stronę.
 fg_allow_all_sites|Zezwól na wszystkich stronach
 extName|StreamRemaster
-extDescription|Napisy na żywo w dowolnej karcie, transkrybowane i tłumaczone przez twój własny serwer Whisper.
+extDescription|Napisy na żywo oraz płynniejsze i ostrzejsze wideo w każdej karcie, dzięki AI na twoim komputerze.
 start|Włącz napisy
 stop|Wyłącz napisy
 status_idle|Gotowe
@@ -1406,7 +1406,7 @@ subs_auto_start|Запускать субтитры при воспроизве�
 auto_start_hint|В этом браузере это работает только во вкладках, где вы нажали кнопку расширения, пока они не перейдут на другой сайт.
 fg_allow_all_sites|Разрешить на всех сайтах
 extName|StreamRemaster
-extDescription|Субтитры в реальном времени для любой вкладки: распознаёт и переводит ваш собственный сервер Whisper.
+extDescription|Субтитры в реальном времени и более плавное и чёткое видео в любой вкладке — с ИИ на вашем компьютере.
 start|Включить субтитры
 stop|Выключить субтитры
 status_idle|Готово
@@ -1629,7 +1629,7 @@ subs_auto_start|Запускати субтитри під час відтвор
 auto_start_hint|У цьому браузері це працює лише у вкладках, де ви натиснули кнопку розширення, доки вони не перейдуть на інший сайт.
 fg_allow_all_sites|Дозволити на всіх сайтах
 extName|StreamRemaster
-extDescription|Субтитри наживо для будь-якої вкладки: розпізнає й перекладає ваш власний сервер Whisper.
+extDescription|Субтитри наживо й плавніше та чіткіше відео в будь-якій вкладці — зі ШІ на вашому комп’ютері.
 start|Увімкнути субтитри
 stop|Вимкнути субтитри
 status_idle|Готово
@@ -1852,7 +1852,7 @@ subs_auto_start|播放视频时自动开始字幕
 auto_start_hint|在此浏览器中，仅在您点击过扩展按钮的标签页中有效，直到该标签页转到其他网站。
 fg_allow_all_sites|在所有网站上允许
 extName|StreamRemaster
-extDescription|为任意标签页提供实时字幕，由你自己的 Whisper 服务器转写和翻译。
+extDescription|为任意标签页提供实时字幕，并用 AI 让视频更流畅、更清晰，全部在你自己的电脑上运行。
 start|开启字幕
 stop|关闭字幕
 status_idle|就绪
@@ -2075,7 +2075,7 @@ subs_auto_start|動画の再生時に字幕を自動で開始
 auto_start_hint|このブラウザーでは、拡張機能のボタンをクリックしたタブでのみ、別のサイトに移動するまで機能します。
 fg_allow_all_sites|すべてのサイトで許可
 extName|StreamRemaster
-extDescription|どのタブにもリアルタイム字幕。自分の Whisper サーバーが文字起こしと翻訳をします。
+extDescription|どのタブにもリアルタイム字幕を。動画も AI でよりなめらかに、くっきりと。すべて自分のパソコンで動きます。
 start|字幕をオン
 stop|字幕をオフ
 status_idle|準備完了
@@ -2298,7 +2298,7 @@ subs_auto_start|동영상이 재생되면 자막 자동으로 시작
 auto_start_hint|이 브라우저에서는 확장 프로그램 버튼을 클릭한 탭에서만, 다른 사이트로 이동하기 전까지 작동합니다.
 fg_allow_all_sites|모든 사이트에서 허용
 extName|StreamRemaster
-extDescription|어떤 탭에서든 실시간 자막. 내 Whisper 서버가 받아쓰고 번역합니다.
+extDescription|어떤 탭에서든 실시간 자막과 더 부드럽고 선명한 동영상을. 모두 내 컴퓨터의 AI로 처리합니다.
 start|자막 켜기
 stop|자막 끄기
 status_idle|준비됨
@@ -2521,7 +2521,7 @@ subs_auto_start|เริ่มคำบรรยายอัตโนมัต�
 auto_start_hint|ในเบราว์เซอร์นี้ ใช้ได้เฉพาะในแท็บที่คุณคลิกปุ่มของส่วนขยายแล้ว จนกว่าแท็บนั้นจะไปยังเว็บไซต์อื่น
 fg_allow_all_sites|อนุญาตในทุกเว็บไซต์
 extName|StreamRemaster
-extDescription|คำบรรยายสดสำหรับทุกแท็บ ถอดความและแปลโดยเซิร์ฟเวอร์ Whisper ของคุณเอง
+extDescription|คำบรรยายสดและวิดีโอที่ลื่นไหลและคมชัดขึ้นในทุกแท็บ ด้วย AI บนคอมพิวเตอร์ของคุณเอง
 start|เปิดคำบรรยาย
 stop|ปิดคำบรรยาย
 status_idle|พร้อม
@@ -2744,7 +2744,7 @@ subs_auto_start|वीडियो चलने पर उपशीर्षक 
 auto_start_hint|इस ब्राउज़र में यह केवल उन टैब में काम करता है जिनमें आपने एक्सटेंशन का बटन क्लिक किया है, जब तक वे किसी दूसरी साइट पर नहीं जाते।
 fg_allow_all_sites|सभी साइटों पर अनुमति दें
 extName|StreamRemaster
-extDescription|किसी भी टैब के लिए लाइव सबटाइटल, जिन्हें आपका अपना Whisper सर्वर लिखता और अनुवाद करता है।
+extDescription|किसी भी टैब में लाइव सबटाइटल और ज़्यादा स्मूद, ज़्यादा साफ़ वीडियो, आपके अपने कंप्यूटर पर AI से।
 start|सबटाइटल चालू करें
 stop|सबटाइटल बंद करें
 status_idle|तैयार
@@ -2905,7 +2905,7 @@ local_only_english|इस कंप्यूटर पर सबटाइटल 
 
 LANGS['ca'] = """
 extName|StreamRemaster
-extDescription|Subtítols en directe per a qualsevol pestanya, transcrits i traduïts pel teu propi servidor Whisper.
+extDescription|Subtítols en directe i vídeo més fluid i nítid en qualsevol pestanya, amb IA al teu propi ordinador.
 start|Activa els subtítols
 stop|Treu els subtítols
 status_idle|A punt
@@ -3128,7 +3128,7 @@ where_transcribe|On transcriure
 
 LANGS['gl'] = """
 extName|StreamRemaster
-extDescription|Subtítulos en directo para calquera lapela, transcritos e traducidos polo teu propio servidor Whisper.
+extDescription|Subtítulos en directo e vídeo máis fluído e nítido en calquera lapela, con IA no teu propio ordenador.
 start|Activar subtítulos
 stop|Quitar subtítulos
 status_idle|Listo
@@ -3351,7 +3351,7 @@ where_transcribe|Onde transcribir
 
 LANGS['eu'] = """
 extName|StreamRemaster
-extDescription|Zuzeneko azpitituluak edozein fitxatan, zure Whisper zerbitzariak transkribatuak eta itzuliak.
+extDescription|Zuzeneko azpitituluak eta bideo leunagoa eta zorrotzagoa edozein fitxatan, zure ordenagailuko AArekin.
 start|Aktibatu azpitituluak
 stop|Kendu azpitituluak
 status_idle|Prest
